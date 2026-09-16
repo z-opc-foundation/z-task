@@ -1,0 +1,82 @@
+# =============================================================================
+# z-task 启动配置 (application.yml)
+# 业务方接入时, 复制此文件并改 datasource / sso 配置.
+# =============================================================================
+
+server:
+  port: 8082
+  servlet:
+    context-path: /
+
+spring:
+  application:
+    name: z-task
+  profiles:
+    active: dev
+  datasource:
+    url: jdbc:mysql://rm-bp108uqlgwn712k54ho.mysql.rds.aliyuncs.com:3306/oc?useUnicode=true&characterEncoding=utf-8&useSSL=false&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true
+    username: zifang
+    password: 1qaz2wsx3edc
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    druid:
+      initial-size: 5
+      min-idle: 5
+      max-active: 20
+      max-wait: 60000
+      validation-query: SELECT 1
+      test-while-idle: true
+  jackson:
+    date-format: yyyy-MM-dd HH:mm:ss
+    time-zone: Asia/Shanghai
+  servlet:
+    multipart:
+      max-file-size: 50MB
+      max-request-size: 100MB
+
+# MyBatis Plus
+mybatis-plus:
+  configuration:
+    map-underscore-to-camel-case: true
+    log-impl: org.apache.ibatis.logging.slf4j.Slf4jImpl
+  global-config:
+    db-config:
+      id-type: auto
+      logic-delete-field: null
+
+# 4A 中心 SSO 配置 (z-ctc-sso)
+sso:
+  enabled: true
+  token-cookie-name: zifang_token
+  # SSO 排除路径 (不需要鉴权)
+  exclude-paths:
+    - /login
+    - /api/auth/login
+    - /api/auth/register
+    - /api/sync-user/**
+    - /doc.html
+    - /v3/api-docs/**
+    - /v2/api-docs/**
+    - /swagger-resources/**
+    - /swagger-ui/**
+    - /swagger-ui.html
+    - /webjars/**
+    - /favicon.ico
+    - /error
+  # SSO 拦截路径 (默认 /**, 即全部)
+  intercept-paths:
+    - /**
+  login-url: /login
+
+# Knife4j
+knife4j:
+  enable: true
+  setting:
+    language: zh_cn
+
+# Logging
+logging:
+  level:
+    com.zifang.z.task: info
+    com.zifang.ctc.audit: info
+  pattern:
+    console: '%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{50} - %msg%n'

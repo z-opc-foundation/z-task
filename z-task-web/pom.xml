@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xmlns="http://maven.apache.org/POM/4.0.0"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>com.zifang</groupId>
+        <artifactId>z-task</artifactId>
+        <version>1.0.0-SNAPSHOT</version>
+    </parent>
+
+    <artifactId>z-task-web</artifactId>
+
+    <dependencies>
+        <dependency>
+            <groupId>com.zifang</groupId>
+            <artifactId>z-task-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.zifang</groupId>
+            <artifactId>z-boot-datasource-starter</artifactId>
+        </dependency>
+        <!-- 4A 中心: 鉴权 + 审计 (FEATURE016: 合并为 z-ctc-core) -->
+        <dependency>
+            <groupId>com.zifang</groupId>
+            <artifactId>z-ctc-web</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.github.yuku123</groupId>
+            <artifactId>z-util-core</artifactId>
+            <version>${util.version}</version>
+        </dependency>
+    </dependencies>
+</project>

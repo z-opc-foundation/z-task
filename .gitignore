@@ -1,0 +1,63 @@
+
+# z-opc-foundation 重构 2026-09-06
+_frontend/node/
+_frontend/node_modules/
+_frontend/dist/
+node_modules/
+
+# ============ Java / Maven ============
+*.class
+/build/
+**/target/
+**/*.flattened-pom.xml
+.flattened-pom.xml
+**/*.lst
+**/*.jar
+dependency-reduced-pom.xml
+release.properties
+pom.xml.releaseBackup
+mvnw
+mvnw.cmd
+
+# ============ IDE ============
+.idea/
+*.iml
+*.ipr
+*.iws
+.vscode/
+.project
+.classpath
+.settings/
+
+# ============ OS ============
+.DS_Store
+**/.DS_Store
+Thumbs.db
+desktop.ini
+
+# ============ Logs ============
+**/logs/
+**/*.log
+
+# ============ Maven Central 发布凭证 ============
+.env
+.env.local
+.env.*.local
+.gnupg/
+.gpg-keyring/
+
+# ============ Docker ============
+.build-context/
+docker-compose.override.yml
+
+# ============ 系统与临时 ============
+*~
+*.bak
+*.tmp
+*.pid.lock
+.cache/
+.tmp/
+.temp/
+
+# ===== Git 本地备份目录 (历史塌缩用) =====
+.git.bak.*/
