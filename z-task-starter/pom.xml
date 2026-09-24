@@ -18,16 +18,10 @@
             <artifactId>z-task-core</artifactId>
         </dependency>
 
-        <!-- Web模块（包含MyBatis配置） -->
+        <!-- Web模块（包含MyBatis配置, 传递引入 z-ctc-web SSO） -->
         <dependency>
             <groupId>com.zifang</groupId>
             <artifactId>z-task-web</artifactId>
-        </dependency>
-
-        <!-- CTC SSO（统一认证）FEATURE016: 合并为 z-ctc-core -->
-        <dependency>
-            <groupId>com.zifang</groupId>
-            <artifactId>z-ctc-web</artifactId>
         </dependency>
 
         <!-- Spring Boot 自动配置 -->

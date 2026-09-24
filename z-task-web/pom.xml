@@ -17,18 +17,17 @@
             <artifactId>z-task-core</artifactId>
         </dependency>
         <dependency>
-            <groupId>com.zifang</groupId>
+            <groupId>io.github.yuku123</groupId>
             <artifactId>z-boot-datasource-starter</artifactId>
         </dependency>
-        <!-- 4A 中心: 鉴权 + 审计 (FEATURE016: 合并为 z-ctc-core) -->
+        <!-- 4A 中心鉴权: 仅 SSO 拦截器/JWT (z-ctc-web 的 ctc 主数据栈 z-task 不需要) -->
         <dependency>
-            <groupId>com.zifang</groupId>
-            <artifactId>z-ctc-web</artifactId>
+            <groupId>io.github.yuku123</groupId>
+            <artifactId>z-ctc-sso</artifactId>
         </dependency>
         <dependency>
             <groupId>io.github.yuku123</groupId>
             <artifactId>z-util-core</artifactId>
-            <version>${util.version}</version>
         </dependency>
     </dependencies>
 </project>

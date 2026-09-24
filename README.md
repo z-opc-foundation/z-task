@@ -13,15 +13,20 @@
 | **项目** | z-task |
 | **分类** | 业务应用 · 项目管理 |
 | **父项目** | z-opc (com.zifang:z-opc:1.0.0-SNAPSHOT) |
-| **默认端口** | `3006` |
+| **默认端口** | `8082` (前端 Vite dev 5800) |
 | **文档维护** | z-opc-foundation |
-| **最近更新** | 2026-09-06 |
+| **最近更新** | 2026-09-24 |
 
 ---
 
 ## 🎯 核心功能
 
 类似 Trello/Jira 的任务协作平台, 支持项目/任务/标签/成员管理
+
+- **项目空间**: 项目 CRUD / 归档 / 成员管理 (z-ctc 用户镜像)
+- **看板协作**: 看板 → 列表 → 任务卡片, 拖拽排序 (position)
+- **任务管理**: 优先级/状态/截止日期/多人执行者/标签
+- **统一鉴权**: z-ctc 4A SSO (SsoInterceptor, JWT Cookie)
 
 详细功能特性详见各子模块 README 或源码注释。
 
@@ -49,10 +54,11 @@ z-task/
 
 ## 🔧 技术栈
 
-- Spring Boot
-- React
-- Ant Design
-- MySQL
+- Java 8 + Spring Boot 2.7.12 (依赖版本由 z-boot-dependencies BOM 锁定)
+- MyBatis Plus 3.5.7 + Druid (z-boot-datasource-starter, 配置键 `z.base.db.task.*`)
+- z-ctc-web (4A SSO 统一鉴权)
+- React 19 + Ant Design 6 + Vite 6 (复用 @yuku123/z-frontend-common)
+- MySQL 8.0
 
 ---
 
@@ -62,18 +68,19 @@ z-task/
 
 - JDK 8+ (推荐 JDK 17)
 - Maven 3.6+
-- 端口 `3006` 未被占用
+- 端口 `8082` 未被占用
+- MySQL 可达 (连接配置见 `z-task-starter/src/main/resources/application.yml`, 敏感项走环境变量
+  `ZTASK_DB_HOST/PORT/NAME/USER/PASSWORD`)
 
 ### 编译
 
 ```bash
-# 在 z-opc 父项目下编译 (推荐)
-cd /Users/zifang/workplace/idea_workplace/z-opc
-mvn clean install -pl :z-opc -am -DskipTests
-
-# 单独编译本模块 (需 ../pom.xml 父项目可用)
+# 在 z-opc-foundation 仓内编译 (父 POM 位于仓根)
 cd /Users/zifang/workplace/ceo_workplace/z-opc-foundation/z-task
 mvn clean compile
+
+# 仅后端测试 (决策层单测, 零 DB 依赖)
+mvn test -pl z-task-core
 ```
 
 ### 运行
@@ -107,9 +114,8 @@ mvn test
 ```
 
 测试覆盖:
-- 单元测试: 各核心服务类
-- 集成测试: 端到端调用链路
-- 性能测试: 详见 `/src/test` 下的 `*PerformanceTest.java`
+- 单元测试: z-task-core 决策层服务 (TaskService/TaskListService/ProjectBizService), 37 例,
+  JDK 动态代理 + 内存 Map 模拟 Mapper, 零 Mockito 零 DB 依赖
 
 ---
 
@@ -129,8 +135,8 @@ API 接口定义在各子模块的 `controller` 包下。
 # 构建镜像
 docker build -t z-task:latest .
 
-# 运行容器
-docker run -d -p 3006:3006 --name z-task z-task:latest
+# 运行容器 (容器内 8080, 宿主映射 8082, 见 _doc/003_script/build.sh)
+docker run -d -p 8082:8080 --name z-task z-task:latest
 ```
 
 ### 配置
@@ -149,10 +155,20 @@ docker run -d -p 3006:3006 --name z-task z-task:latest
 
 ---
 
+## ⚠️ 已知风险
+
+| 级别 | 内容 |
+|------|------|
+| P1 | `/api/sync-user/**` 在 SSO exclude-paths 中**免鉴权** (服务端用户同步端点, 无 service token 机制); 独立部署时勿将该端口暴露公网 |
+| P2 | DB 连接走 `z.base.db.task.*`, 未配置时回退 `127.0.0.1:3306/root` (启动成功但业务接口不可用) |
+
+---
+
 ## 📝 版本历史
 
 | 版本 | 日期 | 变更 |
 |------|------|------|
+| 1.0.1 | 2026-09-24 | 对齐 z-boot 家族标准架构: 配置去明文凭证改环境变量, 删除死配置 spring.datasource, TaskController 迁移 api/ DTO 风格, SQL 三方漂移收口为权威 schema.sql, 补 37 例决策层单测, 清理 createTask DEBUG 残留 |
 | 1.0.0 | 2026-09-06 | 从 z-opc monorepo 拆分独立仓, 文档补齐 |
 
 ---

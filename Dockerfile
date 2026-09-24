@@ -20,6 +20,9 @@ WORKDIR /app
 # 复制SpringBoot jar包
 COPY z-task-starter/target/z-task-starter-1.0.0-SNAPSHOT.jar app.jar
 
+# 容器内监听 8080 (覆盖 jar 内 application.yml 的 8082; build.sh 按 8082:8080 做宿主映射)
+ENV SERVER_PORT=8080
+
 # 暴露端口
 EXPOSE 8080
 

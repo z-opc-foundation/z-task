@@ -22,15 +22,15 @@ public class WebMvcConfig implements WebMvcConfigurer {
     }
 
     /**
-     * 配置视图控制器，支持前端路由history模式
+     * 配置视图控制器，支持前端路由history模式.
+     * <p>
+     * Spring Boot 2.7 默认 PathPatternParser 不允许 `/**` 后再跟模式段,
+     * 故按有限深度枚举非资源路径段; 含 `.` 的路径(静态资源)不转发.
      */
     @Override
     public void addViewControllers(ViewControllerRegistry registry) {
-        // 所有非/api开头的请求都转发到index.html，交给前端路由处理
-        registry.addViewController("/{path:[^api].*}")
-                .setViewName("forward:/index.html");
-        // 处理多级路由
-        registry.addViewController("/**/{path:[^\\.]+}")
-                .setViewName("forward:/index.html");
+        registry.addViewController("/{p1:[^\\.]+}").setViewName("forward:/index.html");
+        registry.addViewController("/{p1:[^\\.]+}/{p2:[^\\.]+}").setViewName("forward:/index.html");
+        registry.addViewController("/{p1:[^\\.]+}/{p2:[^\\.]+}/{p3:[^\\.]+}").setViewName("forward:/index.html");
     }
 }

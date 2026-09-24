@@ -19,12 +19,12 @@
         </dependency>
 
         <dependency>
-            <groupId>com.zifang</groupId>
+            <groupId>io.github.yuku123</groupId>
             <artifactId>z-boot-web-starter</artifactId>
         </dependency>
 
         <dependency>
-            <groupId>com.zifang</groupId>
+            <groupId>io.github.yuku123</groupId>
             <artifactId>z-boot-datasource-starter</artifactId>
         </dependency>
 

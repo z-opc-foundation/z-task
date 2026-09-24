@@ -1,16 +1,20 @@
-package com.zifang.z.task.web.controller;
+package com.zifang.z.task.web.api;
 
 import com.zifang.ctc.sso.model.UserInfo;
 import com.zifang.util.core.meta.Result;
 import com.zifang.z.task.core.domain.entity.Task;
 import com.zifang.z.task.core.service.TaskService;
+import com.zifang.z.task.web.api.request.TaskReq;
+import com.zifang.z.task.web.api.response.TaskResp;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.BeanUtils;
 import org.springframework.web.bind.annotation.*;
 
+import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * 任务管理 Controller (z-task 业务核心).
@@ -33,11 +37,11 @@ import java.util.List;
  * </ul>
  */
 @Tag(name = "任务管理")
-@RestController
+@RestController("zTaskTaskController")
 @RequestMapping("/api/task")
 public class TaskController {
 
-    @Autowired
+    @Resource
     private TaskService zTaskService;
 
     /**
@@ -51,6 +55,12 @@ public class TaskController {
         return u != null ? u.getUsername() : null;
     }
 
+    private TaskResp toResp(Task task) {
+        TaskResp resp = new TaskResp();
+        BeanUtils.copyProperties(task, resp);
+        return resp;
+    }
+
     /**
      * 任务列表 (按任务列表).
      *
@@ -59,8 +69,9 @@ public class TaskController {
      */
     @Operation(summary = "任务列表（按列表）")
     @GetMapping("/list")
-    public Result<List<Task>> listByList(@RequestParam Long listId) {
-        return Result.success(zTaskService.getTasksByList(listId));
+    public Result<List<TaskResp>> listByList(@RequestParam Long listId) {
+        return Result.success(zTaskService.getTasksByList(listId).stream()
+                .map(this::toResp).collect(Collectors.toList()));
     }
 
     /**
@@ -71,40 +82,45 @@ public class TaskController {
      */
     @Operation(summary = "任务列表（按项目）")
     @GetMapping("/project/list")
-    public Result<List<Task>> listByProject(@RequestParam Long projectId) {
-        return Result.success(zTaskService.getTasksByProject(projectId));
+    public Result<List<TaskResp>> listByProject(@RequestParam Long projectId) {
+        return Result.success(zTaskService.getTasksByProject(projectId).stream()
+                .map(this::toResp).collect(Collectors.toList()));
     }
 
     /**
      * 任务列表 (按负责人).
      *
      * @param userId 负责人用户 ID
+     * @param assignee 负责人用户 ID (与 userId 等价的兼容参数)
      * @return 任务列表
      */
     @Operation(summary = "任务列表（按负责人）")
     @GetMapping("/assignee/list")
-    public Result<List<Task>> listByAssignee(
+    public Result<List<TaskResp>> listByAssignee(
             @RequestParam(value = "userId", required = false) String userId,
             @RequestParam(value = "assignee", required = false) String assignee) {
         // E2E 修复: 兼容前端 makeApi('task').listByAssignee(assignee=1) 这种调用 — assignee 和 userId 等价
         String resolved = (assignee != null && !assignee.isEmpty()) ? assignee : userId;
         if (resolved == null || resolved.isEmpty()) {
-            return Result.<List<Task>>fail("缺少参数: userId").code(400);
+            return Result.<List<TaskResp>>fail("缺少参数: userId").code(400);
         }
-        return Result.success(zTaskService.getTasksByAssignee(resolved));
+        return Result.success(zTaskService.getTasksByAssignee(resolved).stream()
+                .map(this::toResp).collect(Collectors.toList()));
     }
 
     /**
      * 创建任务.
      *
-     * @param task    任务实体
+     * @param req     任务请求体
      * @param request HTTP 请求, 用于提取当前用户
      * @return 创建后的任务
      */
     @Operation(summary = "创建任务")
     @PostMapping
-    public Result<Task> create(@RequestBody Task task, HttpServletRequest request) {
-        return Result.success(zTaskService.createTask(task, userId(request)));
+    public Result<TaskResp> create(@RequestBody TaskReq req, HttpServletRequest request) {
+        Task task = new Task();
+        BeanUtils.copyProperties(req, task);
+        return Result.success(toResp(zTaskService.createTask(task, userId(request))));
     }
 
     /**

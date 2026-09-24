@@ -4,11 +4,9 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.zifang.util.core.meta.ResultCode;
 import com.zifang.z.task.core.common.exception.BusinessException;
-import com.zifang.z.task.core.domain.entity.ProjectMember;
 import com.zifang.z.task.core.domain.entity.Task;
 import com.zifang.z.task.core.domain.entity.TaskAssignee;
 import com.zifang.z.task.core.domain.entity.TaskList;
-import com.zifang.z.task.core.domain.mapper.ProjectMemberMapper;
 import com.zifang.z.task.core.domain.mapper.TaskAssigneeMapper;
 import com.zifang.z.task.core.domain.mapper.TaskMapper;
 import com.zifang.z.task.core.service.ProjectMemberService;
@@ -38,8 +36,6 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper, Task> implements Ta
 
     @Autowired
     private ProjectMemberService projectMemberService;
-    @Autowired
-    private ProjectMemberMapper projectMemberMapper;
 
     @Autowired
     private TaskListService taskListService;
@@ -53,13 +49,9 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper, Task> implements Ta
             throw new BusinessException(ResultCode.NOT_FOUND, "列表不存在");
         }
 
-        boolean isMem = projectMemberService.isMember(task.getProjectId(), userId);
-        int dbCount = projectMemberMapper.selectCountByProjectAndUser(task.getProjectId(), userId);
-        if (!isMem || dbCount == 0) {
-            ProjectMember mem = projectMemberService.getMember(task.getProjectId(), userId);
-            int altCount = projectMemberMapper.selectCountByProjectAndUser(task.getProjectId(), "1");
-            String memStr = mem == null ? "NULL" : mem.toString();
-            throw new RuntimeException("DEBUG: projectId=" + task.getProjectId() + " userId=[" + userId + "] isMem=" + isMem + " dbCount(userId)=" + dbCount + " dbCountAlt=" + altCount + " mem=" + memStr);
+        // 检查是否是项目成员
+        if (!projectMemberService.isMember(task.getProjectId(), userId)) {
+            throw new BusinessException(ResultCode.REQ_REJECT, "无权限在该项目中创建任务");
         }
 
         // 设置默认值

@@ -8,11 +8,9 @@ import java.time.LocalDateTime;
 /**
  * 项目表
  * <p>
- * DB schema (see _doc/_sql/z-task.sql — the FIRST z_task_project CREATE TABLE block
- * uses `manager_id` / `gmt_create` / `gmt_modified`; the second one with
- * `owner_id` / `created_at` / `updated_at` is silently skipped because of
- * `IF NOT EXISTS`). The @TableField mappings below bridge the entity (new
- * design) to the actual DB columns (old design) without touching the DB.
+ * 权威 schema 见 _doc/002_deploy/init/schema.sql (z_task_project)。
+ * The @TableField mappings bridge the entity (new design) to the actual
+ * DB columns (old design) without touching the DB.
  *
  * @author zifang
  */

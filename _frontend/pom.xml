@@ -15,7 +15,7 @@
     <packaging>pom</packaging>
 
     <name>z-task-frontend</name>
-    <description>Z-Task 前端 (React 18 + Antd 5)</description>
+    <description>Z-Task 前端 (React 19 + Ant Design 6)</description>
 
     <properties>
         <node.version>v22.14.0</node.version>

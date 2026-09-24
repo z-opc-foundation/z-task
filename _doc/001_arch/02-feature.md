@@ -86,17 +86,17 @@ Z-Task 是一个轻量级任务协作管理工具，对标 Teambition / Trello�
 | 兼容性 | 支持现代浏览器(Chrome/Firefox/Safari/Edge) |
 | 响应式 | 支持桌面端优先，适配平板                        |
 
-## 4. 技术栈规划
+## 4. 技术栈 (实际落地)
 
-参考 z-config 项目，采用统一技术栈：
+与 z-opc 家族统一技术栈，依赖版本由 z-boot-dependencies BOM 锁定：
 
 | 层级    | 技术                                   |
 |-------|--------------------------------------|
 | 后端    | Java 8, Spring Boot 2.7.12           |
-| 持久层   | MySQL 8.0, MyBatis Plus 3.3.1, Druid |
+| 持久层   | MySQL 8.0, MyBatis Plus 3.5.7, Druid (z-boot-datasource-starter) |
 | 缓存    | Caffeine / Redis(可选)                 |
-| API文档 | Knife4j 3.0.3                        |
-| 前端    | Vue 3 + Element Plus + Pinia         |
+| API文档 | Knife4j (z-boot-web-starter 自带)      |
+| 前端    | React 19 + Ant Design 6 + Vite 6     |
 | 构建    | Maven                                |
 
 ## 5. 优先级划分
