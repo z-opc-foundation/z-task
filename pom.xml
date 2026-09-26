@@ -37,7 +37,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <knife4j.version>4.1.0</knife4j.version>
         <!-- z-boot 家族发布版 (对齐 z-ops): 不消费 com.zifang:1.0.0-SNAPSHOT 陈旧死线 -->
-        <z-boot.version>1.0.12</z-boot.version>
+        <z-boot.version>1.0.16</z-boot.version>
         <z-ctc.version>1.0.1</z-ctc.version>
     </properties>
 
