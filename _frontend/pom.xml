@@ -69,7 +69,13 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-resources-plugin</artifactId>
-                <version>3.3.1</version>
+                <!-- <version>3.3.1</version> 删掉：parent 的 pluginManagement 供
+                     maven-resources-plugin ${maven-resources-plugin.version}=3.3.1（现读 repo1 上
+                     z-boot-parent-1.0.19.pom:188-198，值逐字节相同）⇒ 零漂移，且 module pom 里的字面
+                     版本顶穿父链正是 trap 3 点名的形状。
+                     上面 frontend-maven-plugin 的 ${frontend-maven-plugin.version}=1.15.1 与 node/npm
+                     两个键**留着**：父链那侧不管这三件（只供 compiler/surefire/failsafe/jar/resources/
+                     spring-boot 六件），删了就是悬空属性 + 无兜底版本。 -->
                 <executions>
                     <execution>
                         <id>copy-frontend-dist</id>

@@ -4,14 +4,29 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
+    <!-- 消费入口统一走 z-boot-parent（1.0.19 起全组织口径，试点 z-cache）：它继承第三方地板
+         z-boot-dependencies:1.0.19、import 兄弟仓权威 z-boot-fleet:1.0.0，并下发 Java 8 的
+         pluginManagement（compiler 3.11.0 + source/target 8 + -parameters、surefire 2.22.2、
+         spring-boot-maven-plugin 2.7.18）。
+         原先这里是 com.zifang:z-opc:1.0.0-SNAPSHOT + <relativePath>../pom.xml</relativePath>，
+         而 z-opc-foundation/ 上一层没有 pom.xml（实测 ls 不存在）—— 那份 parent 只躺在本机
+         ~/.m2/repository/com/zifang/z-opc/1.0.0-SNAPSHOT/ 里（现读 58449 字节：DM 179 条 =
+         178 条直接条目 + 1 条 z-boot-dependencies:${z-boot.version}=1.0.18 的 import，
+         178 条里 0 条带 <exclusions>），换台机器连本 pom 都读不动；本机永远测不出来。
+         relativePath 必须留空：parent 不在磁盘上，在 repo1。 -->
     <parent>
-        <groupId>com.zifang</groupId>
-        <artifactId>z-opc</artifactId>
-        <version>1.0.0-SNAPSHOT</version>
-        <relativePath>../pom.xml</relativePath>
+        <groupId>io.github.yuku123</groupId>
+        <artifactId>z-boot-parent</artifactId>
+        <version>1.0.19</version>
+        <relativePath/>
     </parent>
 
+    <!-- 坐标逐字保留迁移前的面值：groupId/version 以前是从悬空 parent com.zifang:z-opc 继承来的，
+         现在必须自己写出来，否则 groupId 会静默变成 io.github.yuku123（命名空间换号是另一个决定，
+         不在本次迁移里顺手做）。版本不抬（本仓全部 repo1 maven-metadata 实测 404，从未发布过）。 -->
+    <groupId>com.zifang</groupId>
     <artifactId>z-task</artifactId>
+    <version>1.0.0-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <name>z-task</name>
@@ -32,58 +47,83 @@
         <module>z-task-starter</module>
     </modules>
 
-    <properties>
-        <java.version>8</java.version>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <knife4j.version>4.1.0</knife4j.version>
-        <!-- z-boot 家族发布版 (对齐 z-ops): 不消费 com.zifang:1.0.0-SNAPSHOT 陈旧死线 -->
-        <z-boot.version>1.0.17</z-boot.version>
-        <z-ctc.version>1.0.1</z-ctc.version>
-    </properties>
+    <!-- 版本口径全部由 parent 的父链下发，本仓不再自己摊属性表。删掉的 4 格逐条给实测理由
+         （迁前 parent_preflight 报的就是这四格）：
+         · z-boot.version=1.0.17 —— parent 自己的键是 1.0.19，且实测 1.0.17 那格在本仓从来不是
+           "面值"：本仓 import 的 floor:1.0.17 把 spring-boot 那条线整体拉到 2.7.12（现读 floor:1.0.17
+           import spring-boot-dependencies:2.7.12，1.0.19 的是 2.7.18），基线树里 spring/spring-boot/
+           netty/tomcat 全是 1.0.17 那一代的版本。这格按 CEO 口径交给 parent 管，不留字面旧值。
+         · z-ctc.version=1.0.1 —— 与 fleet 面值逐字节相同（现读 z-boot-fleet:1.0.0 里
+           z-ctc-sso/common/core/web 四格全是 1.0.1）⇒ 键与那条 DM 一起删，改由 fleet 下发。
+         · knife4j.version=4.1.0 —— 本仓 0 个引用点（全仓 grep ${knife4j.version} 只命中定义行本身），
+           是死键；knife4j 三件的实际面值由地板直钉（floor:1.0.19 里 knife4j-core/openapi3-* = 4.1.0，
+           与基线树逐字相同）⇒ 删键零漂移。
+         · java.version=8 —— 唯一引用点是下面那块 maven-compiler-plugin 的 source/target，
+           而 parent 的 pluginManagement 已用 maven.compiler.source/target=8 供同一口径
+           （javac 里 8 与 1.8 同义）⇒ 键与那块插件声明一起删。
+         · project.build.sourceEncoding=UTF-8 —— 与 parent 面值相同，由父链供。 -->
 
     <dependencyManagement>
         <dependencies>
-
+            <!-- 自家 5 个 reactor 坐标钉 ${project.version}（z-boot README「消费模型」步骤 4）：
+                 继承来的 DM 会改写**传递依赖**的版本，仓外只要有一格存在，旧发布件的字节码就能当
+                 sibling 编进本仓产物。现读 fleet 里 0 条 com.zifang 格（本仓 5 个坐标的 repo1
+                 maven-metadata 实测全 404）⇒ 这 5 条今天是登记位，fleet 收了 z-task 就立刻生效。
+                 z-task / z-task-frontend 是 pom 打包，type 要写对，否则 ${project.version} 那条
+                 jar 声明会盖住真正的 pom 解析。 -->
             <dependency>
-                <groupId>io.github.yuku123</groupId>
-                <artifactId>z-boot-dependencies</artifactId>
-                <scope>import</scope>
+                <groupId>com.zifang</groupId>
+                <artifactId>z-task</artifactId>
+                <version>${project.version}</version>
                 <type>pom</type>
-                <version>${z-boot.version}</version>
             </dependency>
-
-            <dependency>
-                <groupId>io.github.yuku123</groupId>
-                <artifactId>z-boot-web-starter</artifactId>
-                <version>${z-boot.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>io.github.yuku123</groupId>
-                <artifactId>z-boot-datasource-starter</artifactId>
-                <version>${z-boot.version}</version>
-            </dependency>
-
-            <!-- 4A 中心 SSO 鉴权 (z-task 只消费 z-ctc-sso, 不引入 ctc 主数据栈) -->
-            <dependency>
-                <groupId>io.github.yuku123</groupId>
-                <artifactId>z-ctc-sso</artifactId>
-                <version>${z-ctc.version}</version>
-            </dependency>
-
-            <!-- 内部模块 -->
             <dependency>
                 <groupId>com.zifang</groupId>
                 <artifactId>z-task-core</artifactId>
                 <version>${project.version}</version>
             </dependency>
-
             <dependency>
                 <groupId>com.zifang</groupId>
                 <artifactId>z-task-web</artifactId>
                 <version>${project.version}</version>
             </dependency>
+            <dependency>
+                <groupId>com.zifang</groupId>
+                <artifactId>z-task-starter</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.zifang</groupId>
+                <artifactId>z-task-frontend</artifactId>
+                <version>${project.version}</version>
+                <type>pom</type>
+            </dependency>
 
+            <!-- snakeyaml：这是迁前旧 parent com.zifang:z-opc 那 178 条直接 DM 里，唯一一条
+                 "本仓树里用得上、新父链又不供同一面值"的格（现读：phantom 直钉 org.yaml:snakeyaml=2.0；
+                 floor:1.0.19 / fleet:1.0.0 / parent:1.0.19 三处都**不管**这个坐标）。
+                 实测不写这条就掉到 spring-boot-dependencies:2.7.18 的 1.30（迁移后第一遍
+                 dependency:tree 就是 1.30），而 2.0 是 CVE-2022-1471 那一串的口径 ⇒ 按坐标写
+                 直接条目顶住（写法同 z-cache/pom.xml:141-148）。
+                 ⚠ 直接条目是**整条替换**，但这条没有可丢的 exclusion：Boot 的受管项里 snakeyaml
+                 本来就不带 exclusion（14 条带 exclusion 的是 httpclient/mysql/quartz 那一族）。 -->
+            <dependency>
+                <groupId>org.yaml</groupId>
+                <artifactId>snakeyaml</artifactId>
+                <version>2.0</version>
+            </dependency>
+
+            <!-- 以下三组是**删除**，留字说明删了什么、为什么顶不住（z-boot README 步骤 5、10）：
+                 1) floor:1.0.17 的 <scope>import</scope>：parent 的父链已经继承 floor:1.0.19 的 156 条
+                    直接 DM，而"继承来的直接条目"赢过本仓 import（步骤 5）⇒ 这条 import 从来没能把
+                    第三方面值钉在 1.0.17，它只把 Boot 2.7.12 那一代从嵌套 import 里带了进来。
+                    ⚠ 删它不会带走任何 <exclusions>：本仓从来没有 import 过 spring-boot-dependencies，
+                    Boot 那条 mysql-connector-j 排 protobuf-java 的 exclusion 在台账上本来就不存在
+                    （基线树实测 com.google.protobuf:protobuf-java:3.25.5 已经在树里，迁移后仍在）。
+                 2) z-boot-web-starter / z-boot-datasource-starter 的 ${z-boot.version} 直接条目：
+                    parent 的 24 条自家 starter 里就有这两件（1.0.19）。留着字面 1.0.17 就是 trap 3
+                    点名的形状——直接条目顶穿父链，把旧兄弟字节码打进本仓产物。
+                 3) z-ctc-sso 的直接条目：fleet 按同一坐标供面值 1.0.1，与迁移前逐字相同。 -->
         </dependencies>
     </dependencyManagement>
 
@@ -106,24 +146,49 @@
     </dependencies>
 
     <build>
-        <pluginManagement>
-            <plugins>
-                <plugin>
-                    <groupId>org.springframework.boot</groupId>
-                    <artifactId>spring-boot-maven-plugin</artifactId>
-                    <version>2.7.12</version>
-                </plugin>
-            </plugins>
-        </pluginManagement>
+        <!-- 迁前的这两块都删了，逐条给理由：
+             · <pluginManagement> spring-boot-maven-plugin 2.7.12 —— parent 的 pluginManagement 供
+               ${spring-boot.version}=2.7.18，与地板 import 的 spring-boot-dependencies 那一格同值；
+               旧 parent com.zifang:z-opc 也只直接钉了 spring-boot-starter-log4j2:2.7.18 一件，
+               2.7.12 那格是"库走 2.7.12、repackage 插件走 2.7.12"的自洽旧线，本次随 z-boot 1.0.17→1.0.19
+               一起回到 2.7.18 口径（同做法见 z-opcs/z-opcs-server/pom.xml:153-157）。
+             · maven-compiler-plugin 3.10.1 + source/target ${java.version} —— parent 的 pluginManagement
+               供 3.11.0 + source/target 8 + encoding UTF-8 + -parameters（Java 8 口径下发），本仓不再
+               自己起炉灶（同做法见 z-report/pom.xml:208、z-oss/pom.xml:220）。 -->
         <plugins>
+            <!-- 发布形状（z-boot README「消费模型」步骤 7）：parent 那条 flatten 写着
+                 <inherited>false</inherited>（现读 repo1 上 z-boot-parent-1.0.19.pom:211），不下发给
+                 消费仓 ⇒ 本仓自己常开。判据按本仓中央上的形状：本仓 5 个坐标的 repo1 maven-metadata
+                 实测全 404（从未发布过）⇒ 没有既有的"带 parent 的扁平叶子"契约要维持，按自包含走：
+                 flatten oss + updatePomFile，发出去的 pom <parent> 计数 0、不含 com.zifang 悬空引用。
+                 常开而不是挂 central profile：不带 -P central 的 mvn install 会把带 parent 的废 pom
+                 装进仓里（z-cache/pom.xml:160-193 同判，写法照抄）。版本钉 1.5.0：门禁机 Maven 3.6.0
+                 实测只有 1.5.0 rc=0，1.6.0/1.7.2 要 Maven 3.6.3+。 -->
             <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.10.1</version>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>flatten-maven-plugin</artifactId>
+                <version>1.5.0</version>
+                <inherited>true</inherited>
                 <configuration>
-                    <source>${java.version}</source>
-                    <target>${java.version}</target>
+                    <updatePomFile>true</updatePomFile>
+                    <flattenMode>oss</flattenMode>
                 </configuration>
+                <executions>
+                    <execution>
+                        <id>flatten</id>
+                        <phase>process-resources</phase>
+                        <goals>
+                            <goal>flatten</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>flatten.clean</id>
+                        <phase>clean</phase>
+                        <goals>
+                            <goal>clean</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>
