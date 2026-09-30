@@ -189,7 +189,7 @@ npm run build    # 产物在 _frontend/dist，需人工拷到 z-task-web/src/mai
 
 全部端点由 `z-task-web/src/main/java/com/zifang/z/task/web/api/` 的 8 个 Controller 提供，前缀 `/api/...`；
 统一返回 `com.zifang.util.core.meta.Result`（实测类字段为 `data / success / code / message`，
-`_doc/001_arch` 里写的 `msg` 是旧稿叫法）；下表为逐类实测的完整路径。
+[`_doc/001_arch/`](_doc/001_arch/) 里写的 `msg` 是旧稿叫法）；下表为逐类实测的完整路径。
 
 | 路径 | 方法 | Controller / 用途 |
 |------|------|--------------------|
@@ -304,7 +304,7 @@ _Maintained by the z-opc-foundation organization._
   - [`build.sh`](_doc/003_script/build.sh) — docker 构建 + 平滑替换 + 健康检查回滚
   - [`package.sh`](_doc/003_script/package.sh) — 打包（路径已过时，见上方 P2）
   - [`start.sh`](_doc/003_script/start.sh) — 打包后 `mvn spring-boot:run`
-- `_doc/002_deploy/` 无 Docker/K8s 清单，`_doc/004_skill/` 本仓不存在；仓根 `db/` 目前为空目录，表结构一律以上面 `schema.sql` 为准。
+- [`_doc/002_deploy/`](_doc/002_deploy/) 无 Docker/K8s 清单，`_doc/004_skill/` 本仓不存在；仓根 `db/` 目前为空目录，表结构一律以上面 `schema.sql` 为准。
 
 配置面详见 [`z-task-starter/src/main/resources/application.yml`](z-task-starter/src/main/resources/application.yml)，
 前端说明见 [`_frontend/README.md`](_frontend/README.md)（版本面值以 `_frontend/package.json` 为准）。
