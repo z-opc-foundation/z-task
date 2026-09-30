@@ -12,7 +12,7 @@
 |------|-----|
 | **项目** | z-task |
 | **分类** | 业务应用 · 项目管理 |
-| **父项目** | z-opc (com.zifang:z-opc:1.0.0-SNAPSHOT) |
+| **父项目** | z-boot-parent (io.github.yuku123:z-boot-parent:1.0.21) |
 | **默认端口** | `8082` (前端 Vite dev 5800) |
 | **文档维护** | z-opc-foundation |
 | **最近更新** | 2026-09-24 |
