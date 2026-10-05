@@ -3,7 +3,7 @@
 ## 1.1 模块定位
 
 z-task（任务中心）是面向个人和团队的轻量级任务协作平台（看板范式，对标 Teambition/Trello 的开源自研实现），
-提供项目空间、看板/列表、任务卡片、指派、标签、成员协作能力。与 z-wf（审批流）和 z-schedule（定时调度）
+提供项目空间、看板/列表、任务卡片、指派、标签、成员协作能力。与 z-camuda（审批流）和 z-schedule（定时调度）
 规划集成，形成"审批 → 任务 → 提醒"的闭环。
 
 ## 1.2 核心概念
@@ -17,7 +17,7 @@ z-task（任务中心）是面向个人和团队的轻量级任务协作平台�
 
 ```
 z-ctc（用户/账号/4A 鉴权）──► z-task（SsoInterceptor + 用户同步）
-z-wf（审批完成）──规划──► z-task（自动创建跟进任务）
+z-camuda（审批完成）──规划──► z-task（自动创建跟进任务）
 z-schedule（定时调度）──规划──► z-task（到期任务通知）
 ```
 
@@ -65,5 +65,5 @@ z-task/
 | 级别 | 内容 |
 |-----|------|
 | P1 | `/api/sync-user/**` 在 SSO exclude-paths 中免鉴权（服务端同步端点，无 service token 机制，部署时勿暴露公网） |
-| P2 | z-wf / z-schedule 联动为规划项，代码未落地 |
+| P2 | z-camuda / z-schedule 联动为规划项，代码未落地 |
 | P2 | 实体通过 @TableField 桥接旧列名（title→name, dueDate→deadline, gmt_*），新表已按桥接后真实列名建表 |
