@@ -23,13 +23,19 @@ import java.util.List;
 /**
  * E2E 修复: 自执行 SQL 迁移 runner.
  * <p>
- * 启动时检查 _doc/004_sql/z-fix-e2e-bad-sql-grammar.sql 是否执行过, 如没有则跑一次.
+ * 启动时检查 {@link #SCRIPTS} 里的脚本是否执行过, 如没有则跑一次.
  * 跑过的表会写到 z_e2e_migration_log 表 (自建, 不会和业务冲突).
  * 失败不抛 (避免影响主启动), 仅记日志.
  * <p>
  * 触发方式: Spring 启动完成 (CommandLineRunner), 按 @Order 早期执行.
  * <p>
  * 关闭: application.properties 加 {@code z.e2e.migration.enabled=false} 即可.
+ *
+ * <p><b>2026-10-05 修正</b>：此前无论脚本是否找到都会 {@code recordRun} 写迁移标记。
+ * 仓内 {@code _doc/004_sql/} 并不存在（那 3 个脚本在工作区里一个都没有），于是每次
+ * 启动都是"3 条找不到 + 共执行 0 个 DDL 块"，然后<b>把唯一的一次性标记烧掉</b>——
+ * 之后即使把脚本补回来，也永远不会再执行。现在改成：<b>只要有脚本没找到就不写标记</b>，
+ * 让迁移在脚本就位后仍可执行。</p>
  */
 @Component
 @Order(1)
@@ -61,11 +67,18 @@ public class E2ESqlMigrationRunner implements CommandLineRunner {
                 log.info("[E2E SQL] 已执行过, 跳过");
                 return;
             }
-            log.info("[E2E SQL] 开始执行 z-fix-e2e-bad-sql-grammar.sql 迁移...");
+            log.info("[E2E SQL] 开始执行迁移脚本...");
             ensureMarkerTable(conn);
-            int created = executeSqlScript(conn);
+            ScriptOutcome outcome = runScripts(conn);
+            if (!outcome.allFound) {
+                // 不能在这里 recordRun：脚本没找到等于什么都没做，写了标记就再也等不到它们。
+                // 保留标记缺席，脚本补进产物后下一次启动还会重试。
+                log.warn("[E2E SQL] 有脚本未找到，本次<b>不</b>记录迁移标记（否则脚本补回来也永远不执行）。"
+                        + "已执行 {} 个 DDL 块。请确认产物里是否含 _doc/004_sql/*.sql", outcome.ddlExecuted);
+                return;
+            }
             recordRun(conn);
-            log.info("[E2E SQL] 迁移完成, 共执行 {} 个 DDL 块", created);
+            log.info("[E2E SQL] 迁移完成, 共执行 {} 个 DDL 块", outcome.ddlExecuted);
         } catch (Exception e) {
             log.warn("[E2E SQL] 迁移失败 (不影响主启动): {}", e.getMessage());
         }
@@ -107,23 +120,48 @@ public class E2ESqlMigrationRunner implements CommandLineRunner {
         }
     }
 
-    private int executeSqlScript(Connection conn) throws Exception {
-        int total = 0;
-        for (String scriptPath : SCRIPTS) {
-            log.info("[E2E SQL] 执行脚本: {}", scriptPath);
-            int n = executeOneScript(conn, scriptPath);
-            log.info("[E2E SQL]   -> {} 个 DDL 块", n);
-            total += n;
+    /** 一次脚本执行的结果：脚本是否找到 + 执行了几个 DDL 块。 */
+    private static final class ScriptOutcome {
+        final boolean allFound;
+        final int ddlExecuted;
+
+        ScriptOutcome(boolean allFound, int ddlExecuted) {
+            this.allFound = allFound;
+            this.ddlExecuted = ddlExecuted;
         }
-        return total;
     }
 
-    private int executeOneScript(Connection conn, String scriptPath) throws Exception {
+    private ScriptOutcome runScripts(Connection conn) throws Exception {
+        int total = 0;
+        boolean allFound = true;
+        for (String scriptPath : SCRIPTS) {
+            log.info("[E2E SQL] 执行脚本: {}", scriptPath);
+            SingleOutcome one = executeOneScript(conn, scriptPath);
+            log.info("[E2E SQL]   -> {} 个 DDL 块{}", one.ddlExecuted,
+                    one.found ? "" : "（脚本未找到）");
+            total += one.ddlExecuted;
+            allFound &= one.found;
+        }
+        return new ScriptOutcome(allFound, total);
+    }
+
+    /** 单个脚本的结果。 */
+    private static final class SingleOutcome {
+        final boolean found;
+        final int ddlExecuted;
+
+        SingleOutcome(boolean found, int ddlExecuted) {
+            this.found = found;
+            this.ddlExecuted = ddlExecuted;
+        }
+    }
+
+    private SingleOutcome executeOneScript(Connection conn, String scriptPath) throws Exception {
         String script;
         try (InputStream is = openScript(scriptPath)) {
             if (is == null) {
                 log.warn("[E2E SQL] 找不到迁移脚本 {}", scriptPath);
-                return 0;
+                return new SingleOutcome(false, 0);
             }
             try (BufferedReader r = new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8))) {
                 StringBuilder sb = new StringBuilder();
@@ -145,30 +183,33 @@ public class E2ESqlMigrationRunner implements CommandLineRunner {
                 n++;
             } catch (Exception e) {
                 // 失败的不致命 — 表可能已存在, 或权限问题. 记日志继续.
-                log.debug("[E2E SQL] DDL 块失败 (跳过): {} -- {}", trimmed.substring(0, Math.min(80, trimmed.length())), e.getMessage());
+                // **必须是 warn 不是 debug**：生产默认关 debug，此前"DDL 块失败"在生产
+                // 完全无痕，而外面还会照常写迁移标记，等于静默半迁移且永不重试。
+                log.warn("[E2E SQL] DDL 块失败 (跳过): {} -- {}",
+                        trimmed.substring(0, Math.min(80, trimmed.length())), e.getMessage());
             }
         }
-        return n;
+        return new SingleOutcome(true, n);
     }
 
     private InputStream openScript(String scriptPath) {
-        // 尝试多个路径
-        String[] paths = {
-                scriptPath,
-                "classpath:" + scriptPath,
-                "/Users/zifang/workplace/idea_workplace/z-opc/" + scriptPath
-        };
-        for (String p : paths) {
-            if (p.startsWith("classpath:")) {
-                InputStream is = getClass().getClassLoader().getResourceAsStream(p.substring("classpath:".length()));
-                if (is != null) return is;
-            } else {
-                try {
-                    return new java.io.FileInputStream(p);
-                } catch (Exception ignore) {
-                }
-            }
+        // ① classpath：打包后的正确来源
+        InputStream is = getClass().getClassLoader().getResourceAsStream(scriptPath);
+        if (is != null) {
+            return is;
         }
+        // ② 工作目录：本地开发 / 单测时用
+        try {
+            java.io.File f = new java.io.File(scriptPath);
+            if (f.isFile()) {
+                return new java.io.FileInputStream(f);
+            }
+        } catch (Exception e) {
+            log.debug("[E2E SQL] 读取 {} 失败: {}", scriptPath, e.getMessage());
+        }
+        // 此前这里还有一条硬编码的作者本机绝对路径
+        // （/Users/zifang/workplace/idea_workplace/z-opc/…）——该目录已不存在，
+        // 在别的机器上更是死路径，还会泄露作者的工作区结构，故删除。
         return null;
     }
 
