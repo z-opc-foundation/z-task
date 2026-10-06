@@ -1,4 +1,4 @@
-package com.zifang.z.task.starter.config;
+package com.zifang.z.task.admin.config;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;

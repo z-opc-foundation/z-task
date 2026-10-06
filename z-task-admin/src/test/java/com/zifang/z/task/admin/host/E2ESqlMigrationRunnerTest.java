@@ -1,4 +1,4 @@
-package com.zifang.z.task.starter.host;
+package com.zifang.z.task.admin.host;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

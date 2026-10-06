@@ -25,7 +25,7 @@
          迁移那一轮的处理是"逐字保留旧面值"，2026-09-30 CEO 裁定"上到中央仓库"之后改成真换号：
            groupId com.zifang → io.github.yuku123（与本组织已发布的 26 个仓同一 namespace）
            版本 1.0.0-SNAPSHOT → 1.0.0（Central 不收 SNAPSHOT；repo1 实测 z-task / z-task-core /
-             z-task-web / z-task-starter / z-task-frontend 在两个 namespace 下 maven-metadata 全 404
+             z-task-web / z-task-admin 在两个 namespace 下 maven-metadata 全 404
              ⇒ 1.0.0 是这些坐标的第一个号，不顶掉任何已发布件）
          Java 包名保持 com.zifang.*：换的是 Maven 坐标，不是 namespace（同 z-cache/z-util 的口径）。
          连带把仓内自家坐标（上面 dependencyManagement 那 5 格 + 各子 pom 的 parent 与 sibling
@@ -79,7 +79,7 @@
              移出 reactor 后发布 jar 里的 UI 内容与今天逐字相同。同做法见 z-config/pom.xml。 -->
         <!-- <module>_frontend</module> -->
         <module>z-task-web</module>
-        <module>z-task-starter</module>
+        <module>z-task-admin</module>
     </modules>
 
     <!-- 版本口径全部由 parent 的父链下发，本仓不再自己摊属性表。删掉的 4 格逐条给实测理由
@@ -125,7 +125,7 @@
             </dependency>
             <dependency>
                 <groupId>io.github.yuku123</groupId>
-                <artifactId>z-task-starter</artifactId>
+                <artifactId>z-task-admin</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
@@ -332,10 +332,15 @@
                             <autoPublish>true</autoPublish>
                             <!-- 本插件不认 maven.deploy.skip，没排除的模块照样进 bundle
                                  （实测结论见 z-schedule/pom.xml 同位置注释）⇒ 不可发布的模块点名列出。
-                                  · z-task-starter：只有 SpringApplication 主类，repackage 不带 classifier ⇒ 产物是执行 fat jar，不是别仓可引的库件
-                                  -->
+                                  · z-task-admin：2026-10-06 由 z-task-starter 改名而来。它只有
+                                    SpringApplication 主类（ZTaskAdminApplication），repackage 不带
+                                    classifier ⇒ 产物是执行 fat jar，不是别仓可引的库件。
+                                    改名后与组织规范一致（对齐 z-camuda：-starter 无 main 是库件，
+                                    -admin 带主类是可运行应用），且 -admin 本就按政策不入中央，
+                                    两道机制指向同一结论。
+                                    改名前全仓 0 处引用（z-opc/pom.xml 注释实测），改名零影响。 -->
                             <excludeArtifacts>
-                                <excludeArtifact>z-task-starter</excludeArtifact>
+                                <excludeArtifact>z-task-admin</excludeArtifact>
                             </excludeArtifacts>
                             <waitUntil>uploaded</waitUntil>
                             <waitMaxTime>1800</waitMaxTime>

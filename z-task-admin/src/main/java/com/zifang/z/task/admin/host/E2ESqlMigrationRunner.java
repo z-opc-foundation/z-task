@@ -1,4 +1,4 @@
-package com.zifang.z.task.starter.host;
+package com.zifang.z.task.admin.host;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;

@@ -1,4 +1,4 @@
-package com.zifang.z.task.starter.host;
+package com.zifang.z.task.admin.host;
 
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.ComponentScan;
@@ -13,6 +13,6 @@ import org.springframework.context.annotation.Configuration;
  */
 @Configuration
 @ConditionalOnProperty(prefix = "z.task.host", name = "enabled", havingValue = "true", matchIfMissing = false)
-@ComponentScan(basePackages = "com.zifang.z.task.starter.host")
+@ComponentScan(basePackages = "com.zifang.z.task.admin.host")
 public class TaskHostAutoConfiguration {
 }

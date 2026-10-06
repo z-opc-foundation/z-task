@@ -1,4 +1,4 @@
-package com.zifang.z.task.starter;
+package com.zifang.z.task.admin;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -11,9 +11,9 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
  * NoUniqueBeanDefinitionException。
  */
 @SpringBootApplication
-public class ZTaskStarterApplication {
+public class ZTaskAdminApplication {
 
     public static void main(String[] args) {
-        SpringApplication.run(ZTaskStarterApplication.class, args);
+        SpringApplication.run(ZTaskAdminApplication.class, args);
     }
 }
