@@ -341,6 +341,7 @@
                                     改名前全仓 0 处引用（z-opc/pom.xml 注释实测），改名零影响。 -->
                             <excludeArtifacts>
                                 <excludeArtifact>z-task-admin</excludeArtifact>
+                                                            <excludeArtifact>z-task-frontend</excludeArtifact>
                             </excludeArtifacts>
                             <waitUntil>uploaded</waitUntil>
                             <waitMaxTime>1800</waitMaxTime>
