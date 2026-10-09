@@ -1,4 +1,4 @@
-import request from '../utils/request'
+import request from '../services/request'
 
 // ========== 登录 ==========
 // Main backend exposes /api/auth/login (see z-ctc LoginController). NOT /api/user/login.

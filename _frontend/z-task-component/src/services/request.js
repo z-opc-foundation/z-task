@@ -19,3 +19,10 @@ request.interceptors.request.use((config) => {
 })
 
 export default request
+
+// 前缀参数注入（lead 005 section 9.3）：默认 '/api'。
+export function configureTask(config) {
+    if (config && config.apiBase !== undefined) {
+        request.defaults.baseURL = config.apiBase
+    }
+}
