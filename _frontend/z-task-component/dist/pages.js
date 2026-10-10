@@ -878,5 +878,5 @@ export {
   pt as configureTask,
   mt as isAuthenticated,
   lt as menuItems,
-  L as routeTable
+  L as routes
 };
