@@ -2,17 +2,17 @@ export const isAuthenticated = () => !!localStorage.getItem('token')
 
 
 
-// 延迟绑定：先 import 页面再注入 routeTable.Component
+// 延迟绑定：先 import 页面再注入 routes.Component
 import Dashboard from './pages/Dashboard'
 import TaskList from './pages/task/TaskList'
 import TaskEdit from './pages/task/TaskEdit'
 import ProjectList from './pages/project/ProjectList'
 import UserList from './pages/user/UserList'
-routeTable[0].Component = Dashboard
-routeTable[1].Component = TaskList
-routeTable[2].Component = TaskEdit
-routeTable[3].Component = ProjectList
-routeTable[4].Component = UserList
+routes[0].Component = Dashboard
+routes[1].Component = TaskList
+routes[2].Component = TaskEdit
+routes[3].Component = ProjectList
+routes[4].Component = UserList
 
 export {default as Dashboard} from './pages/Dashboard'
 export {default as Login} from './pages/Login'
@@ -34,7 +34,7 @@ export const menuItems = [
     { key: '/z-task/user', label: '用户管理', icon: <AppstoreOutlined /> },
 ]
 
-export const routeTable = [
+export const routes = [
     { path: '/z-task/home', Component: HomePage },
     { path: '/z-task/dashboard', Component: null },
     { path: '/z-task/task', Component: null },
