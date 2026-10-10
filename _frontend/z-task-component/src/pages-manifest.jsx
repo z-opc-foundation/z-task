@@ -22,6 +22,7 @@ export {default as TaskEdit} from './pages/task/TaskEdit'
 export {default as UserList} from './pages/user/UserList'
 import { AppstoreOutlined, DashboardOutlined, HomeOutlined } from '@ant-design/icons'
 import HomePage from './pages/HomePage'
+import TaskApp from './pages/TaskApp.jsx'
 
 /** 菜单 + 路由清单（lead 008 §10/§14/§16 批量落地）。App 壳在 suit 侧组装。 */
 export const appMeta = { title: 'z-task 任务管理', short: 'z-task' }
@@ -41,6 +42,7 @@ export const routes = [
     { path: '/z-task/task/edit/:id?', Component: null },
     { path: '/z-task/project', Component: null },
     { path: '/z-task/user', Component: null },
+    { path: '/z-task/:rest*', Component: TaskApp },
 ]
 
 export { default as HomePage } from './pages/HomePage'
