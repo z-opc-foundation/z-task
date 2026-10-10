@@ -39,7 +39,7 @@ export default function TaskEdit() {
         try {
             // TODO: 调用 createTask 或 updateTask
             message.success(isEdit ? '任务更新成功' : '任务创建成功')
-            navigate('/task')
+            navigate('/z-task/task')
         } catch (e) {
             message.error(isEdit ? '更新失败' : '创建失败')
         }
@@ -129,7 +129,7 @@ export default function TaskEdit() {
                         <Button type="primary" htmlType="submit">
                             {isEdit ? '更新' : '创建'}
                         </Button>
-                        <Button onClick={() => navigate('/task')}>
+                        <Button onClick={() => navigate('/z-task/task')}>
                             取消
                         </Button>
                     </Space>

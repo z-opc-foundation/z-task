@@ -86,7 +86,7 @@ export default function TaskList() {
             key: 'action',
             render: (_, record) => (
                 <Space size="middle">
-                    <Button type="link" icon={<EditOutlined/>} onClick={() => navigate(`/task/edit/${record.id}`)}>
+                    <Button type="link" icon={<EditOutlined/>} onClick={() => navigate(`/z-task/task/edit/${record.id}`)}>
                         编辑
                     </Button>
                     {record.status === 2 ? (
@@ -123,7 +123,7 @@ export default function TaskList() {
         <Card
             title="任务管理"
             extra={
-                <Button type="primary" icon={<PlusOutlined/>} onClick={() => navigate('/task/edit/new')}>
+                <Button type="primary" icon={<PlusOutlined/>} onClick={() => navigate('/z-task/task/edit/new')}>
                     新建任务
                 </Button>
             }
