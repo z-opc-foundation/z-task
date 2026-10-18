@@ -1,7 +1,7 @@
 import { Card, Col, Row, Space, Tag, Typography } from 'antd'
 import { useNavigate } from 'react-router-dom'
 import { useEffect, useState } from 'react'
-import { menuItems } from '../pages-manifest'
+import { menuItems } from '../appMeta.jsx'
 
 const { Title, Paragraph } = Typography
 

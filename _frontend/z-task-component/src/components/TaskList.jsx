@@ -2,7 +2,7 @@ import {useEffect, useState} from 'react'
 import {Button, Form, Input, message, Modal, Select, Space, Table, Tag} from 'antd'
 import {CheckOutlined, EyeOutlined, PlusOutlined} from '@ant-design/icons'
 import {taskApi} from '../api'
-import {EmptyState, ErrorState, PageHeader, TableToolbar} from '@/common/components/ui'
+import {EmptyState, ErrorState, PageHeader, TableToolbar} from '@yuku123/z-frontend-common/ui'
 import TaskDetailDrawer from './TaskDetailDrawer'
 import TaskEditModal from './TaskEditModal'
 

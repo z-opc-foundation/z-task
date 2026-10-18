@@ -65,3 +65,6 @@ docker-compose.override.yml
 /.cache/
 **/__pycache__/
 *.pyc
+
+# frontend-maven-plugin 下载的 node
+_frontend/**/.mvn-node/

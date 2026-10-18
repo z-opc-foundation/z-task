@@ -1,40 +1,19 @@
-export const isAuthenticated = () => !!localStorage.getItem('token')
-
-
-
-// 延迟绑定：先 import 页面再注入 routes.Component
-import Dashboard from './pages/Dashboard'
-import TaskList from './pages/task/TaskList'
-import TaskEdit from './pages/task/TaskEdit'
-import ProjectList from './pages/project/ProjectList'
-import UserList from './pages/user/UserList'
-routes[0].Component = Dashboard
-routes[1].Component = TaskList
-routes[2].Component = TaskEdit
-routes[3].Component = ProjectList
-routes[4].Component = UserList
-
-export {default as Dashboard} from './pages/Dashboard'
-export {default as Login} from './pages/Login'
-export {default as ProjectList} from './pages/project/ProjectList'
-export {default as TaskList} from './pages/task/TaskList'
-export {default as TaskEdit} from './pages/task/TaskEdit'
-export {default as UserList} from './pages/user/UserList'
-import { AppstoreOutlined, DashboardOutlined, HomeOutlined } from '@ant-design/icons'
 import HomePage from './pages/HomePage'
 import TaskApp from './pages/TaskApp.jsx'
 
-/** 菜单 + 路由清单（lead 008 §10/§14/§16 批量落地）。App 壳在 suit 侧组装。 */
-export const appMeta = { title: 'z-task 任务管理', short: 'z-task' }
+/**
+ * 路由清单（lead 008 §10/§14/§16 批量落地）。App 壳在 suit 侧组装。
+ *
+ * appMeta / menuItems 已挪到 ./appMeta.js —— 它们原本在这里、而 HomePage 又回头 import
+ * menuItems，模块循环让 menuItems 落进 TDZ，浏览器报 "Cannot access 'X' before
+ * initialization" 整页白屏。页面组件直接在本文件 import，不要绕道 pages.js 再转发。
+ */
+export {appMeta, menuItems} from './appMeta.jsx'
 
-export const menuItems = [
-    { key: '/z-task/home', label: '首页', icon: <HomeOutlined /> },
-    { key: '/z-task/overview', label: '仪表盘', icon: <DashboardOutlined /> },
-    { key: '/z-task/task', label: '任务管理', icon: <AppstoreOutlined /> },
-    { key: '/z-task/project', label: '项目管理', icon: <AppstoreOutlined /> },
-    { key: '/z-task/user', label: '用户管理', icon: <AppstoreOutlined /> },
-]
-
+/**
+ * dashboard / task / project / user 四条路由的 Component 留 null，实际由 TaskApp
+ * 这个嵌套路由壳接管（见 pages/TaskApp.jsx），所以 suit 侧渲染 null 路由时跳过。
+ */
 export const routes = [
     { path: '/z-task/home', Component: HomePage },
     { path: '/z-task/dashboard', Component: null },
@@ -45,5 +24,13 @@ export const routes = [
     { path: '/z-task/:rest*', Component: TaskApp },
 ]
 
-export { default as HomePage } from './pages/HomePage'
-export { default as LoginPage } from './pages/LoginPage'
+export const isAuthenticated = () => !!localStorage.getItem('token')
+
+export {default as Dashboard} from './pages/Dashboard'
+export {default as Login} from './pages/Login'
+export {default as HomePage} from './pages/HomePage'
+export {default as LoginPage} from './pages/LoginPage'
+export {default as ProjectList} from './pages/project/ProjectList'
+export {default as TaskList} from './pages/task/TaskList'
+export {default as TaskEdit} from './pages/task/TaskEdit'
+export {default as UserList} from './pages/user/UserList'

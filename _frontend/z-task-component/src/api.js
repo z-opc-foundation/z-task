@@ -16,7 +16,7 @@
  *      业务层拿到的 r 已经是内层数据, 不需要再 .then(r => r.data).
  */
 
-import {authRequest, createRequest} from '@/common'
+import {authRequest, createRequest} from '@yuku123/z-frontend-common'
 
 const request = createRequest('task')
 

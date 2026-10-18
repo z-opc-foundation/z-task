@@ -66,7 +66,7 @@ export default function App() {
                     <Route path="/z-task/login" element={<LoginRoute />} />
                     <Route element={<ProtectedShell />}>
                         <Route path="/" element={<Navigate to={menuItems[0].key} replace />} />
-                        {routes.map((r) => (
+                        {routes.filter((r) => r.Component).map((r) => (
                             <Route key={r.path} path={r.path} element={<r.Component />} />
                         ))}
                         <Route path="*" element={<NotFound />} />
