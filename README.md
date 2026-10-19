@@ -127,7 +127,7 @@ z-task/
 
 > 注意：`_frontend/README.md` 仍写着 "React 18 / Vite 5 / Ant Design 5"，与其 `package.json` 不符；
 > `_doc/001_arch/01-module-structure.md` 写的是 Vue 3 + Spring Boot 2.7.12，
-> `01-module-structure-2.md` 写的是 parent `com.zifang:z-opc:1.0.0-SNAPSHOT` —— 这三处都是拆分前的历史稿，
+> `03-split-from-z-opc.md` 写的是 parent `com.zifang:z-opc:1.0.0-SNAPSHOT` —— 这三处都是拆分前的历史稿，
 > 以本 README 与 POM/package.json 为准。
 
 ---
@@ -295,7 +295,7 @@ _Maintained by the z-opc-foundation organization._
 - [`_doc/001_arch/`](_doc/001_arch/) — 架构与功能文档：
   - [`00-overview.md`](_doc/001_arch/00-overview.md) — 项目总览（模块定位 / 核心概念 / 端口 / API 面貌 / 已知风险），最贴近当前代码
   - [`01-module-structure.md`](_doc/001_arch/01-module-structure.md) — 早期详细架构稿（819 行，含 Vue 3 / Spring Boot 2.7.12 等**拆分前**面值，仅作历史参考）
-  - [`01-module-structure-2.md`](_doc/001_arch/01-module-structure-2.md) — 拆分来源说明（旧 parent `com.zifang:z-opc`，现已不适用）
+  - [`03-split-from-z-opc.md`](_doc/001_arch/03-split-from-z-opc.md) — 拆分来源说明（旧 parent `com.zifang:z-opc`，现已不适用）
   - [`02-feature.md`](_doc/001_arch/02-feature.md) — 功能设计与优先级矩阵
 - [`_doc/002_deploy/init/`](_doc/002_deploy/init/) — SQL：
   - [`schema.sql`](_doc/002_deploy/init/schema.sql) — **权威建表入口**（建库 `z_task` + 9 张 `z_task_*` 表 + 4 张预留表）
@@ -306,5 +306,6 @@ _Maintained by the z-opc-foundation organization._
   - [`start.sh`](_doc/003_script/start.sh) — 打包后 `mvn spring-boot:run`
 - [`_doc/002_deploy/`](_doc/002_deploy/) 无 Docker/K8s 清单，`_doc/004_skill/` 本仓不存在；仓根 `db/` 目前为空目录，表结构一律以上面 `schema.sql` 为准。
 
-配置面详见 [`z-task-starter/src/main/resources/application.yml`](z-task-starter/src/main/resources/application.yml)，
-前端说明见 [`_frontend/README.md`](_frontend/README.md)（版本面值以 `_frontend/package.json` 为准）。
+配置面详见 [`z-task-admin/src/main/resources/application.yml`](z-task-admin/src/main/resources/application.yml)，
+前端说明见 [`_frontend/README.md`](_frontend/README.md)（版本面值以 `_frontend/z-task-component/package.json` 与
+`_frontend/z-task-suit/package.json` 为准；本仓无 `z-task-starter` 模块，模块为 admin / core / web 三件）。

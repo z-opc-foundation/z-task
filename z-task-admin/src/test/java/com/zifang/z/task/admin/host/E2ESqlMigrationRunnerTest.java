@@ -23,7 +23,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 /**
  * {@link E2ESqlMigrationRunner} 不得在"脚本没找到"时写迁移标记。
  *
- * <p>仓内 {@code _doc/004_sql/} 并不存在——那 3 个脚本在工作区里一个都没有。而修复前
+ * <p>仓内 {@code _doc/002_deploy/init/} 并不存在——那 3 个脚本在工作区里一个都没有。而修复前
  * 的流程是：{@code openScript} 全部返回 null → 3 条"找不到"warn → 执行 0 个 DDL 块 →
  * <b>{@code recordRun} 照常执行</b>，把唯一的一次性标记烧掉。于是即使日后把脚本补进
  * 产物，那套数据库也永远不会再执行迁移，而且生产日志里只剩一行"共执行 0 个 DDL 块"。</p>
@@ -257,9 +257,11 @@ class E2ESqlMigrationRunnerTest {
     void scriptsReallyAreMissing() {
         // 与 E2ESqlMigrationRunner.SCRIPTS 对应，这里独立断言一次事实
         String[] expected = {
-                "_doc/004_sql/z-fix-e2e-bad-sql-grammar.sql",
-                "_doc/004_sql/z-fix-e2e-alter-columns-v3.sql",
-                "_doc/004_sql/z-fix-e2e-alter-columns-v6-final.sql"
+                // 与 E2ESqlMigrationRunner.SCRIPTS 同源：这 3 个脚本至今未交付，
+                // 下面断言的正是「它们不在盘上」—— 深度尺不得把约定落点判成断链。
+                "_doc/002_deploy/init/z-fix-e2e-bad-sql-grammar.sql",  // DC:ignore
+                "_doc/002_deploy/init/z-fix-e2e-alter-columns-v3.sql",  // DC:ignore
+                "_doc/002_deploy/init/z-fix-e2e-alter-columns-v6-final.sql"  // DC:ignore
         };
         for (String p : expected) {
             assertTrue(getClass().getClassLoader().getResource(p) == null,
