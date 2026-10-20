@@ -16,15 +16,15 @@
 | **仓库** | `z-task`（`git@github.com:z-opc-foundation/z-task.git`，分支 `main`） |
 | **Maven 坐标** | `io.github.yuku123:z-task:1.0.0`（根 POM `packaging=pom`；**没有 `<revision>` 属性**，版本是直写的 `<version>1.0.0</version>`，三个子模块的 parent 逐字同一面值） |
 | **父项目** | `io.github.yuku123:z-boot-parent:1.1.0`（`<relativePath/>` 留空，parent 在 repo1 不在磁盘）；父链自带第三方地板与兄弟仓权威表 |
-| **Maven Central** | 已发布（实测 200）：`z-task:1.0.0`（pom）、`z-task-core:1.0.0`、`z-task-web:1.0.0`（pom + jar 均可拉）；未发布（实测 404）：`z-task-starter`、`z-task-frontend` |
-| **默认端口** | `8082`（`server.port`，`server.servlet.context-path: /`）· Docker 容器内 `8080` · 前端 Vite dev `5800` |
+| **Maven Central** | 已发布（2026-09-30 实测 200）：`z-task:1.0.0`（pom）、`z-task-core:1.0.0`、`z-task-web:1.0.0`（pom + jar 均可拉）；未发布（2026-09-30 实测 404）：`z-task-admin`、`z-task-frontend` |
+| **默认端口** | `8082`（`server.port`，`server.servlet.context-path: /`）· Docker 容器内 `8080` · 前端 Vite dev `3009`（`_frontend/z-task-suit/vite.config.js`） |
 | **运行口径** | Java 8（parent 下发 `maven.compiler.source/target=8`）· Spring Boot 2.7.18（实测产物 `spring-boot-2.7.18.jar`） |
-| **模块数** | reactor 内 3 个 Maven 模块（`z-task-core` / `z-task-web` / `z-task-starter`）；`_frontend` 有独立 pom 但已被移出 `<modules>` |
-| **最近更新** | 2026-09-30 |
+| **模块数** | reactor 内 3 个 Maven 模块（`z-task-core` / `z-task-web` / `z-task-admin`）；`_frontend` 有独立 pom 但已被移出 `<modules>` |
+| **最近更新** | 2026-10-20 |
 
 中央消费方实测：`z-opc/pom.xml` 的 dependencyManagement 已把 `z-task-core` / `z-task-web` 指向
 `io.github.yuku123:*:1.0.0`，`z-opc/z-opcs-bridge`、`z-opc/bootstraps/z-opc-main-starter` 直接依赖这两件；
-`z-task-starter` 从该列删除（本仓 central profile 的 `excludeArtifacts` 也把它排除出 bundle）。
+`z-task-admin` 从该列删除（本仓 central profile 的 `excludeArtifacts` 也把它排除出 bundle）。
 
 ---
 
@@ -58,17 +58,16 @@ z-task/
 ├── z-task-core/           # 领域层：9 个实体 + 9 个 Mapper + Service 接口/实现 + 决策层单测
 ├── z-task-web/            # HTTP 层：api/ 8 个 Controller（Req/Resp DTO）+ TaskMyBatisConfig + spring.factories
 │   └── src/main/resources/static/   # 前端构建产物（9 个文件已提交进 git，随 jar 发布）
-├── z-task-starter/        # 可执行启动模块：ZTaskStarterApplication + WebMvcConfig + application.yml
+├── z-task-admin/          # 可执行启动模块：ZTaskAdminApplication + WebMvcConfig + application.yml
 ├── _frontend/             # React 19 前端（Vite 6），独立 npm 工程，不在 Maven reactor
 │   └── pom.xml            # frontend-maven-plugin 形态保留但已从 <modules> 注释掉
-├── db/                    # 目前为空目录（表结构不在这里，权威 schema 见 _doc/002_deploy/init/）
 └── _doc/                  # 文档与 SQL、脚本，见文末「文档目录」
 ```
 
-- **不参与发布的两格**：`z-task-starter` 只有 `SpringApplication` 主类，`spring-boot-maven-plugin` 的
-  repackage 不带 classifier，产物是执行 fat jar（实测 `z-task-starter/target/z-task-starter-1.0.0.jar`，
+- **不参与发布的两格**：`z-task-admin` 只有 `SpringApplication` 主类，`spring-boot-maven-plugin` 的
+  repackage 不带 classifier，产物是执行 fat jar（实测 `z-task-admin/target/z-task-admin-1.0.0.jar`，
   约 69 MB），不是别仓可引的库件 → 根 POM central profile 的 `excludeArtifacts` 点名排除。
-  `z-task-frontend` 已整模块移出 reactor（`_frontend/pom.xml` 要下载 nodejs，产物早已提交到
+  `_frontend` 已整模块移出 reactor（`_frontend/pom.xml` 要下载 nodejs，产物早已提交到
   `z-task-web/src/main/resources/static`）。
 - **组件注册只有一处**：`z-task-web/src/main/resources/META-INF/spring.factories` 指向
   `ZTaskWebAutoConfiguration`，它以 `FullyQualifiedAnnotationBeanNameGenerator` 扫描
@@ -108,7 +107,7 @@ z-task/
 
 ## 🔧 技术栈
 
-后端面值全部**实测自 `z-task-starter/target/z-task-starter-1.0.0.jar` 的 `BOOT-INF/lib`**（2026-09-30 构建产物），
+后端面值全部**实测自 `z-task-admin/target/z-task-admin-1.0.0.jar` 的 `BOOT-INF/lib`**（2026-09-30 构建产物），
 不是从 pom 猜的：
 
 | 层级 | 实测版本 |
@@ -123,7 +122,7 @@ z-task/
 | 日志 | Log4j2 2.25.4（`z-boot-web-starter` 默认口径） |
 | YAML | snakeyaml 2.0（根 POM 唯一的第三方 dependencyManagement 直接条目，顶住 Boot 自带的 1.30） |
 | 测试 | junit-jupiter（api + engine）+ spring-boot-test，无 Mockito |
-| 前端 | React 19.2 + Ant Design 6.3.3 + Vite 6.2 + react-router-dom 7.13 + axios，复用 `@yuku123/z-frontend-common` 0.1.x（面值见 `_frontend/package.json`） |
+| 前端 | React 19.2 + Ant Design 6.3.3 + Vite 6.2 + react-router-dom 7.13 + axios，复用 `@yuku123/z-frontend-common` **1.x**（`z-task-suit` 侧 `^1.0.0`、`z-task-component` 侧 `^1.1.1`；面值见 `_frontend/z-task-suit/package.json`） |
 
 > 注意：`_frontend/README.md` 仍写着 "React 18 / Vite 5 / Ant Design 5"，与其 `package.json` 不符；
 > `_doc/001_arch/01-module-structure.md` 写的是 Vue 3 + Spring Boot 2.7.12，
@@ -148,10 +147,10 @@ mvn clean install -DskipTests
 
 ```bash
 # 方式一：跑 reactor 里 repackage 出的执行 fat jar（无 classifier）
-java -jar z-task-starter/target/z-task-starter-1.0.0.jar
+java -jar z-task-admin/target/z-task-admin-1.0.0.jar
 
 # 方式二：Maven 插件直接跑
-mvn -pl z-task-starter spring-boot:run
+mvn -pl z-task-admin spring-boot:run
 ```
 
 监听 `http://localhost:8082/`，前端 SPA 静态资源就在同进程的 `classpath:/static/`，
@@ -179,7 +178,7 @@ mvn -pl z-task-starter spring-boot:run
 ```bash
 cd _frontend
 npm install
-npm run dev      # Vite 监听 5800，/api 代理到 http://localhost:8082（见 vite.config.js）
+npm run dev      # Vite 监听 3009，/api 代理到 http://localhost:8888（见 _frontend/z-task-suit/vite.config.js）
 npm run build    # 产物在 _frontend/dist，需人工拷到 z-task-web/src/main/resources/static
 ```
 
@@ -230,13 +229,19 @@ npm run build    # 产物在 _frontend/dist，需人工拷到 z-task-web/src/mai
 mvn -pl z-task-core test
 ```
 
-`z-task-core/src/test` 实测 37 个 `@Test`：`TaskServiceImplTest` 22、`TaskListServiceImplTest` 10、
-`ProjectBizServiceImplTest` 5；支撑类 `support/Proxies` 用 JDK 动态代理 + 反射注入按方法名分发返回值，
+`z-task-core/src/test` 下三个决策层单测类：`TaskServiceImplTest`、`TaskListServiceImplTest`、
+`ProjectBizServiceImplTest`；支撑类 `support/Proxies` 用 JDK 动态代理 + 反射注入按方法名分发返回值，
 内存 Map 充当存储 —— **零 Mockito、零 DB 依赖**（家法：不引 Mockito）。
-`z-task-web` 与 `z-task-starter` 目前没有测试类。
+`z-task-admin` 另有 `E2ESqlMigrationRunnerTest`（迁移脚本端到端）；`z-task-web` 目前没有测试类。
 
 本轮 README 更新按作业单要求未执行 `mvn`（禁止跑构建），所以这里只登记"用例数与构造方式"实测结论，
-不声明"跑绿"；`z-task-starter/target` 下存在 1.0.0 产物可反证该 reactor 能构建成功。
+不声明"跑绿"；`z-task-admin/target` 下存在 1.0.0 产物可反证该 reactor 能构建成功。
+
+> 2026-10-20 复核：已实跑 `mvn -o test`，`z-task-core` 与 `z-task-admin` 两组用例全绿、BUILD SUCCESS；
+> 上面那段「未执行 mvn」是 2026-09-30 那轮的原文，按「历史叙述不改」原样保留。
+> 本仓 README 的定量主张由 `z-task-core/src/test/java/com/zifang/z/task/core/ReadmeClaimsTest.java` 守卫：
+> 版本、reactor 模块清单、Controller 名单、实体与 Mapper 数量、默认端口、数据源环境变量、
+> 表数量、前端工程与 Vite 端口、文档目录逐条对着源码重算，README 改了就红。
 接口级验证需要真实 MySQL：先跑 [`schema.sql`](_doc/002_deploy/init/schema.sql) 建 `z_task` 库，
 再注入 `ZTASK_DB_*` 环境变量启动。
 
@@ -261,8 +266,8 @@ sh _doc/003_script/start.sh     # 打包后 mvn spring-boot:run
 | 级别 | 内容 |
 |------|------|
 | P1 | `/api/sync-user/**` 在 `sso.exclude-paths` 中**免鉴权**（服务端用户同步端点，没有 service token 机制）；独立部署时勿把该端口暴露公网 |
-| P1 | [`Dockerfile`](Dockerfile) 的 `COPY z-task-starter/target/z-task-starter-1.0.0-SNAPSHOT.jar app.jar` 已过时：版本换 1.0.0 后实际产物是 `z-task-starter-1.0.0.jar`（无 classifier），照此 `docker build` 会 COPY 失败。本轮只改 README，脚本与 Dockerfile 待单独纠偏 |
-| P2 | [`_doc/003_script/package.sh`](_doc/003_script/package.sh) 仍 `cd z-task-frontend`（实际目录是 `_frontend`），并把 dist 拷进 `z-task-starter/src/main/resources/static`（该目录不存在，静态资源实际在 `z-task-web/src/main/resources/static`）；另硬编码了作者本机 `JAVA_HOME` |
+| P1 | [`Dockerfile`](Dockerfile) 的 `COPY z-task-admin/target/z-task-admin-1.0.0-SNAPSHOT.jar app.jar` 已过时：版本换 1.0.0 后实际产物是 `z-task-admin-1.0.0.jar`（无 classifier），照此 `docker build` 会 COPY 失败。本轮只改 README，脚本与 Dockerfile 待单独纠偏 |
+| P2 | [`_doc/003_script/package.sh`](_doc/003_script/package.sh) 仍 `cd z-task-frontend`（实际目录是 `_frontend`），并把 dist 拷进 `z-task-admin/src/main/resources/static`（该目录不存在，静态资源实际在 `z-task-web/src/main/resources/static`）；另硬编码了作者本机 `JAVA_HOME` |
 | P2 | DB 走 `z.base.db.task.*`，未注入时回退 `127.0.0.1:3306` / `root` / 空口令 —— 服务能起，但业务接口会因连不上库而失败 |
 | P2 | z-camuda（审批转任务）、z-schedule（到期提醒）联动为规划项，本仓代码未落地；`z_checklist` / `z_comment` / `z_attachment` / `z_activity` 四表建了但无实体 |
 
@@ -272,6 +277,7 @@ sh _doc/003_script/start.sh     # 打包后 mvn spring-boot:run
 
 | 面值 / 提交 | 内容 |
 |-------------|------|
+| —— · `1f37340` | 启动模块 `z-task-starter` 改名 `z-task-admin`（模块划分对齐组织规范）；本 README 中所有启动模块路径已同步 |
 | `1.0.0` · `44f55fc` | 坐标换 `io.github.yuku123:z-task:1.0.0`（原 `com.zifang:z-task:1.0.0-SNAPSHOT`），补 central 发布通道（flatten(oss) 常开 + `excludeArtifacts z-task-starter`），`z-task`/`z-task-core`/`z-task-web` 三件上中央；Java 包名保持 `com.zifang.*` |
 | —— · `6661606` | 消费入口抬到 `z-boot-parent:1.0.21`（Spring Boot 随之回到 2.7.18，此前 README/文档写的 2.7.12 已失效） |
 | —— · `c2e0e9d` | 消费入口从悬空的 `com.zifang:z-opc` 换成 `io.github.yuku123:z-boot-parent:1.0.19`，删除四个死属性（`z-boot.version` / `z-ctc.version` / `knife4j.version` / `java.version`） |
@@ -304,7 +310,7 @@ _Maintained by the z-opc-foundation organization._
   - [`build.sh`](_doc/003_script/build.sh) — docker 构建 + 平滑替换 + 健康检查回滚
   - [`package.sh`](_doc/003_script/package.sh) — 打包（路径已过时，见上方 P2）
   - [`start.sh`](_doc/003_script/start.sh) — 打包后 `mvn spring-boot:run`
-- [`_doc/002_deploy/`](_doc/002_deploy/) 无 Docker/K8s 清单，`_doc/004_skill/` 本仓不存在；仓根 `db/` 目前为空目录，表结构一律以上面 `schema.sql` 为准。
+- [`_doc/002_deploy/`](_doc/002_deploy/) 无 Docker/K8s 清单，`_doc/004_skill/` 本仓不存在；仓根也没有 `db/` 目录，表结构一律以上面 `schema.sql` 为准。
 
 配置面详见 [`z-task-admin/src/main/resources/application.yml`](z-task-admin/src/main/resources/application.yml)，
 前端说明见 [`_frontend/README.md`](_frontend/README.md)（版本面值以 `_frontend/z-task-component/package.json` 与
