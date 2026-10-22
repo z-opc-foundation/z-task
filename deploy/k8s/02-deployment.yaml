@@ -1,0 +1,98 @@
+# ============================================================
+# z-task —— Deployment（工作负载）
+#
+# 【镜像 tag 为什么这样写】
+#   image: zopc/z-task:local
+#   —— 裸 tag，**不带 Nexus 仓库前缀**。铁律：本集群 imagePullPolicy=Never，
+#      镜像只存在于两个节点的 containerd，不在任何 registry。k3s 不会去拉，
+#      它按 `image:` 字段的**字面引用**去节点本地 content store 里找。
+#      如果喂进 containerd 的 tag 带前缀（例如 nexus.internal/zopc/z-task:local）
+#      而清单里写的是裸 tag（或反过来），本地查不到 ⇒ Pod 卡 ErrImageNeverPull。
+#      喂镜像的 tag 必须与这里的 `image:` 逐字一致，见 README §2。
+#   imagePullPolicy: Never —— 照抄线上。
+#
+# 【探针为什么选 tcpSocket】
+#   本域线上 1 副本在跑，但**HTTP 端点在本域不可用作探针**：
+#     · /actuator/health 经 SSO 闸门 ⇒ 返回 302 / 401（不是 200），
+#       拿它当探针 ⇒ Pod 永远不就绪（探针只认 2xx/3xx）。
+#     · 线上基线里的 readinessProbe 打的是 httpGet /doc.html，
+#       那是 Swagger 文档页，不是健康端点。
+#   ⇒ 保守用 tcpSocket 探 8082：只证明「端口在监听」，不假设应用健康语义。
+#     （需要真正的业务健康判定时，应在应用侧提供一个不经 SSO 闸门的内部端点。）
+#
+# 【secret 从哪来】
+#   ZTASK_DB_PASSWORD → secretKeyRef: secret z-task-db / 键 password。
+#   secret z-task-db 已在集群里（手工灌的），本仓不写它的内容。
+#   重建集群时按 README §3 的命令补灌。
+# ============================================================
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: z-task-admin
+  namespace: z-task
+  labels:
+    app.kubernetes.io/name: z-task-admin
+    app.kubernetes.io/part-of: z-opc-foundation
+spec:
+  replicas: 1
+  # 保留 10 个历史版本 ⇒ `kubectl rollout undo deploy/z-task-admin -n z-task` 可用。
+  revisionHistoryLimit: 10
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: z-task-admin
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: z-task-admin
+    spec:
+      containers:
+        - name: z-task
+          image: zopc/z-task:local
+          imagePullPolicy: Never
+          ports:
+            - name: http
+              containerPort: 8082
+              protocol: TCP
+          env:
+            # JVM 参数：与线上逐字一致。
+            - name: JAVA_OPTS
+              value: "-Xms256m -Xmx1024m"
+            # ===== 数据源：共享 RDS 的 oc 库（z-opc 系各仓共用同一个库）=====
+            # 地址/账号照线上现状明文（要求「集群可从代码复现」⇒ 与线上一字不差）；
+            # 口令一律走 secret 引用，仓里不出现明文口令。
+            - name: ZTASK_DB_HOST
+              value: rm-bp108uqlgwn712k54ho.mysql.rds.aliyuncs.com
+            - name: ZTASK_DB_PORT
+              value: "3306"
+            - name: ZTASK_DB_NAME
+              value: oc
+            - name: ZTASK_DB_USER
+              value: zifang
+            - name: ZTASK_DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: z-task-db
+                  key: password
+          resources:
+            limits:
+              cpu: "2"
+              memory: 2Gi
+            requests:
+              cpu: 300m
+              memory: 1280Mi
+          # 探针只探「端口在监听」。
+          # ⚠ 本域 HTTP 端点被 SSO 闸门挡（/actuator/health 返回 302/401），
+          #   不能用作探针；理由见文件头注释。
+          readinessProbe:
+            tcpSocket:
+              port: http
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            failureThreshold: 6
+          livenessProbe:
+            tcpSocket:
+              port: http
+            # 启动比就绪慢：JVM 起 + 连 RDS，放宽到 120s 再开始判活。
+            initialDelaySeconds: 120
+            periodSeconds: 30
+            failureThreshold: 6
