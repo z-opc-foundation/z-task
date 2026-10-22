@@ -1,8 +1,12 @@
 /**
  * 任务表格组件
+ *
+ * §2 列表页三件套由基座 ListTable 一次到位（分页 + 过滤 + EmptyState），
+ * 本仓不再手写 pagination={{...}}，避免各页分页参数口径分裂。
  */
-import {Button, Space, Table, Tag} from 'antd'
+import {Button, Space, Tag} from 'antd'
 import {CheckCircleOutlined, DeleteOutlined, EditOutlined} from '@ant-design/icons'
+import {ListTable} from '@yuku123/z-frontend-common/ui'
 
 const priorityMap = {high: 'red', medium: 'orange', low: 'green'}
 const statusMap = {
@@ -53,12 +57,14 @@ export default function TaskTable({dataSource, loading, onEdit, onDelete, onComp
     ]
 
     return (
-        <Table
+        <ListTable
             columns={columns}
-            dataSource={dataSource}
+            rows={dataSource}
             loading={loading}
             rowKey="id"
-            pagination={{pageSize: 10}}
+            searchKeys="title,projectName"
+            searchPlaceholder="按任务名称 / 项目过滤"
+            emptyDescription="当前还没有任务"
         />
     )
 }

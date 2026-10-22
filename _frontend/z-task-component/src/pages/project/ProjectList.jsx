@@ -1,6 +1,7 @@
 import {useEffect, useState} from 'react'
-import {Button, Card, Form, Input, message, Modal, Space, Table, Tag} from 'antd'
+import {Button, Form, Input, message, Modal, Space, Tag} from 'antd'
 import {EditOutlined, PlusOutlined} from '@ant-design/icons'
+import {ListTable} from '@yuku123/z-frontend-common/ui'
 import {archiveProject, createProject, getProjectListByUser} from '../../services/api'
 
 const statusMap = {
@@ -105,19 +106,23 @@ export default function ProjectList() {
     ]
 
     return (
-        <Card
-            title="项目管理"
-            extra={
-                <Button type="primary" icon={<PlusOutlined/>} onClick={() => setModalVisible(true)}>
-                    新建项目
-                </Button>
-            }
-        >
-            <Table
+        <div>
+            {/* Card + Table 合成基座 ListTable 一件：分页 / 过滤 / EmptyState 三件套一次到位，
+                「新建项目」按钮落在 cardExtra（与过滤框并排） */}
+            <ListTable
                 columns={columns}
-                dataSource={projects}
+                rows={projects}
                 rowKey="id"
                 loading={loading}
+                cardTitle="项目管理"
+                cardExtra={
+                    <Button type="primary" icon={<PlusOutlined/>} onClick={() => setModalVisible(true)}>
+                        新建项目
+                    </Button>
+                }
+                searchKeys="name,description"
+                searchPlaceholder="按项目名称 / 描述过滤"
+                emptyDescription="还没有项目，新建一个开始组织任务"
             />
 
             <Modal
@@ -140,6 +145,6 @@ export default function ProjectList() {
                     </Form.Item>
                 </Form>
             </Modal>
-        </Card>
+        </div>
     )
 }

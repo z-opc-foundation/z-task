@@ -1,5 +1,6 @@
 import {useEffect, useState} from 'react'
-import {Card, Table, Tag} from 'antd'
+import {Tag} from 'antd'
+import {ListTable} from '@yuku123/z-frontend-common/ui'
 
 // z-task 的用户来自 z-ctc SSO 同步，无独立 CRUD
 // 前端 UserList 只做展示（只读），由 z-ctc 统一管理用户
@@ -61,14 +62,16 @@ export default function UserList() {
     ]
 
     return (
-        <Card title="用户管理">
-            <Table
-                columns={columns}
-                dataSource={users}
-                rowKey="id"
-                loading={loading}
-                locale={{emptyText: '暂无数据（用户由 z-ctc 统一管理）'}}
-            />
-        </Card>
+        /* Card + Table 合成基座 ListTable 一件：分页 / 过滤 / EmptyState 三件套一次到位 */
+        <ListTable
+            columns={columns}
+            rows={users}
+            rowKey="id"
+            loading={loading}
+            cardTitle="用户管理"
+            searchKeys="username,nickname,email"
+            searchPlaceholder="按用户名 / 昵称 / 邮箱过滤"
+            emptyDescription="暂无数据（用户由 z-ctc 统一管理）"
+        />
     )
 }

@@ -1,10 +1,10 @@
 import {useEffect, useState} from 'react'
-import {Button, Card, Input, message, Select, Space, Table, Tag} from 'antd'
-import {EditOutlined, PlusOutlined, SearchOutlined} from '@ant-design/icons'
+import {Button, message, Select, Space, Tag} from 'antd'
+import {EditOutlined, PlusOutlined} from '@ant-design/icons'
 import {useNavigate} from 'react-router-dom'
+import {ListTable} from '@yuku123/z-frontend-common/ui'
 import {completeTask, getTaskListByList, reopenTask} from '../../services/api'
 
-const {Search} = Input
 const {Option} = Select
 
 const statusMap = {
@@ -120,15 +120,11 @@ export default function TaskList() {
     }
 
     return (
-        <Card
-            title="任务管理"
-            extra={
-                <Button type="primary" icon={<PlusOutlined/>} onClick={() => navigate('/z-task/task/edit/new')}>
-                    新建任务
-                </Button>
-            }
-        >
-            <div style={{marginBottom: 16, display: 'flex', gap: 16}}>
+        <div>
+            {/* Card + Table 合成基座 ListTable 一件：分页 / 过滤 / EmptyState 三件套一次到位。
+                原来那个「选择列表」下拉留在卡片上方（它切的是数据源，不是过滤），
+                过滤交给 ListTable 内置的搜索框（原来那个 antd Search 没接 onChange，是死的）。 */}
+            <div style={{marginBottom: 16}}>
                 <Select
                     placeholder="选择列表"
                     style={{width: 200}}
@@ -139,19 +135,23 @@ export default function TaskList() {
                     <Option value={2}>进行中</Option>
                     <Option value={3}>已完成</Option>
                 </Select>
-                <Search
-                    placeholder="搜索任务名称"
-                    allowClear
-                    enterButton={<SearchOutlined/>}
-                    style={{width: 300}}
-                />
             </div>
-            <Table
+
+            <ListTable
                 columns={columns}
-                dataSource={tasks}
+                rows={tasks}
                 rowKey="id"
                 loading={loading}
+                cardTitle="任务管理"
+                cardExtra={
+                    <Button type="primary" icon={<PlusOutlined/>} onClick={() => navigate('/z-task/task/edit/new')}>
+                        新建任务
+                    </Button>
+                }
+                searchKeys="title"
+                searchPlaceholder="搜索任务名称"
+                emptyDescription="该列表下还没有任务"
             />
-        </Card>
+        </div>
     )
 }

@@ -1,8 +1,8 @@
 import {useEffect, useState} from 'react'
-import {Button, Form, Input, message, Modal, Select, Space, Table, Tag} from 'antd'
+import {Button, Form, Input, message, Modal, Select, Space, Tag} from 'antd'
 import {CheckOutlined, EyeOutlined, PlusOutlined} from '@ant-design/icons'
 import {taskApi} from '../api'
-import {EmptyState, ErrorState, PageHeader, TableToolbar} from '@yuku123/z-frontend-common/ui'
+import {ErrorState, ListTable, PageHeader, TableToolbar} from '@yuku123/z-frontend-common/ui'
 import TaskDetailDrawer from './TaskDetailDrawer'
 import TaskEditModal from './TaskEditModal'
 
@@ -135,7 +135,9 @@ export default function TaskList({apiBaseURL, back}) {
         },
     ]
 
-    const isEmpty = !loading && !loadError && tasks.length === 0 && projectId
+    // 空态话术只在「已选项目 + 无错误 + 加载完成 + 该项目下确实没有任务」时才提示去建任务；
+    // 未选项目 / 加载失败时退回通用空态，避免在不该建任务的场景里误导用户。
+    const isProjectEmpty = !loading && !loadError && !!projectId && tasks.length === 0
 
     return (
         <div>
@@ -170,29 +172,20 @@ export default function TaskList({apiBaseURL, back}) {
                 </div>
             )}
 
-            <div style={{
-                background: '#ffffff',
-                borderRadius: 16,
-                padding: 20,
-                boxShadow: '0 1px 3px rgba(15, 23, 42, 0.04), 0 1px 2px rgba(15, 23, 42, 0.06)',
-            }}>
-                {isEmpty ? (
-                    <EmptyState
-                        title="该项目下还没有任务"
-                        description="把目标拆解成可执行的任务, 一项项推进"
-                        actionText="新建第一个任务"
-                        onAction={onCreate}
-                    />
-                ) : (
-                    <Table
-                        rowKey="id"
-                        columns={columns}
-                        dataSource={tasks}
-                        loading={loading}
-                        pagination={{pageSize: 10}}
-                    />
-                )}
-            </div>
+            {/* 任务表：原来的「白底 div + Table」合成基座 ListTable 一件
+                （分页 + 过滤 + EmptyState 三件套一次到位），空态话术保持原样 */}
+            <ListTable
+                rows={tasks}
+                columns={columns}
+                loading={loading}
+                rowKey="id"
+                searchKeys="title"
+                searchPlaceholder="按任务标题过滤"
+                emptyTitle={isProjectEmpty ? '该项目下还没有任务' : '暂无数据'}
+                emptyDescription={isProjectEmpty ? '把目标拆解成可执行的任务, 一项项推进' : undefined}
+                emptyActionText={isProjectEmpty ? '新建第一个任务' : undefined}
+                emptyOnAction={isProjectEmpty ? onCreate : undefined}
+            />
 
             <Modal
                 title="新建任务"

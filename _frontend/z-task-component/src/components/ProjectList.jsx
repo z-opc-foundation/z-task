@@ -13,7 +13,6 @@ import {
     Select,
     Space,
     Spin,
-    Table,
     Tag
 } from 'antd'
 import {
@@ -24,6 +23,7 @@ import {
     PlusOutlined,
     UnorderedListOutlined
 } from '@ant-design/icons'
+import {ListTable} from '@yuku123/z-frontend-common/ui'
 import {taskApi} from '../api'
 
 /** 格式化日期为 2026-06-18T15:27:00 (去掉毫秒/时区) */
@@ -191,24 +191,27 @@ export default function ProjectList({apiBaseURL}) {
             </div>
 
             <div style={{display: 'flex', gap: 16, height: 'calc(100vh - 220px)'}}>
-                <Card
-                    size="small"
-                    title={<Space><InboxOutlined/>项目管理</Space>}
-                    style={{width: 520, flexShrink: 0}}
-                    styles={{body: {padding: 8, overflow: 'auto', height: 'calc(100% - 40px)'}}}
-                >
-                    <Table
-                        rowKey="id"
-                        columns={listColumns}
-                        dataSource={projects}
-                        loading={loading}
-                        pagination={{pageSize: 10, size: 'small'}}
-                        size="small"
-                        rowClassName={(row) => viewing?.id === row.id ? 'ant-table-row-selected' : ''}
-                        onRow={(row) => ({onClick: () => onViewProject(row), style: {cursor: 'pointer'}})}
-                        locale={{emptyText: '暂无项目'}}
-                    />
-                </Card>
+                {/* 左栏项目表：Card + Table 合成基座 ListTable 一件（分页/过滤/空态三件套），
+                    卡片外观沿用原来的 size="small" + 固定宽度，避免左右分栏布局被撑开 */}
+                <ListTable
+                    rows={projects}
+                    columns={listColumns}
+                    loading={loading}
+                    rowKey="id"
+                    searchKeys="name,description"
+                    searchPlaceholder="按项目名称 / 描述过滤"
+                    cardTitle={<Space><InboxOutlined/>项目管理</Space>}
+                    cardProps={{
+                        size: 'small',
+                        style: {width: 520, flexShrink: 0},
+                        styles: {body: {padding: 8, overflow: 'auto', height: 'calc(100% - 40px)'}},
+                    }}
+                    tableProps={{
+                        rowClassName: (row) => viewing?.id === row.id ? 'ant-table-row-selected' : '',
+                        onRow: (row) => ({onClick: () => onViewProject(row), style: {cursor: 'pointer'}}),
+                    }}
+                    emptyDescription="还没有项目，新建一个开始组织任务"
+                />
 
                 <Card
                     size="small"
