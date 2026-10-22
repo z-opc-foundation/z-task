@@ -2,14 +2,16 @@
 # z-task —— Deployment（工作负载）
 #
 # 【镜像 tag 为什么这样写】
-#   image: zopc/z-task:local
+#   image: zopc/z-task:1.0.0-zboot112
 #   —— 裸 tag，**不带 Nexus 仓库前缀**。铁律：本集群 imagePullPolicy=Never，
 #      镜像只存在于两个节点的 containerd，不在任何 registry。k3s 不会去拉，
 #      它按 `image:` 字段的**字面引用**去节点本地 content store 里找。
-#      如果喂进 containerd 的 tag 带前缀（例如 nexus.internal/zopc/z-task:local）
+#      如果喂进 containerd 的 tag 带前缀（例如 nexus.internal/zopc/z-task:1.0.0-zboot112）
 #      而清单里写的是裸 tag（或反过来），本地查不到 ⇒ Pod 卡 ErrImageNeverPull。
 #      喂镜像的 tag 必须与这里的 `image:` 逐字一致，见 README §2。
 #   imagePullPolicy: Never —— 照抄线上。
+#   ⚠ 2026-10-23（卡 TASK-20261023-008）：原先写的是 `zopc/z-task:local` ——
+#      裸 tag 不可回滚、不可追溯 ⇒ 本轮换成版本化 tag（z-boot-datasource-starter 抬到 1.1.2）。
 #
 # 【探针为什么选 tcpSocket】
 #   本域线上 1 副本在跑，但**HTTP 端点在本域不可用作探针**：
@@ -73,6 +75,15 @@ spec:
                 secretKeyRef:
                   name: z-task-db
                   key: password
+            # SSO 签名密钥：本仓 pom 把 z-ctc-sso 钉到 1.0.5（卡 TASK-20261022-012，
+            # 那一版去掉了内置 HS256 密钥）⇒ 缺 sso.jwt-secret 时 JwtUtil 直接
+            # fail-closed 拒绝启动（2026-10-23 发版实测：新 Pod 起不来、
+            # 旧 Pod 仍在服务）。值只走 secret 引用，仓里不出现明文。
+            - name: SSO_JWT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: sso-jwt
+                  key: sso-jwt-secret
           resources:
             limits:
               cpu: "2"
