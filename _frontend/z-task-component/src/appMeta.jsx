@@ -1,4 +1,4 @@
-import { AppstoreOutlined, DashboardOutlined, HomeOutlined } from '@ant-design/icons'
+import { AppstoreOutlined, DashboardOutlined, HomeOutlined, ReadOutlined } from '@ant-design/icons'
 
 /**
  * 应用级常量单独成模块。
@@ -16,4 +16,5 @@ export const menuItems = [
     { key: '/z-task/task', label: '任务管理', icon: <AppstoreOutlined /> },
     { key: '/z-task/project', label: '项目管理', icon: <AppstoreOutlined /> },
     { key: '/z-task/user', label: '用户管理', icon: <AppstoreOutlined /> },
+    { key: '/z-task/docs', label: '组件文档', icon: <ReadOutlined /> },
 ]

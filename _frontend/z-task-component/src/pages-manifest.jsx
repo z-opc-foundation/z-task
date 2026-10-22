@@ -1,5 +1,6 @@
 import HomePage from './pages/HomePage'
 import TaskApp from './pages/TaskApp.jsx'
+import ComponentDocPage from './pages/ComponentDoc.jsx'
 
 /**
  * 路由清单（lead 008 §10/§14/§16 批量落地）。App 壳在 suit 侧组装。
@@ -21,6 +22,7 @@ export const routes = [
     { path: '/z-task/task/edit/:id?', Component: null },
     { path: '/z-task/project', Component: null },
     { path: '/z-task/user', Component: null },
+    { path: '/z-task/docs', Component: ComponentDocPage },
     { path: '/z-task/:rest*', Component: TaskApp },
 ]
 
@@ -34,3 +36,5 @@ export {default as ProjectList} from './pages/project/ProjectList'
 export {default as TaskList} from './pages/task/TaskList'
 export {default as TaskEdit} from './pages/task/TaskEdit'
 export {default as UserList} from './pages/user/UserList'
+// 主壳接线用：文档页统一以 ComponentDocPage 这个名字从主入口导出。
+export {default as ComponentDocPage} from './pages/ComponentDoc.jsx'

@@ -14,3 +14,6 @@ export {default as TaskApp} from './components/TaskApp'
 // API 客户端
 export {taskApi} from './api'
 export {default as api} from './api'
+
+// 组件文档页（lead 008 §7）：主壳按统一名字取，各仓一致
+export {default as ComponentDocPage} from './pages/ComponentDoc.jsx'
