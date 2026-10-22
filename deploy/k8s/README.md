@@ -13,14 +13,14 @@
 |---|---|---|
 | `00-namespace.yaml` | Namespace `z-task` | 已存在 |
 | `01-service.yaml` | Service `z-task-admin`（NodePort 31882 → 8082） | 已存在 |
-| `02-deployment.yaml` | Deployment `z-task-admin`（镜像 `zopc/z-task:local`，replicas 1） | 已存在 |
+| `02-deployment.yaml` | Deployment `z-task-admin`（镜像 `zopc/z-task:1.0.0-zboot112`，replicas 1） | 已存在 |
 | `README.md` | 本文件 | — |
 
 线上实况要点（与基线导出逐条对齐）：
 
 - Deployment 名 `z-task-admin`，容器名 `z-task`，容器端口 `8082`（端口名 `http`）
 - Service `z-task-admin`，`type: NodePort`，`port 8082 → targetPort http`，`nodePort 31882`
-- 镜像 `zopc/z-task:local`，`imagePullPolicy: Never`
+- 镜像 `zopc/z-task:1.0.0-zboot112`，`imagePullPolicy: Never`
 - env：`JAVA_OPTS=-Xms256m -Xmx1024m` + `ZTASK_DB_HOST` / `_PORT` / `_NAME` / `_USER` / `_PASSWORD`
 - resources：requests `300m` / `1280Mi`，limits `2` CPU / `2Gi`
 - 本域**无 PVC**
@@ -36,9 +36,13 @@
 | `COPY z-task-starter/target/z-task-starter-1.0.0-SNAPSHOT.jar app.jar` | **模块 `z-task-starter` 在本仓不存在**（本仓模块只有 `z-task-core` / `z-task-web` / `z-task-admin`）。启动类是 `z-task-admin` 里的 `ZTaskAdminApplication` ⇒ 产物应是 `z-task-admin/target/z-task-admin-1.0.0.jar`（本仓版本已是 `1.0.0`，不是 `1.0.0-SNAPSHOT`）。⇒ 这行 COPY 会让 build 直接失败（源文件不存在） |
 | `ENV SERVER_PORT=8080` / `EXPOSE 8080`（注释说「覆盖 jar 内 application.yml 的 8082」） | `z-task-admin/src/main/resources/application.yml` 里是 `server.port: 8082`，**线上容器端口也是 8082**（Service targetPort 指向 `http`/8082）。⇒ 按现 Dockerfile 构建出的镜像监听 8080，与本清单的 8082 不匹配 |
 
-线上镜像口径：裸 tag `zopc/z-task:local`，只存在于两个节点的 containerd，不在任何 registry。
+线上镜像口径：裸 tag `zopc/z-task:1.0.0-zboot112`，只存在于两个节点的 containerd，不在任何 registry。
 **线上那份镜像显然不是用仓内这份 Dockerfile 原样构建出来的**（或构建后改过端口/模块名）——
 这正是「仓里查不到它怎么部署的」的具体表现。
+
+> ⚠ 2026-10-23（卡 `TASK-20261023-012`）：线上 tag 已从 `zopc/z-task:local` 换成版本化
+> `zopc/z-task:1.0.0-zboot112`（卡 `TASK-20261023-008` 抬 `z-boot-parent` BOM 1.1.0 → 1.1.2 时换的），
+> 本清单的 `image:` 行已同步对齐到线上现役坐标。**`:local` 不可回滚、不可追溯，不再使用。**
 
 ### 建议命令（可执行；Dockerfile 需先按下面修正进仓）
 
@@ -65,7 +69,7 @@ mvn -pl z-task-admin -am clean package -DskipTests
 #    ENTRYPOINT ["java", "-jar", "app.jar"]
 
 # 3) 构建（tag 必须与 02-deployment.yaml 里的 image: 逐字一致）
-docker build -t zopc/z-task:local .
+docker build -t zopc/z-task:1.0.0-zboot112 .
 ```
 
 ⚠ 改 Dockerfile 属于改 `z-task/` 仓内非 `deploy/` 的文件，**本任务没有动它**（硬约束：只写 `deploy/`）。
@@ -77,7 +81,7 @@ docker build -t zopc/z-task:local .
 
 1. **裸 tag，禁 Nexus 前缀**——本集群 `imagePullPolicy: Never`，k3s 不会去 registry 拉，
    它按 `image:` 的字面引用去节点本地 content store 找。喂进去的 tag 带前缀
-   （如 `nexus.internal/zopc/z-task:local`）而清单里写的是裸 tag（或反过来）⇒ **ErrImageNeverPull**。
+   （如 `nexus.internal/zopc/z-task:1.0.0-zboot112`）而清单里写的是裸 tag（或反过来）⇒ **ErrImageNeverPull**。
 2. **必须用 `cat` 管道喂 `k3s ctr images import -`**——`ctr images import` 从 **stdin** 读，
    直接把文件路径当参数会报 `unrecognized image format`。
 3. **两个节点都要喂**——两个节点都是工作节点，Pod 可能落在任一节点；只喂一个会出现
@@ -85,15 +89,15 @@ docker build -t zopc/z-task:local .
 
 ```bash
 # 1) 在开发机上导出镜像（build 可在开发机做，不必上节点）
-docker save zopc/z-task:local > /tmp/z-task-local.tar
-scp /tmp/z-task-local.tar zifang@192.168.31.231:/tmp/     # zifang001
-scp /tmp/z-task-local.tar zifang@192.168.31.136:/tmp/     # zifang002
+docker save zopc/z-task:1.0.0-zboot112 > /tmp/z-task-1.0.0-zboot112.tar
+scp /tmp/z-task-1.0.0-zboot112.tar zifang@192.168.31.231:/tmp/     # zifang001
+scp /tmp/z-task-1.0.0-zboot112.tar zifang@192.168.31.136:/tmp/     # zifang002
 
 # 2) 喂 zifang001（192.168.31.231）——该节点 sudo 需要口令，会交互提示
-ssh zifang@192.168.31.231 'cat /tmp/z-task-local.tar | sudo k3s ctr images import -'
+ssh zifang@192.168.31.231 'cat /tmp/z-task-1.0.0-zboot112.tar | sudo k3s ctr images import -'
 
 # 3) 喂 zifang002（192.168.31.136）——该节点 sudo -n 可免密
-ssh zifang@192.168.31.136 'cat /tmp/z-task-local.tar | sudo -n k3s ctr images import -'
+ssh zifang@192.168.31.136 'cat /tmp/z-task-1.0.0-zboot112.tar | sudo -n k3s ctr images import -'
 
 # 4) 核验（两个节点都要看到，且 tag 必须与清单一致）
 ssh zifang@192.168.31.231 'sudo k3s ctr images ls | grep z-task'
@@ -103,8 +107,8 @@ ssh zifang@192.168.31.136 'sudo -n k3s ctr images ls | grep z-task'
 一步到位的写法（不落临时文件，效果等价）：
 
 ```bash
-docker save zopc/z-task:local | ssh zifang@192.168.31.231 'cat - | sudo k3s ctr images import -'
-docker save zopc/z-task:local | ssh zifang@192.168.31.136 'cat - | sudo -n k3s ctr images import -'
+docker save zopc/z-task:1.0.0-zboot112 | ssh zifang@192.168.31.231 'cat - | sudo k3s ctr images import -'
+docker save zopc/z-task:1.0.0-zboot112 | ssh zifang@192.168.31.136 'cat - | sudo -n k3s ctr images import -'
 ```
 
 ## 3. 怎么 apply
@@ -174,3 +178,45 @@ kubectl -n z-task rollout status deploy/z-task-admin
   端口口径（8080 vs 线上 8082）也不一致 ⇒ 仓内 Dockerfile 目前**构建不出**线上那份镜像。
   需人工修正 Dockerfile 并提交。
 - 本域没有「不经 SSO 闸门」的内部健康端点，探针只能停在 tcpSocket 级别。
+
+## 7. ⚠️ 纪律：发版 ⇒ **同一次提交里同步清单 `image:` 行**（2026-10-23 落地 · 卡 `TASK-20261023-012` 第 7 项）
+
+### 7.1 纪律条目（一句话，可被下一轮巡检读到）
+
+> **线上镜像坐标变更必须在同一次提交里同步 `deploy/k8s/*-deployment.yaml` 的 `image:` 行。**
+> 换句话说：**改了线上跑的那个 tag，就必须同一次提交把仓内清单的 `image:` 改成逐字一致的同一个 tag。**
+
+### 7.2 为什么（这是本仓踩过的真实坑）
+
+2026-10-23 卡 `TASK-20261023-008` 给本域发版，把线上镜像从 `zopc/z-task:local`
+换成版本化 tag `zopc/z-task:1.0.0-zboot112`（顺带把 `z-boot-parent` BOM 从 1.1.0 抬到 1.1.2，
+修「DB 健康检查卡死 16 分钟」那个坑）。**那次提交只改了 `02-deployment.yaml` 的注释头，
+实体 `image:` 行仍然是 `zopc/z-task:local`** ⇒ 线上跑新镜像、仓内清单还钉旧 tag
+⇒ 巡检量具 `layers.manifest_image_drift` 报 `manifest_behind_live`（🔴 高危）。
+
+### 7.3 为什么这条回滚是**静默**的（本域 `imagePullPolicy: Never` 特有的）
+
+| 查什么 | 本域实况 | 后果 |
+|---|---|---|
+| 旧 tag 还在节点上吗？| 在 —— 回滚目标 `zopc/z-task:local` 就是几分钟前线上正在跑的那份 | ⇒ apply **拉得到镜像** |
+| apply 会报错吗？| 不会 —— `imagePullPolicy: Never` + 镜像在本地 content store | ⇒ **不会 `ErrImageNeverPull`** |
+| 那会怎样？| Pod 正常起来、探针正常、事件 0 | 🔴 **静默回滚**，**没有任何告警** |
+| 回滚丢了什么？| 丢 `z-boot-parent` 1.1.2 的 `connectTimeout` / `socketTimeout` ⇒「DB 健康卡死 16 分钟」原样复活 | 故障**极难归因**（没报错、没事件、没重启）|
+
+⇒ 所以「清单落后」不是「当前故障」，而是**一次例行 `kubectl apply` 就会触发的静默回滚风险**。
+
+### 7.4 怎么自查（只读，随时可跑）
+
+```bash
+# 线上现役 tag
+kubectl -n z-task get deploy z-task-admin \
+  -o jsonpath='{.spec.template.spec.containers[*].image}'
+# 仓内清单（远端 HEAD，origin/main）的 tag
+git show origin/main:deploy/k8s/02-deployment.yaml | grep -n 'image:'
+```
+
+两边**逐字一致**才算对齐。⚠ **不要**用 `git show HEAD:` —— 口径是 `origin/main`（与巡检量具同源）。
+
+> 通用版纪律见 lead 仓 `006_部署方案/010_发版收尾清单.md`；
+> 同款纪律也落在 `z-agent/deploy/k8s/README.md` §8.3（`z-agent` 那份还额外讲了
+> 「注解陈旧 vs 清单落后」两档别混读）。
