@@ -1,10 +1,11 @@
-import { j as e } from "./jsx-runtime-z6PQ6F3d.js";
-import { Card as M, Space as w, Tag as v, Button as T, Select as C, Form as f, Empty as Z, Spin as xe, Descriptions as k, List as N, Drawer as ue, Input as A, message as b, Popconfirm as je, Typography as he, Modal as pe, DatePicker as be, Row as le, Col as K, Statistic as Y, Progress as Ie } from "antd";
+import { j as e } from "./ComponentDoc-CZYjAF-k.js";
+import { C as tt } from "./ComponentDoc-CZYjAF-k.js";
+import { Card as M, Space as w, Tag as v, Button as T, Select as L, Form as f, Empty as Z, Spin as xe, Descriptions as k, List as N, Drawer as ue, Input as A, message as b, Popconfirm as je, Typography as he, Modal as pe, DatePicker as be, Row as le, Col as K, Statistic as Y, Progress as Ie } from "antd";
 import { CheckCircleOutlined as J, EditOutlined as Q, DeleteOutlined as ee, PlusOutlined as me, InboxOutlined as Te, CheckOutlined as te, UnorderedListOutlined as ke, EyeOutlined as ve, ProjectOutlined as we, ReloadOutlined as Pe, ClockCircleOutlined as ye, RocketOutlined as fe } from "@ant-design/icons";
 import { ListTable as se, PageHeader as De, TableToolbar as Oe, ErrorState as re } from "@yuku123/z-frontend-common/ui";
 import { useState as h, useEffect as E } from "react";
 import { createRequest as ze, authRequest as Se } from "@yuku123/z-frontend-common";
-import { Routes as Le, Route as q, Navigate as Ce } from "react-router-dom";
+import { Routes as Ce, Route as q, Navigate as Le } from "react-router-dom";
 const Me = {
   high: { color: "red", text: "高" },
   medium: { color: "orange", text: "中" },
@@ -84,33 +85,33 @@ function Ye({ dataSource: s, loading: l, onEdit: o, onDelete: i, onComplete: n }
 }
 function Je({ value: s, onChange: l, projects: o = [] }) {
   return /* @__PURE__ */ e.jsx(
-    C,
+    L,
     {
       value: s,
       onChange: l,
       placeholder: "请选择项目",
       style: { width: 200 },
       allowClear: !0,
-      children: o.map((i) => /* @__PURE__ */ e.jsx(C.Option, { value: i.id, children: i.name }, i.id))
+      children: o.map((i) => /* @__PURE__ */ e.jsx(L.Option, { value: i.id, children: i.name }, i.id))
     }
   );
 }
-const L = ze("task"), I = {
+const C = ze("task"), I = {
   // === 项目 ===
   listMyProjects: () => Se.get("/project/user/list"),
-  createProject: (s) => L.post("/project", s),
-  updateProject: (s, l) => L.put(`/project/${s}`, l),
-  archiveProject: (s) => L.put(`/project/${s}/archive`),
+  createProject: (s) => C.post("/project", s),
+  updateProject: (s, l) => C.put(`/project/${s}`, l),
+  archiveProject: (s) => C.put(`/project/${s}/archive`),
   // === 任务 ===
-  listTasksByProject: (s) => L.get("/task/project/list", { params: { projectId: s } }),
-  listTasksByList: (s) => L.get("/task/list", { params: { listId: s } }),
-  createTask: (s) => L.post("/task", s),
-  completeTask: (s) => L.post("/task/complete", null, { params: { taskId: s } }),
-  moveTask: (s, l, o) => L.put("/task/move", null, { params: { taskId: s, targetListId: l, position: o } }),
+  listTasksByProject: (s) => C.get("/task/project/list", { params: { projectId: s } }),
+  listTasksByList: (s) => C.get("/task/list", { params: { listId: s } }),
+  createTask: (s) => C.post("/task", s),
+  completeTask: (s) => C.post("/task/complete", null, { params: { taskId: s } }),
+  moveTask: (s, l, o) => C.put("/task/move", null, { params: { taskId: s, targetListId: l, position: o } }),
   // === 任务详情 ===
-  getTaskDetail: (s) => L.get(`/task/${s}`),
-  updateTask: (s, l) => L.put(`/task/${s}`, l),
-  deleteTask: (s) => L.delete(`/task/${s}`)
+  getTaskDetail: (s) => C.get(`/task/${s}`),
+  updateTask: (s, l) => C.put(`/task/${s}`, l),
+  deleteTask: (s) => C.delete(`/task/${s}`)
 }, X = (s) => {
   if (!s) return "-";
   const l = String(s), o = l.match(/^(\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2})/);
@@ -336,7 +337,7 @@ function ae({ apiBaseURL: s }) {
           /* @__PURE__ */ e.jsx(f.Item, { name: "name", label: "项目名称", rules: [{ required: !0, message: "请输入项目名称" }], children: /* @__PURE__ */ e.jsx(A, { placeholder: "例如: 一人公司" }) }),
           /* @__PURE__ */ e.jsx(f.Item, { name: "description", label: "项目描述", children: /* @__PURE__ */ e.jsx(A.TextArea, { rows: 3, placeholder: "可选" }) }),
           /* @__PURE__ */ e.jsx(f.Item, { name: "status", label: "状态", initialValue: 1, children: /* @__PURE__ */ e.jsx(
-            C,
+            L,
             {
               options: [
                 { label: "进行中", value: 1 },
@@ -468,7 +469,7 @@ function _e({ open: s, task: l, projects: o, onClose: i, onSaved: n }) {
               rules: [{ required: !0 }],
               style: { flex: 1 },
               children: /* @__PURE__ */ e.jsx(
-                C,
+                L,
                 {
                   options: o.map((j) => ({ label: j.name, value: j.id })),
                   placeholder: "选择项目"
@@ -480,7 +481,7 @@ function _e({ open: s, task: l, projects: o, onClose: i, onSaved: n }) {
         ] }),
         /* @__PURE__ */ e.jsxs("div", { style: { display: "flex", gap: 16 }, children: [
           /* @__PURE__ */ e.jsx(f.Item, { name: "status", label: "状态", initialValue: 0, style: { flex: 1 }, children: /* @__PURE__ */ e.jsx(
-            C,
+            L,
             {
               options: [
                 { label: "待办", value: 0 },
@@ -490,7 +491,7 @@ function _e({ open: s, task: l, projects: o, onClose: i, onSaved: n }) {
             }
           ) }),
           /* @__PURE__ */ e.jsx(f.Item, { name: "priority", label: "优先级", initialValue: 1, style: { flex: 1 }, children: /* @__PURE__ */ e.jsx(
-            C,
+            L,
             {
               options: [
                 { label: "低", value: 1 },
@@ -612,7 +613,7 @@ function ce({ apiBaseURL: s, back: l }) {
       Oe,
       {
         left: /* @__PURE__ */ e.jsx(
-          C,
+          L,
           {
             value: n,
             onChange: r,
@@ -659,14 +660,14 @@ function ce({ apiBaseURL: s, back: l }) {
         children: /* @__PURE__ */ e.jsxs(f, { form: $, layout: "vertical", preserve: !1, children: [
           /* @__PURE__ */ e.jsx(f.Item, { name: "title", label: "任务标题", rules: [{ required: !0, message: "请输入任务标题" }], children: /* @__PURE__ */ e.jsx(A, { placeholder: "例如: 实现 xx 功能" }) }),
           /* @__PURE__ */ e.jsx(f.Item, { name: "projectId", label: "所属项目", rules: [{ required: !0 }], children: /* @__PURE__ */ e.jsx(
-            C,
+            L,
             {
               options: o.map((a) => ({ label: a.name, value: a.id })),
               placeholder: "从数据库捞出的项目列表"
             }
           ) }),
           /* @__PURE__ */ e.jsx(f.Item, { name: "listId", label: "列表ID", rules: [{ required: !0 }], children: /* @__PURE__ */ e.jsx(A, { type: "number", placeholder: "默认 1" }) }),
-          /* @__PURE__ */ e.jsx(f.Item, { name: "priority", label: "优先级", initialValue: 1, children: /* @__PURE__ */ e.jsx(C, { options: [{ label: "低", value: 1 }, { label: "中", value: 2 }, { label: "高", value: 3 }] }) })
+          /* @__PURE__ */ e.jsx(f.Item, { name: "priority", label: "优先级", initialValue: 1, children: /* @__PURE__ */ e.jsx(L, { options: [{ label: "低", value: 1 }, { label: "中", value: 2 }, { label: "高", value: 3 }] }) })
         ] })
       }
     ),
@@ -747,7 +748,7 @@ function Ve({ apiBaseURL: s }) {
       /* @__PURE__ */ e.jsx(we, { style: { fontSize: 18, color: "#1677ff" } }),
       /* @__PURE__ */ e.jsx(oe, { strong: !0, children: "选择项目：" }),
       /* @__PURE__ */ e.jsx(
-        C,
+        L,
         {
           value: i,
           onChange: n,
@@ -826,8 +827,8 @@ function Ve({ apiBaseURL: s }) {
   ] });
 }
 function Xe() {
-  return /* @__PURE__ */ e.jsxs(Le, { children: [
-    /* @__PURE__ */ e.jsx(q, { index: !0, element: /* @__PURE__ */ e.jsx(Ce, { to: "dashboard", replace: !0 }) }),
+  return /* @__PURE__ */ e.jsxs(Ce, { children: [
+    /* @__PURE__ */ e.jsx(q, { index: !0, element: /* @__PURE__ */ e.jsx(Le, { to: "dashboard", replace: !0 }) }),
     /* @__PURE__ */ e.jsx(q, { path: "dashboard", element: /* @__PURE__ */ e.jsx(Ve, {}) }),
     /* @__PURE__ */ e.jsx(q, { path: "project", element: /* @__PURE__ */ e.jsx(ae, {}) }),
     /* @__PURE__ */ e.jsx(q, { path: "project/*", element: /* @__PURE__ */ e.jsx(ae, {}) }),
@@ -836,6 +837,7 @@ function Xe() {
   ] });
 }
 export {
+  tt as ComponentDocPage,
   ae as ProjectList,
   Je as ProjectSelect,
   Xe as TaskApp,
