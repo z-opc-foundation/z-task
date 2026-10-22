@@ -160,6 +160,22 @@
                     parent 的 24 条自家 starter 里就有这两件（1.0.19）。留着字面 1.0.17 就是 trap 3
                     点名的形状——直接条目顶穿父链，把旧兄弟字节码打进本仓产物。
                  3) z-ctc-sso 的直接条目：fleet 按同一坐标供面值 1.0.1，与迁移前逐字相同。 -->
+
+            <!-- z-ctc-sso 抬到 1.0.5（卡 TASK-20261022-012 · 2026-10-23）
+                 为什么要**重新加回来**一条直接条目：
+                 z-ctc-sso 1.0.1~1.0.4 的 `SsoAutoConfiguration` 把 HS256 签名密钥
+                 **硬编码在 class 常量池里**（并随 jar 发到了 Maven 中央，中央坐标不可撤回）
+                 ⇒ 本仓产物里带着一把公开的签名密钥 ⇒ 任何人都能离线伪造 sso_token。
+                 1.0.5 起该密钥改为 `sso.jwt-secret`（env SSO_JWT_SECRET）注入，签发方缺失即
+                 fail-closed（启动失败）⇒ 本仓必须钉到 1.0.5，否则整改到不了生产。
+                 ⚠ 本仓自己的 DM **压过** import 进来的 z-boot-fleet BOM ⇒ 这一条是唯一能顶住它的位置。
+                 ⚠ z-ctc-sso 1.0.5 目前只在本地 m2（**未发中央**）⇒ 干净环境构建前
+                   需先由用户把 z-ctc-sso 1.0.5 发上中央（发中央是用户亲自做的事）。 -->
+            <dependency>
+                <groupId>io.github.yuku123</groupId>
+                <artifactId>z-ctc-sso</artifactId>
+                <version>1.0.5</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 
