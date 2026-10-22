@@ -166,6 +166,7 @@ kubectl -n z-task rollout status deploy/z-task-admin
 |---|---|---|---|
 | readinessProbe | `httpGet /doc.html`（Swagger 文档页） | `tcpSocket 8082`（readiness + liveness） | 本域 HTTP 端点被 SSO 闸门挡（`/actuator/health` 返回 302/401），探针只认 2xx/3xx ⇒ 用 tcpSocket 只证端口在监听 |
 | labels | 资源上只有 `app.kubernetes.io/name` | 额外加 `app.kubernetes.io/part-of` | 仅加标签，不影响 selector 匹配；`apply` 是幂等合并 |
+| SA 令牌自动挂载 | `automountServiceAccountToken: false` | 不含该字段 | 该收敛由**独立清单**执行（卡 `TASK-20261021-021` 交付、用户亲自执行），刻意与各域部署清单分开，避免抢同一批字段。⚠ `apply` 本清单**不会回退**这项加固（字段既不在本清单、也不在 last-applied ⇒ 三向合并不构成删除动作，已用 `kubectl apply --dry-run=server` 逐域实测：该字段仍为 `false`） |
 
 ## 6. 待办（不在本任务范围内）
 
