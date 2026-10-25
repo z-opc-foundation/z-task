@@ -1,4 +1,4 @@
-import {useEffect, useState} from 'react'
+import {useEffect, useMemo, useState} from 'react'
 import {
     Button,
     Card,
@@ -65,6 +65,15 @@ export default function ProjectList({apiBaseURL}) {
     useEffect(() => {
         load()
     }, [])
+
+    // lead 008 §2 规则 3：客户端查询过滤（taskApi.listMyProjects() 一次取回本人项目，过滤在端侧做）。
+    // 参与匹配的字段取自本页 listColumns 真实存在的 dataIndex：name / status / createdAt。
+    const [keyword, setKeyword] = useState('')
+    const filteredProjects = useMemo(() => {
+        const kw = keyword.trim().toLowerCase()
+        if (!kw) return projects
+        return projects.filter((p) => `${p.name || ''} ${p.status ?? ''} ${p.createdAt || ''}`.toLowerCase().includes(kw))
+    }, [projects, keyword])
 
     const onViewProject = async (row) => {
         setViewing(row)
@@ -191,16 +200,21 @@ export default function ProjectList({apiBaseURL}) {
             </div>
 
             <div style={{display: 'flex', gap: 16, height: 'calc(100vh - 220px)'}}>
-                {/* 左栏项目表：Card + Table 合成基座 ListTable 一件（分页/过滤/空态三件套），
+                {/* 左栏项目表：Card + Table 合成基座 ListTable 一件（分页/空态两件套），
+                    查询过滤框按 lead 008 §2 规则 3 挂在 cardExtra 里（端侧过滤 filteredProjects），
                     卡片外观沿用原来的 size="small" + 固定宽度，避免左右分栏布局被撑开 */}
                 <ListTable
-                    rows={projects}
+                    rows={filteredProjects}
                     columns={listColumns}
                     loading={loading}
                     rowKey="id"
-                    searchKeys="name,description"
-                    searchPlaceholder="按项目名称 / 描述过滤"
                     cardTitle={<Space><InboxOutlined/>项目管理</Space>}
+                    cardExtra={
+                        <Space>
+                            <Input.Search allowClear placeholder="按项目名称 / 状态 / 创建时间过滤" style={{width: 240}}
+                                          onChange={(e) => setKeyword(e.target.value)}/>
+                        </Space>
+                    }
                     cardProps={{
                         size: 'small',
                         style: {width: 520, flexShrink: 0},
