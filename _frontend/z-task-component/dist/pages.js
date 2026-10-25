@@ -7,7 +7,7 @@ import { createRequest as Q } from "@yuku123/z-frontend-common";
 import { ListTable as D } from "@yuku123/z-frontend-common/ui";
 const Te = { title: "z-task 任务管理", short: "z-task" }, Y = [
   { key: "/z-task/home", label: "首页", icon: /* @__PURE__ */ e.jsx(Z, {}) },
-  { key: "/z-task/overview", label: "仪表盘", icon: /* @__PURE__ */ e.jsx(_, {}) },
+  { key: "/z-task/dashboard", label: "仪表盘", icon: /* @__PURE__ */ e.jsx(_, {}) },
   { key: "/z-task/task", label: "任务管理", icon: /* @__PURE__ */ e.jsx(P, {}) },
   { key: "/z-task/project", label: "项目管理", icon: /* @__PURE__ */ e.jsx(P, {}) },
   { key: "/z-task/user", label: "用户管理", icon: /* @__PURE__ */ e.jsx(P, {}) },
