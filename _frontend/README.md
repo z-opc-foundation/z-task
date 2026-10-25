@@ -41,7 +41,7 @@ cd z-task-suit && LOCAL_SIBLINGS=1 npm run dev
   `@yuku123/z-task-component/pages` 导出）覆写。
 - 壳的 dev server 已配 `/api` → `http://localhost:8888` 反代；本仓后端在
   [`../z-task-admin/`](../z-task-admin/)。
-- ⚠️ 壳目前是 **hard-coded 登录**（admin / 123456，见 `App.jsx` 里 lead 008 §16 那条），
+- ⚠️ 壳目前是 **mock 登录**（账号由构建期 VITE_MOCK_USER / VITE_MOCK_PASSWORD 注入，见 `App.jsx` 里 lead 008 §16 那条），
   CTC / SSO 接入后换共享 `LoginPage` 的 `loginApi`。
 
 > 维护约定：组件与壳的任何改动都**不要**写进仓根 README 的功能陈述，
