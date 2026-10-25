@@ -604,7 +604,6 @@ function ce({ apiBaseURL: s, back: l }) {
       De,
       {
         title: "任务管理",
-        subtitle: "按项目维度组织任务, 支持新建、完成等操作",
         breadcrumb: [{ label: "任务中心" }, { label: "任务列表" }],
         back: !!l
       }
