@@ -7,24 +7,24 @@ import { createRequest as G } from "@yuku123/z-frontend-common";
 import { ListTable as A } from "@yuku123/z-frontend-common/ui";
 const Se = { title: "z-task 任务管理", short: "z-task" }, Q = [
   { key: "/z-task/home", label: "首页", icon: /* @__PURE__ */ e.jsx($, {}) },
-  { key: "/z-task/dashboard", label: "仪表盘", icon: /* @__PURE__ */ e.jsx(H, {}) },
-  { key: "/z-task/task", label: "任务管理", icon: /* @__PURE__ */ e.jsx(L, {}) },
-  { key: "/z-task/project", label: "项目管理", icon: /* @__PURE__ */ e.jsx(L, {}) },
-  { key: "/z-task/user", label: "用户管理", icon: /* @__PURE__ */ e.jsx(L, {}) },
+  { key: "/z-task/dashboard", label: "仪表盘", desc: "任务量、完成率与近期趋势", icon: /* @__PURE__ */ e.jsx(H, {}) },
+  { key: "/z-task/task", label: "任务管理", desc: "任务列表、状态流转与负责人", icon: /* @__PURE__ */ e.jsx(L, {}) },
+  { key: "/z-task/project", label: "项目管理", desc: "按项目归置任务与进度", icon: /* @__PURE__ */ e.jsx(L, {}) },
+  { key: "/z-task/user", label: "用户管理", desc: "成员账号与角色", icon: /* @__PURE__ */ e.jsx(L, {}) },
   { key: "/z-task/docs", label: "组件文档", icon: /* @__PURE__ */ e.jsx(Z, {}) }
 ], { Title: Y, Paragraph: ee } = U;
 function te() {
   const t = T(), [l, o] = x(null);
   v(() => {
-    const n = localStorage.getItem("userInfo");
-    if (n)
+    const r = localStorage.getItem("userInfo");
+    if (r)
       try {
-        o(JSON.parse(n));
+        o(JSON.parse(r));
       } catch {
-        o({ name: n });
+        o({ name: r });
       }
   }, []);
-  const d = Q.filter((n) => n.key !== "/z-task/home");
+  const d = Q.filter((r) => r.key !== "/z-task/home");
   return /* @__PURE__ */ e.jsxs("div", { children: [
     /* @__PURE__ */ e.jsx(j, { style: { marginBottom: 16, background: "linear-gradient(135deg, #7c3aed 0%, #6d28d9 100%)", border: "none" }, children: /* @__PURE__ */ e.jsxs(w, { direction: "vertical", size: 4, style: { color: "#fff" }, children: [
       /* @__PURE__ */ e.jsxs(Y, { level: 3, style: { color: "#fff", margin: 0 }, children: [
@@ -34,7 +34,7 @@ function te() {
       /* @__PURE__ */ e.jsx(ee, { style: { color: "rgba(255,255,255,0.85)", margin: 0 }, children: "z-task 任务管理 管理台" }),
       (l == null ? void 0 : l.role) && /* @__PURE__ */ e.jsx(z, { style: { marginTop: 8, background: "rgba(255,255,255,0.2)", color: "#fff", border: "none" }, children: l.role })
     ] }) }),
-    /* @__PURE__ */ e.jsx(R, { gutter: [16, 16], children: d.map((n) => /* @__PURE__ */ e.jsx(C, { xs: 24, sm: 12, md: 12, lg: 8, children: /* @__PURE__ */ e.jsx(j, { hoverable: !0, onClick: () => t(n.key), style: { borderTop: "3px solid #7c3aed" }, children: /* @__PURE__ */ e.jsxs(w, { align: "start", size: 12, children: [
+    /* @__PURE__ */ e.jsx(R, { gutter: [16, 16], children: d.map((r) => /* @__PURE__ */ e.jsx(C, { xs: 24, sm: 12, md: 12, lg: 8, children: /* @__PURE__ */ e.jsx(j, { hoverable: !0, onClick: () => t(r.key), style: { borderTop: "3px solid #7c3aed" }, children: /* @__PURE__ */ e.jsxs(w, { align: "start", size: 12, children: [
       /* @__PURE__ */ e.jsx("div", { style: {
         width: 44,
         height: 44,
@@ -46,12 +46,12 @@ function te() {
         alignItems: "center",
         justifyContent: "center",
         fontSize: 20
-      }, children: n.icon }),
+      }, children: r.icon }),
       /* @__PURE__ */ e.jsxs("div", { style: { minWidth: 0 }, children: [
-        /* @__PURE__ */ e.jsx("div", { style: { fontSize: 15, fontWeight: 600, color: "#0f172a" }, children: n.label }),
-        /* @__PURE__ */ e.jsx("div", { style: { fontSize: 12, color: "#94a3b8", marginTop: 2 }, children: n.key })
+        /* @__PURE__ */ e.jsx("div", { style: { fontSize: 15, fontWeight: 600, color: "#0f172a" }, children: r.label }),
+        /* @__PURE__ */ e.jsx("div", { style: { fontSize: 12, color: "#94a3b8", marginTop: 2 }, children: r.desc || r.label })
       ] })
-    ] }) }) }, n.key)) })
+    ] }) }) }, r.key)) })
   ] });
 }
 const p = G({ baseURL: "/api" });
@@ -74,13 +74,13 @@ function ce() {
   return v(() => {
     const o = localStorage.getItem("userId") || "1";
     ae(o).then((d) => {
-      const n = d.data || [];
+      const r = d.data || [];
       l({
-        total: n.length,
-        todo: n.filter((s) => s.status === 0).length,
-        doing: n.filter((s) => s.status === 1).length,
-        done: n.filter((s) => s.status === 2).length,
-        cancelled: n.filter((s) => s.status === 3).length
+        total: r.length,
+        todo: r.filter((s) => s.status === 0).length,
+        doing: r.filter((s) => s.status === 1).length,
+        done: r.filter((s) => s.status === 2).length,
+        cancelled: r.filter((s) => s.status === 3).length
       });
     }).catch(() => {
     });
@@ -133,16 +133,16 @@ const { Option: P } = f, de = {
   3: { color: "red", text: "紧急" }
 };
 function xe() {
-  const t = T(), [l, o] = x([]), [d, n] = x(!1), [s, h] = x(null), a = async (r) => {
-    if (r) {
-      n(!0);
+  const t = T(), [l, o] = x([]), [d, r] = x(!1), [s, h] = x(null), a = async (n) => {
+    if (n) {
+      r(!0);
       try {
-        const i = await se(r);
+        const i = await se(n);
         o(i.data || []);
       } catch {
         u.error("加载任务失败");
       } finally {
-        n(!1);
+        r(!1);
       }
     }
   };
@@ -165,8 +165,8 @@ function xe() {
       title: "优先级",
       dataIndex: "priority",
       key: "priority",
-      render: (r) => {
-        const i = ue[r] || { color: "default", text: String(r) };
+      render: (n) => {
+        const i = ue[n] || { color: "default", text: String(n) };
         return /* @__PURE__ */ e.jsx(z, { color: i.color, children: i.text });
       }
     },
@@ -174,8 +174,8 @@ function xe() {
       title: "状态",
       dataIndex: "status",
       key: "status",
-      render: (r) => {
-        const i = de[r] || { color: "default", text: String(r) };
+      render: (n) => {
+        const i = de[n] || { color: "default", text: String(n) };
         return /* @__PURE__ */ e.jsx(z, { color: i.color, children: i.text });
       }
     },
@@ -183,25 +183,25 @@ function xe() {
       title: "截止日期",
       dataIndex: "dueDate",
       key: "dueDate",
-      render: (r) => r || "-"
+      render: (n) => n || "-"
     },
     {
       title: "操作",
       key: "action",
-      render: (r, i) => /* @__PURE__ */ e.jsxs(w, { size: "middle", children: [
+      render: (n, i) => /* @__PURE__ */ e.jsxs(w, { size: "middle", children: [
         /* @__PURE__ */ e.jsx(m, { type: "link", icon: /* @__PURE__ */ e.jsx(M, {}), onClick: () => t(`/z-task/task/edit/${i.id}`), children: "编辑" }),
         i.status === 2 ? /* @__PURE__ */ e.jsx(m, { type: "link", onClick: () => O(i.id), children: "重新打开" }) : /* @__PURE__ */ e.jsx(m, { type: "link", onClick: () => I(i.id), children: "完成" })
       ] })
     }
-  ], I = async (r) => {
+  ], I = async (n) => {
     try {
-      await re(r), u.success("任务已完成"), a(s);
+      await re(n), u.success("任务已完成"), a(s);
     } catch {
       u.error("操作失败");
     }
-  }, O = async (r) => {
+  }, O = async (n) => {
     try {
-      await ne(r), u.success("任务已重新打开"), a(s);
+      await ne(n), u.success("任务已重新打开"), a(s);
     } catch {
       u.error("操作失败");
     }
@@ -212,7 +212,7 @@ function xe() {
       {
         placeholder: "选择列表",
         style: { width: 200 },
-        onChange: (r) => h(r),
+        onChange: (n) => h(n),
         allowClear: !0,
         children: [
           /* @__PURE__ */ e.jsx(P, { value: 1, children: "待办" }),
@@ -248,7 +248,7 @@ const { Option: y } = f, he = [
   { value: 2, label: "已完成" }
 ];
 function pe() {
-  const t = T(), { id: l } = V(), o = l !== "new", [d] = c.useForm(), [n, s] = x(!1);
+  const t = T(), { id: l } = V(), o = l !== "new", [d] = c.useForm(), [r, s] = x(!1);
   v(() => {
     o && l && (s(!0), s(!1));
   }, [l, o]);
@@ -349,10 +349,10 @@ const je = {
   1: { color: "green", text: "进行中" }
 };
 function ge() {
-  const [t, l] = x([]), [o, d] = x(!1), [n, s] = x(!1), [h] = c.useForm(), a = async () => {
+  const [t, l] = x([]), [o, d] = x(!1), [r, s] = x(!1), [h] = c.useForm(), a = async () => {
     d(!0);
     try {
-      const r = localStorage.getItem("userId") || "1", i = await le(r);
+      const n = localStorage.getItem("userId") || "1", i = await le(n);
       l(i.data || []);
     } catch {
       u.error("加载项目失败");
@@ -365,14 +365,14 @@ function ge() {
   }, []);
   const g = async () => {
     try {
-      const r = await h.validateFields();
-      await ie(r), u.success("创建成功"), s(!1), h.resetFields(), a();
+      const n = await h.validateFields();
+      await ie(n), u.success("创建成功"), s(!1), h.resetFields(), a();
     } catch {
       u.error("创建失败");
     }
-  }, I = async (r) => {
+  }, I = async (n) => {
     try {
-      await oe(r), u.success("归档成功"), a();
+      await oe(n), u.success("归档成功"), a();
     } catch {
       u.error("归档失败");
     }
@@ -392,14 +392,14 @@ function ge() {
       title: "项目描述",
       dataIndex: "description",
       key: "description",
-      render: (r) => r || "-"
+      render: (n) => n || "-"
     },
     {
       title: "状态",
       dataIndex: "status",
       key: "status",
-      render: (r) => {
-        const i = je[r] || { color: "default", text: String(r) };
+      render: (n) => {
+        const i = je[n] || { color: "default", text: String(n) };
         return /* @__PURE__ */ e.jsx(z, { color: i.color, children: i.text });
       }
     },
@@ -411,7 +411,7 @@ function ge() {
     {
       title: "操作",
       key: "action",
-      render: (r, i) => /* @__PURE__ */ e.jsxs(w, { size: "middle", children: [
+      render: (n, i) => /* @__PURE__ */ e.jsxs(w, { size: "middle", children: [
         /* @__PURE__ */ e.jsx(m, { type: "link", icon: /* @__PURE__ */ e.jsx(M, {}), children: "编辑" }),
         i.status === 1 && /* @__PURE__ */ e.jsx(m, { type: "link", danger: !0, onClick: () => I(i.id), children: "归档" })
       ] })
@@ -436,7 +436,7 @@ function ge() {
       F,
       {
         title: "新建项目",
-        open: n,
+        open: r,
         onOk: g,
         onCancel: () => {
           s(!1), h.resetFields();
@@ -456,7 +456,7 @@ function ke() {
   v(() => {
     l([]);
   }, []);
-  const n = [
+  const r = [
     {
       title: "ID",
       dataIndex: "id",
@@ -502,7 +502,7 @@ function ke() {
     /* @__PURE__ */ e.jsx(
       A,
       {
-        columns: n,
+        columns: r,
         rows: t,
         rowKey: "id",
         loading: o,
@@ -526,9 +526,9 @@ function ye() {
 }
 function Oe() {
   const t = T(), l = async (o) => {
-    var d, n, s, h;
+    var d, r, s, h;
     try {
-      const a = await p.post("/auth/login", o), g = ((d = a == null ? void 0 : a.data) == null ? void 0 : d.token) ?? (a == null ? void 0 : a.token), I = ((n = a == null ? void 0 : a.data) == null ? void 0 : n.userId) ?? (a == null ? void 0 : a.userId);
+      const a = await p.post("/auth/login", o), g = ((d = a == null ? void 0 : a.data) == null ? void 0 : d.token) ?? (a == null ? void 0 : a.token), I = ((r = a == null ? void 0 : a.data) == null ? void 0 : r.userId) ?? (a == null ? void 0 : a.userId);
       if (g && localStorage.setItem("token", g), I != null && localStorage.setItem("userId", String(I)), !g) {
         u.error("登录响应缺少 token");
         return;
@@ -579,7 +579,7 @@ function Le({ mockAuth: t } = {}) {
     username: "",
     password: "",
     user: { name: "", role: "管理员" }
-  }, n = async (s) => {
+  }, r = async (s) => {
     o(!0);
     try {
       if (!d.username || !d.password) {
@@ -614,7 +614,7 @@ function Le({ mockAuth: t } = {}) {
       }, children: "z" }),
       /* @__PURE__ */ e.jsx("div", { style: { fontSize: 18, fontWeight: 600, color: "#0f172a" }, children: "z-task 管理台" })
     ] }),
-    /* @__PURE__ */ e.jsxs(c, { onFinish: n, size: "large", children: [
+    /* @__PURE__ */ e.jsxs(c, { onFinish: r, size: "large", children: [
       /* @__PURE__ */ e.jsx(c.Item, { name: "username", rules: [{ required: !0, message: "请输入用户名" }], children: /* @__PURE__ */ e.jsx(k, { prefix: /* @__PURE__ */ e.jsx(q, {}), placeholder: "用户名" }) }),
       /* @__PURE__ */ e.jsx(c.Item, { name: "password", rules: [{ required: !0, message: "请输入密码" }], children: /* @__PURE__ */ e.jsx(k.Password, { prefix: /* @__PURE__ */ e.jsx(B, {}), placeholder: "密码" }) }),
       /* @__PURE__ */ e.jsx(c.Item, { style: { marginBottom: 8 }, children: /* @__PURE__ */ e.jsx(

@@ -12,9 +12,9 @@ export const appMeta = { title: 'z-task 任务管理', short: 'z-task' }
 
 export const menuItems = [
     { key: '/z-task/home', label: '首页', icon: <HomeOutlined /> },
-    { key: '/z-task/dashboard', label: '仪表盘', icon: <DashboardOutlined /> },
-    { key: '/z-task/task', label: '任务管理', icon: <AppstoreOutlined /> },
-    { key: '/z-task/project', label: '项目管理', icon: <AppstoreOutlined /> },
-    { key: '/z-task/user', label: '用户管理', icon: <AppstoreOutlined /> },
+    { key: '/z-task/dashboard', label: '仪表盘', desc: '任务量、完成率与近期趋势', icon: <DashboardOutlined /> },
+    { key: '/z-task/task', label: '任务管理', desc: '任务列表、状态流转与负责人', icon: <AppstoreOutlined /> },
+    { key: '/z-task/project', label: '项目管理', desc: '按项目归置任务与进度', icon: <AppstoreOutlined /> },
+    { key: '/z-task/user', label: '用户管理', desc: '成员账号与角色', icon: <AppstoreOutlined /> },
     { key: '/z-task/docs', label: '组件文档', icon: <ReadOutlined /> },
 ]
