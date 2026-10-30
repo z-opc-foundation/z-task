@@ -68,3 +68,9 @@ docker-compose.override.yml
 
 # frontend-maven-plugin 下载的 node
 _frontend/**/.mvn-node/
+
+# ============ vite 构建旧产物（沙箱删除闸 ⇒ 只移不删，遗留带时间戳的兄弟目录） ============
+dist.stale-*/
+**/dist.stale-*/
+dist.bak-*/
+**/dist.bak-*/

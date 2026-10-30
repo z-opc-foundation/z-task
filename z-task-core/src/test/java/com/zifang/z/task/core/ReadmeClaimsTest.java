@@ -767,14 +767,14 @@ class ReadmeClaimsTest {
             }
         }
 
-        // ---- 部署面：Dockerfile + 三个脚本；确无 compose/deploy/k8s/Makefile ----
+        // ---- 部署面：Dockerfile + 三个脚本 + deploy/（2026-10-30 火车补齐，内含 k8s 清单）；确无 compose/Makefile ----
         String deploy = section(readme, "部署");
-        for (String must : Arrays.asList("Dockerfile", "build.sh", "package.sh", "start.sh")) {
+        for (String must : Arrays.asList("Dockerfile", "build.sh", "package.sh", "start.sh", "deploy/")) {
             if (!deploy.contains(must)) {
                 problems.add("【部署面】部署节没提到 " + must);
             }
         }
-        for (String absent : Arrays.asList("docker-compose", "deploy/", "k8s/", "Makefile")) {
+        for (String absent : Arrays.asList("docker-compose", "Makefile")) {
             Path p = root.resolve(absent);
             boolean exists = Files.exists(p);
             if (!exists && "docker-compose".equals(absent)) {
@@ -790,6 +790,9 @@ class ReadmeClaimsTest {
             if (!deploy.contains(absent)) {
                 problems.add("【部署面】README 部署节没写明「没有 " + absent + "」这条实测结论");
             }
+        }
+        if (!Files.isDirectory(root.resolve("deploy"))) {
+            problems.add("【部署面】README 部署节按 deploy/ 存在来写，盘上却没有它");
         }
 
         // ---- 测试类：只点名不计数 ----
