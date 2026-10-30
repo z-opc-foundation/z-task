@@ -11,7 +11,7 @@
 
     <artifactId>z-task-admin</artifactId>
 
-    <name>z-task-admin</name>
+<name>z-task :: admin</name>
     <description>任务协作平台可执行管理端应用（ZTaskAdminApplication 主类 + WebMvcConfig +
         启动期 DDL 迁移 runner），repackage 成 fat jar 直接跑，不是给别仓引的库件。
         按组织规范可执行应用归 -admin（对齐 z-camuda：-starter 是无 main 的库件，
