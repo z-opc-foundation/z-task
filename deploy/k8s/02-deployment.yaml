@@ -23,7 +23,8 @@
 #     （需要真正的业务健康判定时，应在应用侧提供一个不经 SSO 闸门的内部端点。）
 #
 # 【secret 从哪来】
-#   ZTASK_DB_PASSWORD → secretKeyRef: secret z-task-db / 键 password。
+#   ZTASK_DB_HOST / ZTASK_DB_USER / ZTASK_DB_PASSWORD →
+#   secretKeyRef: secret z-task-db / 键 host / user / password。
 #   secret z-task-db 已在集群里（手工灌的），本仓不写它的内容。
 #   重建集群时按 README §3 的命令补灌。
 # ============================================================
@@ -60,16 +61,21 @@ spec:
             - name: JAVA_OPTS
               value: "-Xms256m -Xmx1024m"
             # ===== 数据源：共享 RDS 的 oc 库（z-opc 系各仓共用同一个库）=====
-            # 地址/账号照线上现状明文（要求「集群可从代码复现」⇒ 与线上一字不差）；
-            # 口令一律走 secret 引用，仓里不出现明文口令。
+            # 地址/账号/口令一律走 secret 引用，仓内不留明文（lead 001 凭证规范）。
             - name: ZTASK_DB_HOST
-              value: rm-bp108uqlgwn712k54ho.mysql.rds.aliyuncs.com
+              valueFrom:
+                secretKeyRef:
+                  name: z-task-db
+                  key: host
             - name: ZTASK_DB_PORT
               value: "3306"
             - name: ZTASK_DB_NAME
               value: oc
             - name: ZTASK_DB_USER
-              value: zifang
+              valueFrom:
+                secretKeyRef:
+                  name: z-task-db
+                  key: user
             - name: ZTASK_DB_PASSWORD
               valueFrom:
                 secretKeyRef:

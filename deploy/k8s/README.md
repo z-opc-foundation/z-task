@@ -120,15 +120,21 @@ kubectl apply -f deploy/k8s/
 
 执行顺序与前置条件（apply 前置检查）：
 
-1. **secret 先在**：`z-task-db`（键 `password`）必须已存在于 ns `z-task`，
+1. **secret 先在**：`z-task-db`（键 `host` / `user` / `password`）必须已存在于 ns `z-task`，
    否则 Pod 会卡 `CreateContainerConfigError`（找不到 secret key）。
-   集群里这个 secret 已经存在；重建集群时按下面补灌（口令真值在
+   集群里这个 secret 已经存在；重建集群时按下面补灌（真值在
    `lead/004_重要秘钥/`，不入仓）：
 
    ```bash
    kubectl -n z-task create secret generic z-task-db \
-     --from-literal=password='<从 lead/004_重要秘钥/ 取真值>'
+     --from-literal=host='<RDS 主机，从 lead/004_重要秘钥/ 取真值>' \
+     --from-literal=user='<RDS 账号>' \
+     --from-literal=password='<RDS 口令>' \
+     --dry-run=client -o yaml | kubectl apply -f -
    ```
+
+   存量集群升级：先给已有 secret 补上 `host` / `user` 两个键（同上命令即可，`apply`
+   会按 name 覆盖整份 secret），再 apply 本目录清单，避免 Pod 因缺键反复重启。
 
 2. **namespace 先在**：`00-namespace.yaml` 已包含在目录里，`kubectl apply -f deploy/k8s/`
    会按文件名顺序（00 → 01 → 02）依次 apply，namespace 自动先建。
