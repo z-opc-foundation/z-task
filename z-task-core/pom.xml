@@ -13,7 +13,7 @@
 
     <!-- name/description 是 Central 的硬要求（发布 pom 上 Project name is missing 会整批判 FAILED），
          url/licenses/developers/scm 由根 pom 经 flatten(oss) 抄进来，这里只补自家这两格。 -->
-<name>z-task :: core</name>
+    <name>z-task :: core</name>
     <description>任务协作平台领域层：项目/看板/任务/标签的实体、MyBatis Mapper 与 Service 实现</description>
 
     <dependencies>

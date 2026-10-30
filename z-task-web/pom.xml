@@ -11,7 +11,7 @@
 
     <artifactId>z-task-web</artifactId>
 
-<name>z-task :: web</name>
+    <name>z-task :: web</name>
     <description>任务协作平台 Web 层：Board/Task/Project/Label/SyncUser 的 REST 接口、
         请求响应 DTO 与 MyBatis 配置；前端 dist 作为 static 资源随本 jar 发布</description>
 

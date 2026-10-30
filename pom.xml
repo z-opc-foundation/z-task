@@ -36,7 +36,7 @@
     <version>1.0.0</version>
     <packaging>pom</packaging>
 
-<name>z-task :: root</name>
+    <name>z-task :: root</name>
     <description>任务协作管理平台</description>
 
     <licenses>
