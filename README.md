@@ -55,8 +55,8 @@ z-task/
 ├── pom.xml                # 根聚合 POM：parent z-boot-parent:1.2.0、常开 flatten(oss)、central profile
 ├── Dockerfile             # eclipse-temurin:8-jdk，容器内 SERVER_PORT=8080
 ├── LICENSE                # MIT License
-├── z-task-core/           # 领域层：9 个实体 + 9 个 Mapper + Service 接口/实现 + 决策层单测
-├── z-task-web/            # HTTP 层：api/ 8 个 Controller（Req/Resp DTO）+ TaskMyBatisConfig + spring.factories
+├── z-task-core/           # 领域层：11 个实体 + 11 个 Mapper + Service 接口/实现 + 决策层单测
+├── z-task-web/            # HTTP 层：api/ 10 个 Controller（Req/Resp DTO）+ TaskMyBatisConfig + spring.factories
 │   └── src/main/resources/static/   # 前端构建产物（9 个文件已提交进 git，随 jar 发布）
 ├── z-task-admin/          # 可执行启动模块：ZTaskAdminApplication + WebMvcConfig + application.yml
 ├── _frontend/             # React 19 前端（Vite 6），独立 npm 工程，不在 Maven reactor
@@ -81,7 +81,7 @@ z-task/
 
 ---
 
-## 🧱 数据模型（实测 9 + 4 张表）
+## 🧱 数据模型（实测 11 + 4 张表）
 
 `z_task` 库；权威建表脚本 [`_doc/002_deploy/init/schema.sql`](_doc/002_deploy/init/schema.sql)，
 存量库增量走 [`migration.sql`](_doc/002_deploy/init/migration.sql)。
@@ -97,6 +97,8 @@ z-task/
 | `z_task_label` | `Label` | 项目级标签，`color` |
 | `z_task_task_label` | `TaskLabel` | 任务↔标签 |
 | `z_task_sync_user` | `SyncUser` | z-ctc 用户镜像 |
+| `z_task_todo_project` | `TodoProject` | 待办-项目（2026-11-02 自 z-team 迁入）：`visibility` 可见性、`members` 成员 JSON、`extra_info` 空间扩展信息 |
+| `z_task_todo_item` | `TodoItem` | 待办-事项（2026-11-02 自 z-team 迁入）：`status` 字符串态 TODO/DOING/DONE/ARCHIVED、`priority` HIGH/MEDIUM/LOW、`parent_id` 父子树、`agent_id`/`agent_session_id` 指向 z-team 侧个人 Agent（跨仓软外键，不建物理外键） |
 | `z_checklist` / `z_comment` / `z_attachment` / `z_activity` | —— | schema.sql 已建表，**代码里没有任何实体或 Mapper**（实测全仓 grep 只命中 SQL 与旧架构稿），属未接入的预留表 |
 
 `Task` 与 `Project` 通过 `@TableField` 把新字段名桥到旧列名（`title→name`、`dueDate→deadline`、
@@ -186,7 +188,7 @@ npm run build    # 产物在 _frontend/dist，需人工拷到 z-task-web/src/mai
 
 ## 🔌 API 一览
 
-全部端点由 `z-task-web/src/main/java/com/zifang/z/task/web/api/` 的 8 个 Controller 提供，前缀 `/api/...`；
+全部端点由 `z-task-web/src/main/java/com/zifang/z/task/web/api/` 的 10 个 Controller 提供，前缀 `/api/...`；
 统一返回 `com.zifang.util.core.meta.Result`（实测类字段为 `data / success / code / message`，
 [`_doc/001_arch/`](_doc/001_arch/) 里写的 `msg` 是旧稿叫法）；下表为逐类实测的完整路径。
 
@@ -218,6 +220,27 @@ npm run build    # 产物在 _frontend/dist，需人工拷到 z-task-web/src/mai
 | `/api/task-label/task/label/detach` | DELETE | 摘标签 |
 | `/api/sync-user?userId=` | GET | 查镜像用户（**免鉴权**，见风险表） |
 | `/api/sync-user/sync` | POST | 写入/更新镜像用户（**免鉴权**） |
+| `/api/todo/projects` | GET / POST | 待办项目列表（owner + joined）/ 新建 |
+| `/api/todo/projects/{id}` | GET / PUT / DELETE | 取单个项目 / 更新 / 删除 |
+| `/api/todo/projects/{id}/members` | POST | 加项目成员 |
+| `/api/todo/projects/{id}/members/{userId}` | DELETE | 移除项目成员 |
+| `/api/todo/projects/reorder-batch` | POST | 项目批量排序 |
+| `/api/todo/items` | GET / POST | 事项列表 / 新建 |
+| `/api/todo/items/{id}` | PUT / DELETE | 更新事项 / 删除 |
+| `/api/todo/items/{id}/complete`、`/reopen` | POST | 完成 / 重开 |
+| `/api/todo/items/{id}/reorder` | POST | 同组排序 |
+| `/api/todo/items/reorder-batch` | POST | 事项批量排序 |
+| `/api/todo/items/{id}/dispatch-agent`、`/undispatch-agent` | POST | 标记已派发 / 解除派发（Agent 会话本身仍在 z-team 侧） |
+| `/api/todo/projects/{id}/space/tree` | GET | 项目空间目录树 |
+| `/api/todo/projects/{id}/space/file` | GET / PUT / DELETE | 读 / 写 / 删空间文件 |
+| `/api/todo/projects/{id}/space/dir` | POST | 新建空间目录 |
+| `/api/todo/projects/{id}/space/search` | GET | 空间文件全文检索 |
+| `/api/todo/cross/notes/tree`、`/notes/{id}` | GET / PUT / DELETE | 个人笔记（**跨域反向代理到 z-team**，下同） |
+| `/api/todo/cross/notes/{id}/favorite` | POST / DELETE | 收藏 / 取消收藏笔记 |
+| `/api/todo/cross/personal-agents` | GET | 个人 Agent 列表（待办「交给 Agent」的候选） |
+| `/api/todo/cross/staff/search` | GET | 员工目录搜索（指派候选） |
+| `/api/todo/cross/scenario-instances` | GET / POST | 群聊场景实例（待办「所属项目」的关联对象） |
+| `/api/todo/cross/chat-images` | POST | 待办详情里的图片上传（markdown 粘贴图片） |
 
 启动后可用 Knife4j 浏览完整 OpenAPI：`http://localhost:8082/doc.html`。
 
@@ -232,6 +255,7 @@ mvn -pl z-task-core test
 `z-task-core/src/test` 下三个决策层单测类：`TaskServiceImplTest`、`TaskListServiceImplTest`、
 `ProjectBizServiceImplTest`；支撑类 `support/Proxies` 用 JDK 动态代理 + 反射注入按方法名分发返回值，
 内存 Map 充当存储 —— **零 Mockito、零 DB 依赖**（家法：不引 Mockito）。
+`TodoSpaceServiceTest` 是待办项目空间的文件沙箱守卫（真实文件系统断言，14 个用例）。
 `z-task-admin` 另有 `E2ESqlMigrationRunnerTest`（迁移脚本端到端）；`z-task-web` 目前没有测试类。
 
 本轮 README 更新按作业单要求未执行 `mvn`（禁止跑构建），所以这里只登记"用例数与构造方式"实测结论，

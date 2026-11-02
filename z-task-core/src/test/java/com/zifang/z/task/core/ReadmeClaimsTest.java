@@ -441,8 +441,12 @@ class ReadmeClaimsTest {
         }
 
         // 前端工程 + Vite 端口与代理
+        // ⚠ 只认「有 package.json 的目录」才算前端工程 ——
+        // _frontend 下还躺着 dist/（构建产物）、node/（node 二进制）、node_modules/（依赖），
+        // 它们不是工程，要求 README 提及它们是误判（2026-11-02 实测踩到）。
         try (Stream<Path> s = Files.list(root.resolve(FRONTEND_DIR))) {
             f.frontendProjects.addAll(s.filter(Files::isDirectory)
+                    .filter(p -> Files.isRegularFile(p.resolve("package.json")))
                     .map(p -> p.getFileName().toString()).sorted().collect(Collectors.toList()));
         } catch (IOException e) {
             throw new UncheckedIOException(e);
@@ -906,10 +910,15 @@ class ReadmeClaimsTest {
     @DisplayName("尺子的牙口：把 Controller 个数改错必须报红")
     void 尺子的牙口_Controller个数改错必红() {
         String readme = readme();
-        String mutated = readme.replace("的 8 个 Controller 提供", "的 7 个 Controller 提供");
-        assertFalse(mutated.equals(readme), "合成变异没生效：README 里没找到 Controller 个数写法");
+        // ⚠ 不要写死数字。这里原先硬编码 "9 个 Controller"，
+        // 一旦真实 Controller 数变成 10（2026-11-02 新增 TodoCrossDomainController），
+        // 变异就**匹配不上** ⇒ 用例因为"变异没生效"而红，
+        // 报的却是"README 里没找到写法"，指错了方向，白查半小时。
+        // ⇒ 用正则按"N 个 Controller"的**形状**匹配，数字变化不影响本用例。
+        String mutated = readme.replaceFirst("的 \\d+ 个 Controller 提供", "的 9999 个 Controller 提供");
+        assertFalse(mutated.equals(readme), "合成变异没生效：README 里没找到「N 个 Controller 提供」写法");
         List<String> problems = verify(mutated, facts());
-        assertFalse(problems.isEmpty(), "README Controller 个数改成 7，尺子居然没报红");
+        assertFalse(problems.isEmpty(), "README Controller 个数改成 9999，尺子居然没报红");
     }
 
     @Test
@@ -947,17 +956,17 @@ class ReadmeClaimsTest {
     @DisplayName("尺子的牙口：把实体个数改错必须报红")
     void 尺子的牙口_实体个数改错必红() {
         String readme = readme();
-        String mutated = readme.replace("9 个实体 + 9 个 Mapper", "8 个实体 + 9 个 Mapper");
+        String mutated = readme.replace("11 个实体 + 11 个 Mapper", "10 个实体 + 11 个 Mapper");
         assertFalse(mutated.equals(readme), "合成变异没生效：README 里没找到实体/Mapper 计数");
         List<String> problems = verify(mutated, facts());
-        assertFalse(problems.isEmpty(), "README 实体个数改成 8，尺子居然没报红");
+        assertFalse(problems.isEmpty(), "README 实体个数改成 10，尺子居然没报红");
     }
 
     @Test
     @DisplayName("尺子的牙口：把表数量改错必须报红")
     void 尺子的牙口_表数量改错必红() {
         String readme = readme();
-        String mutated = readme.replace("数据模型（实测 9 + 4 张表）", "数据模型（实测 8 + 4 张表）");
+        String mutated = readme.replace("数据模型（实测 11 + 4 张表）", "数据模型（实测 10 + 4 张表）");
         assertFalse(mutated.equals(readme), "合成变异没生效：README 里没找到表数量写法");
         List<String> problems = verify(mutated, facts());
         assertFalse(problems.isEmpty(), "README 表数量被改，尺子居然没报红");

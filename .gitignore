@@ -74,3 +74,11 @@ dist.stale-*/
 **/dist.stale-*/
 dist.bak-*/
 **/dist.bak-*/
+
+# ============ vditor 运行时静态资源（派生成物，不入库） ============
+# 由 _frontend/z-task-suit/scripts/sync-vditor-assets.mjs 从 node_modules/vditor/dist
+# 同步而来，合计 ~8MB（lute 3.6M + mermaid 3.4M）。提交进 git 会让每次 clone 多背 8MB，
+# 而它们 100% 可从依赖还原 ⇒ 只在 dev / build 前生成。
+_frontend/z-task-suit/public/vditor/
+# 同理：vite build 会把 public/ 整个拷进 dist/ ⇒ dist 侧也要挡。
+_frontend/z-task-suit/dist/vditor/

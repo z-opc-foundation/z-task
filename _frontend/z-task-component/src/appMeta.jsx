@@ -1,4 +1,4 @@
-import { AppstoreOutlined, DashboardOutlined, HomeOutlined, ReadOutlined } from '@ant-design/icons'
+import { AppstoreOutlined, DashboardOutlined, HomeOutlined, ReadOutlined, CheckSquareOutlined } from '@ant-design/icons'
 
 /**
  * 应用级常量单独成模块。
@@ -16,5 +16,6 @@ export const menuItems = [
     { key: '/z-task/task', label: '任务管理', desc: '任务列表、状态流转与负责人', icon: <AppstoreOutlined /> },
     { key: '/z-task/project', label: '项目管理', desc: '按项目归置任务与进度', icon: <AppstoreOutlined /> },
     { key: '/z-task/user', label: '用户管理', desc: '成员账号与角色', icon: <AppstoreOutlined /> },
+    { key: '/z-task/todo', label: '待办', desc: '事项、状态列与 Agent 派发', icon: <CheckSquareOutlined /> },
     { key: '/z-task/docs', label: '组件文档', icon: <ReadOutlined /> },
 ]

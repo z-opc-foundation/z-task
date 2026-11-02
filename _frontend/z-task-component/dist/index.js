@@ -1,81 +1,80 @@
-import { j as e } from "./ComponentDoc-CZYjAF-k.js";
-import { C as st } from "./ComponentDoc-CZYjAF-k.js";
-import { Card as S, Space as k, Tag as w, Button as I, Select as L, Form as y, Input as B, Empty as Z, Spin as xe, Descriptions as T, List as q, Drawer as ue, message as g, Popconfirm as je, Typography as he, Modal as pe, DatePicker as be, Row as le, Col as N, Statistic as H, Progress as Ie } from "antd";
-import { CheckCircleOutlined as W, EditOutlined as G, DeleteOutlined as ee, PlusOutlined as me, InboxOutlined as Te, CheckOutlined as te, UnorderedListOutlined as ke, EyeOutlined as we, ProjectOutlined as ve, ReloadOutlined as Pe, ClockCircleOutlined as ye, RocketOutlined as fe } from "@ant-design/icons";
-import { ListTable as se, PageHeader as De, TableToolbar as Oe, ErrorState as re } from "@yuku123/z-frontend-common/ui";
-import { useState as h, useEffect as $, useMemo as Ce } from "react";
-import { createRequest as ze, authRequest as Le } from "@yuku123/z-frontend-common";
-import { Routes as Se, Route as V, Navigate as Me } from "react-router-dom";
-const Ae = {
+import { jsx as e, jsxs as i, Fragment as xe } from "react/jsx-runtime";
+import { Card as z, Space as w, Tag as v, Button as k, Select as S, Form as g, Input as R, Empty as ee, Spin as he, Descriptions as j, List as q, Drawer as pe, message as T, Popconfirm as me, Typography as ye, Modal as fe, DatePicker as ke, Row as ae, Col as U, Statistic as G, Progress as je } from "antd";
+import { CheckCircleOutlined as W, EditOutlined as Y, DeleteOutlined as te, PlusOutlined as ge, InboxOutlined as we, CheckOutlined as le, UnorderedListOutlined as ve, EyeOutlined as Pe, ProjectOutlined as De, ReloadOutlined as Oe, ClockCircleOutlined as be, RocketOutlined as Ie } from "@ant-design/icons";
+import { ListTable as re, PageHeader as Le, TableToolbar as Ce, ErrorState as ie } from "@yuku123/z-frontend-common/ui";
+import { useState as y, useEffect as E, useMemo as Me } from "react";
+import { createRequest as Se, authRequest as ze } from "@yuku123/z-frontend-common";
+import { Routes as Ae, Route as V, Navigate as Be } from "react-router-dom";
+import { C as at, D as it, a as st, T as nt, b as ot, c as ct, d as dt, e as ut, f as ht, g as pt, h as mt, i as yt, l as ft, r as gt, j as bt, k as It, m as Tt, n as xt, t as kt, o as jt } from "./ComponentDoc-BAAWP_t3.js";
+const Re = {
   high: { color: "red", text: "高" },
   medium: { color: "orange", text: "中" },
   low: { color: "green", text: "低" }
-}, Be = {
+}, Fe = {
   pending: { color: "default", text: "待处理" },
   in_progress: { color: "blue", text: "进行中" },
   completed: { color: "green", text: "已完成" }
 };
-function Ye({ task: l, onEdit: r, onComplete: o }) {
-  const i = Ae[l.priority] || { color: "default", text: l.priority }, n = Be[l.status] || { color: "default", text: l.status };
-  return /* @__PURE__ */ e.jsx(S, { size: "small", title: l.title, extra: /* @__PURE__ */ e.jsxs(k, { children: [
-    l.status !== "completed" && /* @__PURE__ */ e.jsx(I, { size: "small", icon: /* @__PURE__ */ e.jsx(W, {}), onClick: () => o == null ? void 0 : o(l), children: "完成" }),
-    /* @__PURE__ */ e.jsx(I, { size: "small", icon: /* @__PURE__ */ e.jsx(G, {}), onClick: () => r == null ? void 0 : r(l), children: "编辑" })
-  ] }), children: /* @__PURE__ */ e.jsxs(k, { orientation: "vertical", style: { width: "100%" }, children: [
-    /* @__PURE__ */ e.jsxs("div", { children: [
+function Qe({ task: r, onEdit: a, onComplete: d }) {
+  const n = Re[r.priority] || { color: "default", text: r.priority }, o = Fe[r.status] || { color: "default", text: r.status };
+  return /* @__PURE__ */ e(z, { size: "small", title: r.title, extra: /* @__PURE__ */ i(w, { children: [
+    r.status !== "completed" && /* @__PURE__ */ e(k, { size: "small", icon: /* @__PURE__ */ e(W, {}), onClick: () => d == null ? void 0 : d(r), children: "完成" }),
+    /* @__PURE__ */ e(k, { size: "small", icon: /* @__PURE__ */ e(Y, {}), onClick: () => a == null ? void 0 : a(r), children: "编辑" })
+  ] }), children: /* @__PURE__ */ i(w, { orientation: "vertical", style: { width: "100%" }, children: [
+    /* @__PURE__ */ i("div", { children: [
       "项目：",
-      l.projectName
+      r.projectName
     ] }),
-    /* @__PURE__ */ e.jsxs(k, { children: [
-      /* @__PURE__ */ e.jsx(w, { color: i.color, children: i.text }),
-      /* @__PURE__ */ e.jsx(w, { color: n.color, children: n.text })
+    /* @__PURE__ */ i(w, { children: [
+      /* @__PURE__ */ e(v, { color: n.color, children: n.text }),
+      /* @__PURE__ */ e(v, { color: o.color, children: o.text })
     ] }),
-    l.dueDate && /* @__PURE__ */ e.jsxs("div", { children: [
+    r.dueDate && /* @__PURE__ */ i("div", { children: [
       "截止：",
-      l.dueDate
+      r.dueDate
     ] })
   ] }) });
 }
-const Fe = { high: "red", medium: "orange", low: "green" }, Re = {
+const _e = { high: "red", medium: "orange", low: "green" }, Ee = {
   pending: "default",
   in_progress: "blue",
   completed: "green"
 };
-function Je({ dataSource: l, loading: r, onEdit: o, onDelete: i, onComplete: n }) {
-  const a = [
-    { title: "任务名称", dataIndex: "title", key: "title" },
-    { title: "项目", dataIndex: "projectName", key: "projectName" },
+function Xe({ dataSource: r, loading: a, onEdit: d, onDelete: n, onComplete: o }) {
+  return /* @__PURE__ */ e(
+    re,
     {
-      title: "优先级",
-      dataIndex: "priority",
-      key: "priority",
-      render: (d) => /* @__PURE__ */ e.jsx(w, { color: Fe[d], children: d === "high" ? "高" : d === "medium" ? "中" : "低" })
-    },
-    {
-      title: "状态",
-      dataIndex: "status",
-      key: "status",
-      render: (d) => {
-        const m = { pending: "待处理", in_progress: "进行中", completed: "已完成" };
-        return /* @__PURE__ */ e.jsx(w, { color: Re[d], children: m[d] || d });
-      }
-    },
-    { title: "截止日期", dataIndex: "dueDate", key: "dueDate" },
-    {
-      title: "操作",
-      key: "action",
-      render: (d, m) => /* @__PURE__ */ e.jsxs(k, { children: [
-        m.status !== "completed" && /* @__PURE__ */ e.jsx(I, { size: "small", icon: /* @__PURE__ */ e.jsx(W, {}), onClick: () => n == null ? void 0 : n(m), children: "完成" }),
-        /* @__PURE__ */ e.jsx(I, { size: "small", icon: /* @__PURE__ */ e.jsx(G, {}), onClick: () => o == null ? void 0 : o(m), children: "编辑" }),
-        /* @__PURE__ */ e.jsx(I, { size: "small", danger: !0, icon: /* @__PURE__ */ e.jsx(ee, {}), onClick: () => i == null ? void 0 : i(m), children: "删除" })
-      ] })
-    }
-  ];
-  return /* @__PURE__ */ e.jsx(
-    se,
-    {
-      columns: a,
-      rows: l,
-      loading: r,
+      columns: [
+        { title: "任务名称", dataIndex: "title", key: "title" },
+        { title: "项目", dataIndex: "projectName", key: "projectName" },
+        {
+          title: "优先级",
+          dataIndex: "priority",
+          key: "priority",
+          render: (u) => /* @__PURE__ */ e(v, { color: _e[u], children: u === "high" ? "高" : u === "medium" ? "中" : "低" })
+        },
+        {
+          title: "状态",
+          dataIndex: "status",
+          key: "status",
+          render: (u) => {
+            const b = { pending: "待处理", in_progress: "进行中", completed: "已完成" };
+            return /* @__PURE__ */ e(v, { color: Ee[u], children: b[u] || u });
+          }
+        },
+        { title: "截止日期", dataIndex: "dueDate", key: "dueDate" },
+        {
+          title: "操作",
+          key: "action",
+          render: (u, b) => /* @__PURE__ */ i(w, { children: [
+            b.status !== "completed" && /* @__PURE__ */ e(k, { size: "small", icon: /* @__PURE__ */ e(W, {}), onClick: () => o == null ? void 0 : o(b), children: "完成" }),
+            /* @__PURE__ */ e(k, { size: "small", icon: /* @__PURE__ */ e(Y, {}), onClick: () => d == null ? void 0 : d(b), children: "编辑" }),
+            /* @__PURE__ */ e(k, { size: "small", danger: !0, icon: /* @__PURE__ */ e(te, {}), onClick: () => n == null ? void 0 : n(b), children: "删除" })
+          ] })
+        }
+      ],
+      rows: r,
+      loading: a,
       rowKey: "id",
       searchKeys: "title,projectName",
       searchPlaceholder: "按任务名称 / 项目过滤",
@@ -83,109 +82,109 @@ function Je({ dataSource: l, loading: r, onEdit: o, onDelete: i, onComplete: n }
     }
   );
 }
-function Qe({ value: l, onChange: r, projects: o = [] }) {
-  return /* @__PURE__ */ e.jsx(
-    L,
+function Ze({ value: r, onChange: a, projects: d = [] }) {
+  return /* @__PURE__ */ e(
+    S,
     {
-      value: l,
-      onChange: r,
+      value: r,
+      onChange: a,
       placeholder: "请选择项目",
       style: { width: 200 },
       allowClear: !0,
-      children: o.map((i) => /* @__PURE__ */ e.jsx(L.Option, { value: i.id, children: i.name }, i.id))
+      children: d.map((n) => /* @__PURE__ */ e(S.Option, { value: n.id, children: n.name }, n.id))
     }
   );
 }
-const z = ze("task"), b = {
+const M = Se("task"), x = {
   // === 项目 ===
-  listMyProjects: () => Le.get("/project/user/list"),
-  createProject: (l) => z.post("/project", l),
-  updateProject: (l, r) => z.put(`/project/${l}`, r),
-  archiveProject: (l) => z.put(`/project/${l}/archive`),
+  listMyProjects: () => ze.get("/project/user/list"),
+  createProject: (r) => M.post("/project", r),
+  updateProject: (r, a) => M.put(`/project/${r}`, a),
+  archiveProject: (r) => M.put(`/project/${r}/archive`),
   // === 任务 ===
-  listTasksByProject: (l) => z.get("/task/project/list", { params: { projectId: l } }),
-  listTasksByList: (l) => z.get("/task/list", { params: { listId: l } }),
-  createTask: (l) => z.post("/task", l),
-  completeTask: (l) => z.post("/task/complete", null, { params: { taskId: l } }),
-  moveTask: (l, r, o) => z.put("/task/move", null, { params: { taskId: l, targetListId: r, position: o } }),
+  listTasksByProject: (r) => M.get("/task/project/list", { params: { projectId: r } }),
+  listTasksByList: (r) => M.get("/task/list", { params: { listId: r } }),
+  createTask: (r) => M.post("/task", r),
+  completeTask: (r) => M.post("/task/complete", null, { params: { taskId: r } }),
+  moveTask: (r, a, d) => M.put("/task/move", null, { params: { taskId: r, targetListId: a, position: d } }),
   // === 任务详情 ===
-  getTaskDetail: (l) => z.get(`/task/${l}`),
-  updateTask: (l, r) => z.put(`/task/${l}`, r),
-  deleteTask: (l) => z.delete(`/task/${l}`)
-}, X = (l) => {
-  if (!l) return "-";
-  const r = String(l), o = r.match(/^(\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2})/);
-  return o ? o[1] : r;
+  getTaskDetail: (r) => M.get(`/task/${r}`),
+  updateTask: (r, a) => M.put(`/task/${r}`, a),
+  deleteTask: (r) => M.delete(`/task/${r}`)
+}, Z = (r) => {
+  if (!r) return "-";
+  const a = String(r), d = a.match(/^(\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2})/);
+  return d ? d[1] : a;
 };
-function ae({ apiBaseURL: l }) {
-  const [r, o] = h([]), [i, n] = h(!1), [a, d] = h(!1), [m, j] = h(null), [x, P] = h(null), [D, O] = h([]), [f, F] = h(!1), [C] = y.useForm(), c = async () => {
-    n(!0);
+function se({ apiBaseURL: r }) {
+  const [a, d] = y([]), [n, o] = y(!1), [s, u] = y(!1), [b, m] = y(null), [h, D] = y(null), [O, L] = y([]), [I, F] = y(!1), [C] = g.useForm(), c = async () => {
+    o(!0);
     try {
-      const t = await b.listMyProjects();
-      o((t == null ? void 0 : t.data) || t || []);
+      const t = await x.listMyProjects();
+      d((t == null ? void 0 : t.data) || t || []);
     } catch (t) {
-      g.error("加载项目失败: " + ((t == null ? void 0 : t.message) || t));
+      T.error("加载项目失败: " + ((t == null ? void 0 : t.message) || t));
     } finally {
-      n(!1);
+      o(!1);
     }
   };
-  $(() => {
+  E(() => {
     c();
   }, []);
-  const [p, v] = h(""), M = Ce(() => {
-    const t = p.trim().toLowerCase();
-    return t ? r.filter((s) => `${s.name || ""} ${s.status ?? ""} ${s.createdAt || ""}`.toLowerCase().includes(t)) : r;
-  }, [r, p]), R = async (t) => {
-    P(t), F(!0);
+  const [f, P] = y(""), A = Me(() => {
+    const t = f.trim().toLowerCase();
+    return t ? a.filter((l) => `${l.name || ""} ${l.status ?? ""} ${l.createdAt || ""}`.toLowerCase().includes(t)) : a;
+  }, [a, f]), _ = async (t) => {
+    D(t), F(!0);
     try {
-      const s = await b.listTasksByProject(t.id);
-      O((s == null ? void 0 : s.data) || s || []);
-    } catch (s) {
-      g.error("加载任务失败: " + ((s == null ? void 0 : s.message) || s));
+      const l = await x.listTasksByProject(t.id);
+      L((l == null ? void 0 : l.data) || l || []);
+    } catch (l) {
+      T.error("加载任务失败: " + ((l == null ? void 0 : l.message) || l));
     } finally {
       F(!1);
     }
-  }, E = async () => {
-    if (x)
+  }, $ = async () => {
+    if (h)
       try {
-        const t = await b.listTasksByProject(x.id);
-        O((t == null ? void 0 : t.data) || t || []);
+        const t = await x.listTasksByProject(h.id);
+        L((t == null ? void 0 : t.data) || t || []);
       } catch (t) {
-        g.error("刷新任务失败: " + ((t == null ? void 0 : t.message) || t));
+        T.error("刷新任务失败: " + ((t == null ? void 0 : t.message) || t));
       }
-  }, _ = () => {
-    j(null), C.resetFields(), C.setFieldsValue({ status: 1 }), d(!0);
+  }, N = () => {
+    m(null), C.resetFields(), C.setFieldsValue({ status: 1 }), u(!0);
   }, K = (t) => {
-    j(t), C.setFieldsValue({ name: t.name, description: t.description, status: t.status ?? 1 }), d(!0);
-  }, A = async () => {
+    m(t), C.setFieldsValue({ name: t.name, description: t.description, status: t.status ?? 1 }), u(!0);
+  }, B = async () => {
     try {
       const t = await C.validateFields();
-      m ? (await b.updateProject(m.id, t), g.success("项目已更新")) : (await b.createProject(t), g.success("项目已创建")), d(!1), c();
+      b ? (await x.updateProject(b.id, t), T.success("项目已更新")) : (await x.createProject(t), T.success("项目已创建")), u(!1), c();
     } catch (t) {
       if (t != null && t.errorFields) return;
-      g.error("保存失败: " + ((t == null ? void 0 : t.message) || t));
+      T.error("保存失败: " + ((t == null ? void 0 : t.message) || t));
     }
-  }, U = async (t) => {
+  }, H = async (t) => {
     try {
-      await b.archiveProject(t), g.success("项目已归档"), c(), (x == null ? void 0 : x.id) === t && (P(null), O([]));
-    } catch (s) {
-      g.error("归档失败: " + ((s == null ? void 0 : s.message) || s));
+      await x.archiveProject(t), T.success("项目已归档"), c(), (h == null ? void 0 : h.id) === t && (D(null), L([]));
+    } catch (l) {
+      T.error("归档失败: " + ((l == null ? void 0 : l.message) || l));
     }
-  }, Y = async (t) => {
+  }, J = async (t) => {
     try {
-      await b.completeTask(t), g.success("任务已完成"), E();
-    } catch (s) {
-      g.error("操作失败: " + ((s == null ? void 0 : s.message) || s));
+      await x.completeTask(t), T.success("任务已完成"), $();
+    } catch (l) {
+      T.error("操作失败: " + ((l == null ? void 0 : l.message) || l));
     }
-  }, J = [
+  }, Q = [
     {
       title: "项目名称",
       dataIndex: "name",
-      render: (t, s) => /* @__PURE__ */ e.jsx(
+      render: (t, l) => /* @__PURE__ */ e(
         "a",
         {
-          onClick: () => R(s),
-          style: { fontWeight: (x == null ? void 0 : x.id) === s.id ? 600 : 400 },
+          onClick: () => _(l),
+          style: { fontWeight: (h == null ? void 0 : h.id) === l.id ? 600 : 400 },
           children: t
         }
       )
@@ -194,47 +193,47 @@ function ae({ apiBaseURL: l }) {
       title: "状态",
       dataIndex: "status",
       width: 80,
-      render: (t) => t === 1 ? /* @__PURE__ */ e.jsx(w, { color: "green", children: "进行中" }) : /* @__PURE__ */ e.jsx(w, { children: "已归档" })
+      render: (t) => t === 1 ? /* @__PURE__ */ e(v, { color: "green", children: "进行中" }) : /* @__PURE__ */ e(v, { children: "已归档" })
     },
-    { title: "创建时间", dataIndex: "createdAt", width: 170, render: X },
+    { title: "创建时间", dataIndex: "createdAt", width: 170, render: Z },
     {
       title: "操作",
       width: 160,
       fixed: "right",
-      render: (t, s) => /* @__PURE__ */ e.jsxs(k, { children: [
-        /* @__PURE__ */ e.jsx(I, { size: "small", icon: /* @__PURE__ */ e.jsx(G, {}), onClick: () => K(s), children: "编辑" }),
-        /* @__PURE__ */ e.jsx(je, { title: "确定归档该项目?", onConfirm: () => U(s.id), children: /* @__PURE__ */ e.jsx(I, { size: "small", danger: !0, icon: /* @__PURE__ */ e.jsx(ee, {}), children: "归档" }) })
+      render: (t, l) => /* @__PURE__ */ i(w, { children: [
+        /* @__PURE__ */ e(k, { size: "small", icon: /* @__PURE__ */ e(Y, {}), onClick: () => K(l), children: "编辑" }),
+        /* @__PURE__ */ e(me, { title: "确定归档该项目?", onConfirm: () => H(l.id), children: /* @__PURE__ */ e(k, { size: "small", danger: !0, icon: /* @__PURE__ */ e(te, {}), children: "归档" }) })
       ] })
     }
-  ], Q = (t) => {
-    const u = {
+  ], X = (t) => {
+    const p = {
       0: { text: "待办", color: "default" },
       1: { text: "进行中", color: "blue" },
       2: { text: "已完成", color: "green" }
     }[t] || { text: String(t), color: "default" };
-    return /* @__PURE__ */ e.jsx(w, { color: u.color, children: u.text });
+    return /* @__PURE__ */ e(v, { color: p.color, children: p.text });
   };
-  return /* @__PURE__ */ e.jsxs("div", { children: [
-    /* @__PURE__ */ e.jsx("div", { style: { display: "flex", justifyContent: "flex-end", marginBottom: 12 }, children: /* @__PURE__ */ e.jsx(I, { type: "primary", icon: /* @__PURE__ */ e.jsx(me, {}), onClick: _, children: "新建项目" }) }),
-    /* @__PURE__ */ e.jsxs("div", { style: { display: "flex", gap: 16, height: "calc(100vh - 220px)" }, children: [
-      /* @__PURE__ */ e.jsx(
-        se,
+  return /* @__PURE__ */ i("div", { children: [
+    /* @__PURE__ */ e("div", { style: { display: "flex", justifyContent: "flex-end", marginBottom: 12 }, children: /* @__PURE__ */ e(k, { type: "primary", icon: /* @__PURE__ */ e(ge, {}), onClick: N, children: "新建项目" }) }),
+    /* @__PURE__ */ i("div", { style: { display: "flex", gap: 16, height: "calc(100vh - 220px)" }, children: [
+      /* @__PURE__ */ e(
+        re,
         {
-          rows: M,
-          columns: J,
-          loading: i,
+          rows: A,
+          columns: Q,
+          loading: n,
           rowKey: "id",
-          cardTitle: /* @__PURE__ */ e.jsxs(k, { children: [
-            /* @__PURE__ */ e.jsx(Te, {}),
+          cardTitle: /* @__PURE__ */ i(w, { children: [
+            /* @__PURE__ */ e(we, {}),
             "项目管理"
           ] }),
-          cardExtra: /* @__PURE__ */ e.jsx(k, { children: /* @__PURE__ */ e.jsx(
-            B.Search,
+          cardExtra: /* @__PURE__ */ e(w, { children: /* @__PURE__ */ e(
+            R.Search,
             {
               allowClear: !0,
               placeholder: "按项目名称 / 状态 / 创建时间过滤",
               style: { width: 240 },
-              onChange: (t) => v(t.target.value)
+              onChange: (t) => P(t.target.value)
             }
           ) }),
           cardProps: {
@@ -243,81 +242,81 @@ function ae({ apiBaseURL: l }) {
             styles: { body: { padding: 8, overflow: "auto", height: "calc(100% - 40px)" } }
           },
           tableProps: {
-            rowClassName: (t) => (x == null ? void 0 : x.id) === t.id ? "ant-table-row-selected" : "",
-            onRow: (t) => ({ onClick: () => R(t), style: { cursor: "pointer" } })
+            rowClassName: (t) => (h == null ? void 0 : h.id) === t.id ? "ant-table-row-selected" : "",
+            onRow: (t) => ({ onClick: () => _(t), style: { cursor: "pointer" } })
           },
           emptyDescription: "还没有项目，新建一个开始组织任务"
         }
       ),
-      /* @__PURE__ */ e.jsx(
-        S,
+      /* @__PURE__ */ e(
+        z,
         {
           size: "small",
           style: { flex: 1, overflow: "auto" },
           styles: { body: { padding: 16 } },
-          title: x ? /* @__PURE__ */ e.jsxs(k, { children: [
-            /* @__PURE__ */ e.jsx(ke, {}),
-            x.name,
+          title: h ? /* @__PURE__ */ i(w, { children: [
+            /* @__PURE__ */ e(ve, {}),
+            h.name,
             " · 任务列表"
           ] }) : "项目详情",
-          children: x ? /* @__PURE__ */ e.jsxs(xe, { spinning: f, children: [
-            /* @__PURE__ */ e.jsxs(T, { size: "small", bordered: !0, column: 2, style: { marginBottom: 16 }, children: [
-              /* @__PURE__ */ e.jsx(T.Item, { label: "项目名称", span: 2, children: x.name }),
-              /* @__PURE__ */ e.jsx(T.Item, { label: "描述", span: 2, children: x.description || "无" }),
-              /* @__PURE__ */ e.jsx(T.Item, { label: "负责人", children: x.ownerId || "未指定" }),
-              /* @__PURE__ */ e.jsx(T.Item, { label: "状态", children: x.status === 1 ? /* @__PURE__ */ e.jsx(w, { color: "green", children: "进行中" }) : /* @__PURE__ */ e.jsx(w, { children: "已归档" }) }),
-              /* @__PURE__ */ e.jsx(
-                T.Item,
+          children: h ? /* @__PURE__ */ i(he, { spinning: I, children: [
+            /* @__PURE__ */ i(j, { size: "small", bordered: !0, column: 2, style: { marginBottom: 16 }, children: [
+              /* @__PURE__ */ e(j.Item, { label: "项目名称", span: 2, children: h.name }),
+              /* @__PURE__ */ e(j.Item, { label: "描述", span: 2, children: h.description || "无" }),
+              /* @__PURE__ */ e(j.Item, { label: "负责人", children: h.ownerId || "未指定" }),
+              /* @__PURE__ */ e(j.Item, { label: "状态", children: h.status === 1 ? /* @__PURE__ */ e(v, { color: "green", children: "进行中" }) : /* @__PURE__ */ e(v, { children: "已归档" }) }),
+              /* @__PURE__ */ e(
+                j.Item,
                 {
                   label: "创建时间",
-                  children: X(x.createdAt)
+                  children: Z(h.createdAt)
                 }
               ),
-              /* @__PURE__ */ e.jsx(T.Item, { label: "项目ID", children: x.id })
+              /* @__PURE__ */ e(j.Item, { label: "项目ID", children: h.id })
             ] }),
-            /* @__PURE__ */ e.jsx(
+            /* @__PURE__ */ e(
               q,
               {
                 size: "small",
-                header: /* @__PURE__ */ e.jsxs("b", { children: [
+                header: /* @__PURE__ */ i("b", { children: [
                   "任务项 (",
-                  D.length,
+                  O.length,
                   ")"
                 ] }),
                 bordered: !0,
-                dataSource: D,
+                dataSource: O,
                 locale: { emptyText: "该项目下暂无任务" },
-                renderItem: (t) => /* @__PURE__ */ e.jsx(
+                renderItem: (t) => /* @__PURE__ */ e(
                   q.Item,
                   {
                     actions: [
-                      /* @__PURE__ */ e.jsx(
-                        I,
+                      /* @__PURE__ */ e(
+                        k,
                         {
                           size: "small",
                           type: "primary",
-                          icon: /* @__PURE__ */ e.jsx(te, {}),
+                          icon: /* @__PURE__ */ e(le, {}),
                           disabled: t.status === 2,
-                          onClick: () => Y(t.id),
+                          onClick: () => J(t.id),
                           children: "完成"
                         },
                         "complete"
                       )
                     ],
-                    children: /* @__PURE__ */ e.jsx(
+                    children: /* @__PURE__ */ e(
                       q.Item.Meta,
                       {
-                        title: /* @__PURE__ */ e.jsxs(k, { children: [
+                        title: /* @__PURE__ */ i(w, { children: [
                           t.title,
-                          Q(t.status),
-                          /* @__PURE__ */ e.jsxs(w, { children: [
+                          X(t.status),
+                          /* @__PURE__ */ i(v, { children: [
                             "优先级 ",
                             t.priority ?? "-"
                           ] })
                         ] }),
-                        description: /* @__PURE__ */ e.jsxs("span", { style: { color: "#888", fontSize: 12 }, children: [
+                        description: /* @__PURE__ */ i("span", { style: { color: "#888", fontSize: 12 }, children: [
                           "截止: ",
-                          X(t.dueDate),
+                          Z(t.dueDate),
                           " · ID: ",
                           t.id
                         ] })
@@ -327,27 +326,27 @@ function ae({ apiBaseURL: l }) {
                 )
               }
             )
-          ] }) : /* @__PURE__ */ e.jsx(Z, { description: "请从左侧选择一个项目", style: { marginTop: 80 } })
+          ] }) : /* @__PURE__ */ e(ee, { description: "请从左侧选择一个项目", style: { marginTop: 80 } })
         }
       )
     ] }),
-    /* @__PURE__ */ e.jsx(
-      ue,
+    /* @__PURE__ */ e(
+      pe,
       {
-        title: m ? `编辑项目 - ${m.name}` : "新建项目",
+        title: b ? `编辑项目 - ${b.name}` : "新建项目",
         size: "large",
-        open: a,
-        onClose: () => d(!1),
+        open: s,
+        onClose: () => u(!1),
         destroyOnHidden: !0,
-        extra: /* @__PURE__ */ e.jsxs(k, { children: [
-          /* @__PURE__ */ e.jsx(I, { onClick: () => d(!1), children: "取消" }),
-          /* @__PURE__ */ e.jsx(I, { type: "primary", onClick: A, children: "保存" })
+        extra: /* @__PURE__ */ i(w, { children: [
+          /* @__PURE__ */ e(k, { onClick: () => u(!1), children: "取消" }),
+          /* @__PURE__ */ e(k, { type: "primary", onClick: B, children: "保存" })
         ] }),
-        children: /* @__PURE__ */ e.jsxs(y, { form: C, layout: "vertical", preserve: !1, children: [
-          /* @__PURE__ */ e.jsx(y.Item, { name: "name", label: "项目名称", rules: [{ required: !0, message: "请输入项目名称" }], children: /* @__PURE__ */ e.jsx(B, { placeholder: "例如: 一人公司" }) }),
-          /* @__PURE__ */ e.jsx(y.Item, { name: "description", label: "项目描述", children: /* @__PURE__ */ e.jsx(B.TextArea, { rows: 3, placeholder: "可选" }) }),
-          /* @__PURE__ */ e.jsx(y.Item, { name: "status", label: "状态", initialValue: 1, children: /* @__PURE__ */ e.jsx(
-            L,
+        children: /* @__PURE__ */ i(g, { form: C, layout: "vertical", preserve: !1, children: [
+          /* @__PURE__ */ e(g.Item, { name: "name", label: "项目名称", rules: [{ required: !0, message: "请输入项目名称" }], children: /* @__PURE__ */ e(R, { placeholder: "例如: 一人公司" }) }),
+          /* @__PURE__ */ e(g.Item, { name: "description", label: "项目描述", children: /* @__PURE__ */ e(R.TextArea, { rows: 3, placeholder: "可选" }) }),
+          /* @__PURE__ */ e(g.Item, { name: "status", label: "状态", initialValue: 1, children: /* @__PURE__ */ e(
+            S,
             {
               options: [
                 { label: "进行中", value: 1 },
@@ -360,138 +359,136 @@ function ae({ apiBaseURL: l }) {
     )
   ] });
 }
-const { Paragraph: $e } = he, ie = {
+const { Paragraph: $e } = ye, ne = {
   0: { label: "待办", color: "default" },
   1: { label: "进行中", color: "blue" },
   2: { label: "已完成", color: "green" }
-}, ne = {
+}, oe = {
   1: { label: "低", color: "default" },
   2: { label: "中", color: "orange" },
   3: { label: "高", color: "red" }
 };
-function Ee({ taskId: l, open: r, onClose: o, onChanged: i, onEdit: n }) {
-  const [a, d] = h(null), [m, j] = h(!1);
-  $(() => {
-    !r || !l || (j(!0), b.getTaskDetail(l).then((f) => d((f == null ? void 0 : f.data) || f)).catch(() => d(null)).finally(() => j(!1)));
-  }, [r, l]);
-  const x = async () => {
+function Ne({ taskId: r, open: a, onClose: d, onChanged: n, onEdit: o }) {
+  const [s, u] = y(null), [b, m] = y(!1);
+  E(() => {
+    !a || !r || (m(!0), x.getTaskDetail(r).then((I) => u((I == null ? void 0 : I.data) || I)).catch(() => u(null)).finally(() => m(!1)));
+  }, [a, r]);
+  const h = async () => {
     try {
-      await b.completeTask(l), d((f) => ({ ...f, status: 2 })), i == null || i();
+      await x.completeTask(r), u((I) => ({ ...I, status: 2 })), n == null || n();
     } catch {
     }
-  }, P = async () => {
+  }, D = async () => {
     try {
-      await b.deleteTask(l), i == null || i(), o == null || o();
+      await x.deleteTask(r), n == null || n(), d == null || d();
     } catch {
     }
-  }, D = ie[a == null ? void 0 : a.status] || ie[0], O = ne[a == null ? void 0 : a.priority] || ne[1];
-  return /* @__PURE__ */ e.jsx(
-    ue,
+  }, O = ne[s == null ? void 0 : s.status] || ne[0], L = oe[s == null ? void 0 : s.priority] || oe[1];
+  return /* @__PURE__ */ e(
+    pe,
     {
-      title: (a == null ? void 0 : a.title) || "任务详情",
+      title: (s == null ? void 0 : s.title) || "任务详情",
       size: "large",
-      open: r,
-      onClose: o,
-      loading: m,
-      footer: /* @__PURE__ */ e.jsxs("div", { style: { display: "flex", justifyContent: "space-between" }, children: [
-        /* @__PURE__ */ e.jsx(
-          je,
+      open: a,
+      onClose: d,
+      loading: b,
+      footer: /* @__PURE__ */ i("div", { style: { display: "flex", justifyContent: "space-between" }, children: [
+        /* @__PURE__ */ e(
+          me,
           {
             title: "确认删除此任务?",
-            onConfirm: P,
+            onConfirm: D,
             okText: "删除",
             cancelText: "取消",
             okButtonProps: { danger: !0 },
-            children: /* @__PURE__ */ e.jsx(I, { danger: !0, icon: /* @__PURE__ */ e.jsx(ee, {}), children: "删除" })
+            children: /* @__PURE__ */ e(k, { danger: !0, icon: /* @__PURE__ */ e(te, {}), children: "删除" })
           }
         ),
-        /* @__PURE__ */ e.jsxs(k, { children: [
-          (a == null ? void 0 : a.status) !== 2 && /* @__PURE__ */ e.jsx(I, { type: "primary", icon: /* @__PURE__ */ e.jsx(te, {}), onClick: x, children: "完成任务" }),
-          /* @__PURE__ */ e.jsx(I, { icon: /* @__PURE__ */ e.jsx(G, {}), onClick: () => n == null ? void 0 : n(a), children: "编辑" })
+        /* @__PURE__ */ i(w, { children: [
+          (s == null ? void 0 : s.status) !== 2 && /* @__PURE__ */ e(k, { type: "primary", icon: /* @__PURE__ */ e(le, {}), onClick: h, children: "完成任务" }),
+          /* @__PURE__ */ e(k, { icon: /* @__PURE__ */ e(Y, {}), onClick: () => o == null ? void 0 : o(s), children: "编辑" })
         ] })
       ] }),
-      children: a && /* @__PURE__ */ e.jsxs(e.Fragment, { children: [
-        /* @__PURE__ */ e.jsxs(T, { column: 2, bordered: !0, size: "small", style: { marginBottom: 24 }, children: [
-          /* @__PURE__ */ e.jsx(T.Item, { label: "状态", children: /* @__PURE__ */ e.jsx(w, { color: D.color, children: D.label }) }),
-          /* @__PURE__ */ e.jsx(T.Item, { label: "优先级", children: /* @__PURE__ */ e.jsx(w, { color: O.color, children: O.label }) }),
-          /* @__PURE__ */ e.jsx(T.Item, { label: "项目 ID", children: a.projectId }),
-          /* @__PURE__ */ e.jsx(T.Item, { label: "列表 ID", children: a.listId }),
-          /* @__PURE__ */ e.jsx(T.Item, { label: "截止时间", span: 2, children: a.dueDate || "未设置" }),
-          /* @__PURE__ */ e.jsx(T.Item, { label: "创建时间", children: a.createdAt || "-" }),
-          /* @__PURE__ */ e.jsx(T.Item, { label: "更新时间", children: a.updatedAt || "-" })
+      children: s && /* @__PURE__ */ i(xe, { children: [
+        /* @__PURE__ */ i(j, { column: 2, bordered: !0, size: "small", style: { marginBottom: 24 }, children: [
+          /* @__PURE__ */ e(j.Item, { label: "状态", children: /* @__PURE__ */ e(v, { color: O.color, children: O.label }) }),
+          /* @__PURE__ */ e(j.Item, { label: "优先级", children: /* @__PURE__ */ e(v, { color: L.color, children: L.label }) }),
+          /* @__PURE__ */ e(j.Item, { label: "项目 ID", children: s.projectId }),
+          /* @__PURE__ */ e(j.Item, { label: "列表 ID", children: s.listId }),
+          /* @__PURE__ */ e(j.Item, { label: "截止时间", span: 2, children: s.dueDate || "未设置" }),
+          /* @__PURE__ */ e(j.Item, { label: "创建时间", children: s.createdAt || "-" }),
+          /* @__PURE__ */ e(j.Item, { label: "更新时间", children: s.updatedAt || "-" })
         ] }),
-        a.description && /* @__PURE__ */ e.jsxs("div", { style: { marginBottom: 24 }, children: [
-          /* @__PURE__ */ e.jsx("div", { style: { fontWeight: 600, marginBottom: 8 }, children: "描述" }),
-          /* @__PURE__ */ e.jsx($e, { style: { whiteSpace: "pre-wrap", color: "#595959" }, children: a.description })
+        s.description && /* @__PURE__ */ i("div", { style: { marginBottom: 24 }, children: [
+          /* @__PURE__ */ e("div", { style: { fontWeight: 600, marginBottom: 8 }, children: "描述" }),
+          /* @__PURE__ */ e($e, { style: { whiteSpace: "pre-wrap", color: "#595959" }, children: s.description })
         ] })
       ] })
     }
   );
 }
-function _e({ open: l, task: r, projects: o, onClose: i, onSaved: n }) {
-  const [a] = y.useForm(), d = !!(r != null && r.id);
-  $(() => {
-    l && r ? a.setFieldsValue({
-      title: r.title,
-      description: r.description,
-      projectId: r.projectId,
-      listId: r.listId,
-      status: r.status,
-      priority: r.priority,
-      dueDate: r.dueDate
-    }) : l && a.resetFields();
-  }, [l, r, a]);
-  const m = async () => {
-    try {
-      const j = await a.validateFields();
-      d ? (await b.updateTask(r.id, j), g.success("任务已更新")) : (await b.createTask(j), g.success("任务已创建")), n == null || n(), i == null || i();
-    } catch (j) {
-      if (j != null && j.errorFields) return;
-      g.error("保存失败: " + ((j == null ? void 0 : j.message) || j));
-    }
-  };
-  return /* @__PURE__ */ e.jsx(
-    pe,
+function Ve({ open: r, task: a, projects: d, onClose: n, onSaved: o }) {
+  const [s] = g.useForm(), u = !!(a != null && a.id);
+  return E(() => {
+    r && a ? s.setFieldsValue({
+      title: a.title,
+      description: a.description,
+      projectId: a.projectId,
+      listId: a.listId,
+      status: a.status,
+      priority: a.priority,
+      dueDate: a.dueDate
+    }) : r && s.resetFields();
+  }, [r, a, s]), /* @__PURE__ */ e(
+    fe,
     {
-      title: d ? "编辑任务" : "新建任务",
-      open: l,
-      onCancel: i,
-      onOk: m,
+      title: u ? "编辑任务" : "新建任务",
+      open: r,
+      onCancel: n,
+      onOk: async () => {
+        try {
+          const m = await s.validateFields();
+          u ? (await x.updateTask(a.id, m), T.success("任务已更新")) : (await x.createTask(m), T.success("任务已创建")), o == null || o(), n == null || n();
+        } catch (m) {
+          if (m != null && m.errorFields) return;
+          T.error("保存失败: " + ((m == null ? void 0 : m.message) || m));
+        }
+      },
       destroyOnHidden: !0,
       size: "large",
-      children: /* @__PURE__ */ e.jsxs(y, { form: a, layout: "vertical", preserve: !1, children: [
-        /* @__PURE__ */ e.jsx(
-          y.Item,
+      children: /* @__PURE__ */ i(g, { form: s, layout: "vertical", preserve: !1, children: [
+        /* @__PURE__ */ e(
+          g.Item,
           {
             name: "title",
             label: "任务标题",
             rules: [{ required: !0, message: "请输入任务标题" }],
-            children: /* @__PURE__ */ e.jsx(B, { placeholder: "例如: 实现 xx 功能" })
+            children: /* @__PURE__ */ e(R, { placeholder: "例如: 实现 xx 功能" })
           }
         ),
-        /* @__PURE__ */ e.jsx(y.Item, { name: "description", label: "描述", children: /* @__PURE__ */ e.jsx(B.TextArea, { rows: 3, placeholder: "任务描述 (可选)" }) }),
-        /* @__PURE__ */ e.jsxs("div", { style: { display: "flex", gap: 16 }, children: [
-          /* @__PURE__ */ e.jsx(
-            y.Item,
+        /* @__PURE__ */ e(g.Item, { name: "description", label: "描述", children: /* @__PURE__ */ e(R.TextArea, { rows: 3, placeholder: "任务描述 (可选)" }) }),
+        /* @__PURE__ */ i("div", { style: { display: "flex", gap: 16 }, children: [
+          /* @__PURE__ */ e(
+            g.Item,
             {
               name: "projectId",
               label: "所属项目",
               rules: [{ required: !0 }],
               style: { flex: 1 },
-              children: /* @__PURE__ */ e.jsx(
-                L,
+              children: /* @__PURE__ */ e(
+                S,
                 {
-                  options: o.map((j) => ({ label: j.name, value: j.id })),
+                  options: d.map((m) => ({ label: m.name, value: m.id })),
                   placeholder: "选择项目"
                 }
               )
             }
           ),
-          /* @__PURE__ */ e.jsx(y.Item, { name: "listId", label: "列表 ID", style: { flex: 1 }, children: /* @__PURE__ */ e.jsx(B, { type: "number", placeholder: "默认 1" }) })
+          /* @__PURE__ */ e(g.Item, { name: "listId", label: "列表 ID", style: { flex: 1 }, children: /* @__PURE__ */ e(R, { type: "number", placeholder: "默认 1" }) })
         ] }),
-        /* @__PURE__ */ e.jsxs("div", { style: { display: "flex", gap: 16 }, children: [
-          /* @__PURE__ */ e.jsx(y.Item, { name: "status", label: "状态", initialValue: 0, style: { flex: 1 }, children: /* @__PURE__ */ e.jsx(
-            L,
+        /* @__PURE__ */ i("div", { style: { display: "flex", gap: 16 }, children: [
+          /* @__PURE__ */ e(g.Item, { name: "status", label: "状态", initialValue: 0, style: { flex: 1 }, children: /* @__PURE__ */ e(
+            S,
             {
               options: [
                 { label: "待办", value: 0 },
@@ -500,8 +497,8 @@ function _e({ open: l, task: r, projects: o, onClose: i, onSaved: n }) {
               ]
             }
           ) }),
-          /* @__PURE__ */ e.jsx(y.Item, { name: "priority", label: "优先级", initialValue: 1, style: { flex: 1 }, children: /* @__PURE__ */ e.jsx(
-            L,
+          /* @__PURE__ */ e(g.Item, { name: "priority", label: "优先级", initialValue: 1, style: { flex: 1 }, children: /* @__PURE__ */ e(
+            S,
             {
               options: [
                 { label: "低", value: 1 },
@@ -511,60 +508,60 @@ function _e({ open: l, task: r, projects: o, onClose: i, onSaved: n }) {
             }
           ) })
         ] }),
-        /* @__PURE__ */ e.jsx(y.Item, { name: "dueDate", label: "截止时间", children: /* @__PURE__ */ e.jsx(be, { style: { width: "100%" }, placeholder: "选择截止日期" }) })
+        /* @__PURE__ */ e(g.Item, { name: "dueDate", label: "截止时间", children: /* @__PURE__ */ e(ke, { style: { width: "100%" }, placeholder: "选择截止日期" }) })
       ] })
     }
   );
 }
-function ce({ apiBaseURL: l, back: r }) {
-  const [o, i] = h([]), [n, a] = h(null), [d, m] = h([]), [j, x] = h(!1), [P, D] = h(null), [O, f] = h(null), [F, C] = h(!1), [c, p] = h(!1), [v, M] = h(!1), [R, E] = h(null), [_] = y.useForm(), K = async () => {
+function ce({ apiBaseURL: r, back: a }) {
+  const [d, n] = y([]), [o, s] = y(null), [u, b] = y([]), [m, h] = y(!1), [D, O] = y(null), [L, I] = y(null), [F, C] = y(!1), [c, f] = y(!1), [P, A] = y(!1), [_, $] = y(null), [N] = g.useForm(), K = async () => {
     try {
-      const s = await b.listMyProjects(), u = (s == null ? void 0 : s.data) || s || [];
-      i(u), f(null), u.length > 0 && !n && a(u[0].id);
-    } catch (s) {
-      f((s == null ? void 0 : s.message) || "加载项目失败");
+      const l = await x.listMyProjects(), p = (l == null ? void 0 : l.data) || l || [];
+      n(p), I(null), p.length > 0 && !o && s(p[0].id);
+    } catch (l) {
+      I((l == null ? void 0 : l.message) || "加载项目失败");
     }
-  }, A = async (s) => {
-    if (!s) {
-      m([]);
+  }, B = async (l) => {
+    if (!l) {
+      b([]);
       return;
     }
-    x(!0), D(null);
+    h(!0), O(null);
     try {
-      const u = await b.listTasksByProject(s);
-      m((u == null ? void 0 : u.data) || u || []);
-    } catch (u) {
-      D((u == null ? void 0 : u.message) || "加载任务失败");
+      const p = await x.listTasksByProject(l);
+      b((p == null ? void 0 : p.data) || p || []);
+    } catch (p) {
+      O((p == null ? void 0 : p.message) || "加载任务失败");
     } finally {
-      x(!1);
+      h(!1);
     }
   };
-  $(() => {
+  E(() => {
     K();
-  }, []), $(() => {
-    A(n);
-  }, [n]);
-  const U = () => {
-    if (!n) {
-      g.warning("请先选择项目");
+  }, []), E(() => {
+    B(o);
+  }, [o]);
+  const H = () => {
+    if (!o) {
+      T.warning("请先选择项目");
       return;
     }
-    _.resetFields(), _.setFieldsValue({ projectId: n, listId: 1, status: 1, priority: 1 }), C(!0);
-  }, Y = async () => {
+    N.resetFields(), N.setFieldsValue({ projectId: o, listId: 1, status: 1, priority: 1 }), C(!0);
+  }, J = async () => {
     try {
-      const s = await _.validateFields();
-      await b.createTask(s), g.success("任务已创建"), C(!1), A(n);
-    } catch (s) {
-      if (s != null && s.errorFields) return;
-      g.error("创建失败: " + ((s == null ? void 0 : s.message) || s));
+      const l = await N.validateFields();
+      await x.createTask(l), T.success("任务已创建"), C(!1), B(o);
+    } catch (l) {
+      if (l != null && l.errorFields) return;
+      T.error("创建失败: " + ((l == null ? void 0 : l.message) || l));
     }
-  }, J = async (s) => {
+  }, Q = async (l) => {
     try {
-      await b.completeTask(s), g.success("任务已完成"), A(n);
-    } catch (u) {
-      g.error("操作失败: " + ((u == null ? void 0 : u.message) || u));
+      await x.completeTask(l), T.success("任务已完成"), B(o);
+    } catch (p) {
+      T.error("操作失败: " + ((p == null ? void 0 : p.message) || p));
     }
-  }, Q = [
+  }, X = [
     { title: "ID", dataIndex: "id", width: 60 },
     { title: "标题", dataIndex: "title" },
     { title: "项目ID", dataIndex: "projectId", width: 80 },
@@ -572,9 +569,9 @@ function ce({ apiBaseURL: l, back: r }) {
       title: "状态",
       dataIndex: "status",
       width: 100,
-      render: (s) => {
-        const u = { 0: "待办", 1: "进行中", 2: "已完成" }, ge = { 0: "default", 1: "blue", 2: "green" }[s] || "default";
-        return /* @__PURE__ */ e.jsx(w, { color: ge, children: u[s] || s });
+      render: (l) => {
+        const p = { 0: "待办", 1: "进行中", 2: "已完成" }, Te = { 0: "default", 1: "blue", 2: "green" }[l] || "default";
+        return /* @__PURE__ */ e(v, { color: Te, children: p[l] || l });
       }
     },
     { title: "优先级", dataIndex: "priority", width: 80 },
@@ -583,250 +580,250 @@ function ce({ apiBaseURL: l, back: r }) {
       title: "操作",
       width: 200,
       fixed: "right",
-      render: (s, u) => /* @__PURE__ */ e.jsxs(k, { children: [
-        /* @__PURE__ */ e.jsx(
-          I,
+      render: (l, p) => /* @__PURE__ */ i(w, { children: [
+        /* @__PURE__ */ e(
+          k,
           {
             size: "small",
-            icon: /* @__PURE__ */ e.jsx(we, {}),
+            icon: /* @__PURE__ */ e(Pe, {}),
             onClick: () => {
-              E(u), p(!0);
+              $(p), f(!0);
             },
             children: "查看"
           }
         ),
-        /* @__PURE__ */ e.jsx(
-          I,
+        /* @__PURE__ */ e(
+          k,
           {
             size: "small",
             type: "primary",
-            icon: /* @__PURE__ */ e.jsx(te, {}),
-            onClick: () => J(u.id),
-            disabled: u.status === 2,
+            icon: /* @__PURE__ */ e(le, {}),
+            onClick: () => Q(p.id),
+            disabled: p.status === 2,
             children: "完成"
           }
         )
       ] })
     }
-  ], t = !j && !P && !!n && d.length === 0;
-  return /* @__PURE__ */ e.jsxs("div", { children: [
-    /* @__PURE__ */ e.jsx(
-      De,
+  ], t = !m && !D && !!o && u.length === 0;
+  return /* @__PURE__ */ i("div", { children: [
+    /* @__PURE__ */ e(
+      Le,
       {
         title: "任务管理",
         breadcrumb: [{ label: "任务中心" }, { label: "任务列表" }],
-        back: !!r
+        back: !!a
       }
     ),
-    /* @__PURE__ */ e.jsx(
-      Oe,
+    /* @__PURE__ */ e(
+      Ce,
       {
-        left: /* @__PURE__ */ e.jsx(
-          L,
+        left: /* @__PURE__ */ e(
+          S,
           {
-            value: n,
-            onChange: a,
+            value: o,
+            onChange: s,
             style: { width: 240 },
             placeholder: "选择项目",
-            options: o.map((s) => ({ label: s.name, value: s.id }))
+            options: d.map((l) => ({ label: l.name, value: l.id }))
           }
         ),
-        right: /* @__PURE__ */ e.jsx(I, { type: "primary", icon: /* @__PURE__ */ e.jsx(me, {}), onClick: U, children: "新建任务" })
+        right: /* @__PURE__ */ e(k, { type: "primary", icon: /* @__PURE__ */ e(ge, {}), onClick: H, children: "新建任务" })
       }
     ),
-    O && /* @__PURE__ */ e.jsx("div", { style: { marginBottom: 16 }, children: /* @__PURE__ */ e.jsx(
-      re,
+    L && /* @__PURE__ */ e("div", { style: { marginBottom: 16 }, children: /* @__PURE__ */ e(
+      ie,
       {
-        error: O,
+        error: L,
         onRetry: K,
         title: "加载项目列表失败"
       }
     ) }),
-    P && /* @__PURE__ */ e.jsx("div", { style: { marginBottom: 16 }, children: /* @__PURE__ */ e.jsx(re, { error: P, onRetry: () => A(n) }) }),
-    /* @__PURE__ */ e.jsx(
-      se,
+    D && /* @__PURE__ */ e("div", { style: { marginBottom: 16 }, children: /* @__PURE__ */ e(ie, { error: D, onRetry: () => B(o) }) }),
+    /* @__PURE__ */ e(
+      re,
       {
-        rows: d,
-        columns: Q,
-        loading: j,
+        rows: u,
+        columns: X,
+        loading: m,
         rowKey: "id",
         searchKeys: "title",
         searchPlaceholder: "按任务标题过滤",
         emptyTitle: t ? "该项目下还没有任务" : "暂无数据",
         emptyDescription: t ? "把目标拆解成可执行的任务, 一项项推进" : void 0,
         emptyActionText: t ? "新建第一个任务" : void 0,
-        emptyOnAction: t ? U : void 0
+        emptyOnAction: t ? H : void 0
       }
     ),
-    /* @__PURE__ */ e.jsx(
-      pe,
+    /* @__PURE__ */ e(
+      fe,
       {
         title: "新建任务",
         open: F,
         onCancel: () => C(!1),
-        onOk: Y,
+        onOk: J,
         destroyOnHidden: !0,
-        children: /* @__PURE__ */ e.jsxs(y, { form: _, layout: "vertical", preserve: !1, children: [
-          /* @__PURE__ */ e.jsx(y.Item, { name: "title", label: "任务标题", rules: [{ required: !0, message: "请输入任务标题" }], children: /* @__PURE__ */ e.jsx(B, { placeholder: "例如: 实现 xx 功能" }) }),
-          /* @__PURE__ */ e.jsx(y.Item, { name: "projectId", label: "所属项目", rules: [{ required: !0 }], children: /* @__PURE__ */ e.jsx(
-            L,
+        children: /* @__PURE__ */ i(g, { form: N, layout: "vertical", preserve: !1, children: [
+          /* @__PURE__ */ e(g.Item, { name: "title", label: "任务标题", rules: [{ required: !0, message: "请输入任务标题" }], children: /* @__PURE__ */ e(R, { placeholder: "例如: 实现 xx 功能" }) }),
+          /* @__PURE__ */ e(g.Item, { name: "projectId", label: "所属项目", rules: [{ required: !0 }], children: /* @__PURE__ */ e(
+            S,
             {
-              options: o.map((s) => ({ label: s.name, value: s.id })),
+              options: d.map((l) => ({ label: l.name, value: l.id })),
               placeholder: "从数据库捞出的项目列表"
             }
           ) }),
-          /* @__PURE__ */ e.jsx(y.Item, { name: "listId", label: "列表ID", rules: [{ required: !0 }], children: /* @__PURE__ */ e.jsx(B, { type: "number", placeholder: "默认 1" }) }),
-          /* @__PURE__ */ e.jsx(y.Item, { name: "priority", label: "优先级", initialValue: 1, children: /* @__PURE__ */ e.jsx(L, { options: [{ label: "低", value: 1 }, { label: "中", value: 2 }, { label: "高", value: 3 }] }) })
+          /* @__PURE__ */ e(g.Item, { name: "listId", label: "列表ID", rules: [{ required: !0 }], children: /* @__PURE__ */ e(R, { type: "number", placeholder: "默认 1" }) }),
+          /* @__PURE__ */ e(g.Item, { name: "priority", label: "优先级", initialValue: 1, children: /* @__PURE__ */ e(S, { options: [{ label: "低", value: 1 }, { label: "中", value: 2 }, { label: "高", value: 3 }] }) })
         ] })
       }
     ),
-    /* @__PURE__ */ e.jsx(
-      Ee,
+    /* @__PURE__ */ e(
+      Ne,
       {
-        taskId: R == null ? void 0 : R.id,
+        taskId: _ == null ? void 0 : _.id,
         open: c,
         onClose: () => {
-          p(!1), E(null);
+          f(!1), $(null);
         },
-        onChanged: A,
-        onEdit: (s) => {
-          E(s), p(!1), M(!0);
+        onChanged: B,
+        onEdit: (l) => {
+          $(l), f(!1), A(!0);
         }
       }
     ),
-    /* @__PURE__ */ e.jsx(
-      _e,
+    /* @__PURE__ */ e(
+      Ve,
       {
-        open: v,
-        task: R,
-        projects: o,
+        open: P,
+        task: _,
+        projects: d,
         onClose: () => {
-          M(!1), E(null);
+          A(!1), $(null);
         },
-        onSaved: A
+        onSaved: B
       }
     )
   ] });
 }
-const { Text: oe, Title: Xe } = he, de = {
-  0: { text: "待办", color: "default", icon: /* @__PURE__ */ e.jsx(ye, {}) },
-  1: { text: "进行中", color: "blue", icon: /* @__PURE__ */ e.jsx(fe, {}) },
-  2: { text: "已完成", color: "green", icon: /* @__PURE__ */ e.jsx(W, {}) }
+const { Text: de, Title: et } = ye, ue = {
+  0: { text: "待办", color: "default", icon: /* @__PURE__ */ e(be, {}) },
+  1: { text: "进行中", color: "blue", icon: /* @__PURE__ */ e(Ie, {}) },
+  2: { text: "已完成", color: "green", icon: /* @__PURE__ */ e(W, {}) }
 };
-function Ve({ apiBaseURL: l }) {
-  const [r, o] = h([]), [i, n] = h(null), [a, d] = h([]), [m, j] = h(!1), [x, P] = h(!1), D = async () => {
-    P(!0);
+function qe({ apiBaseURL: r }) {
+  const [a, d] = y([]), [n, o] = y(null), [s, u] = y([]), [b, m] = y(!1), [h, D] = y(!1), O = async () => {
+    D(!0);
     try {
-      const c = await b.listMyProjects(), p = (c == null ? void 0 : c.data) || c || [];
-      o(p), p.length > 0 && !i && n(p[0].id);
+      const c = await x.listMyProjects(), f = (c == null ? void 0 : c.data) || c || [];
+      d(f), f.length > 0 && !n && o(f[0].id);
     } catch {
-      o([]);
-    } finally {
-      P(!1);
-    }
-  }, O = async (c) => {
-    if (!c) {
       d([]);
+    } finally {
+      D(!1);
+    }
+  }, L = async (c) => {
+    if (!c) {
+      u([]);
       return;
     }
-    j(!0);
+    m(!0);
     try {
-      const p = await b.listTasksByProject(c);
-      d((p == null ? void 0 : p.data) || p || []);
+      const f = await x.listTasksByProject(c);
+      u((f == null ? void 0 : f.data) || f || []);
     } catch {
-      d([]);
+      u([]);
     } finally {
-      j(!1);
+      m(!1);
     }
   };
-  $(() => {
-    D();
-  }, []), $(() => {
-    O(i);
-  }, [i]);
-  const f = a.reduce((c, p) => {
+  E(() => {
+    O();
+  }, []), E(() => {
+    L(n);
+  }, [n]);
+  const I = s.reduce((c, f) => {
     c.total += 1;
-    const v = p.status ?? 0;
-    return v === 0 ? c.todo += 1 : v === 1 ? c.doing += 1 : v === 2 && (c.done += 1), c;
-  }, { total: 0, todo: 0, doing: 0, done: 0 }), F = f.total > 0 ? Math.round(f.done / f.total * 100) : 0, C = [1, 2, 3].map((c) => ({
+    const P = f.status ?? 0;
+    return P === 0 ? c.todo += 1 : P === 1 ? c.doing += 1 : P === 2 && (c.done += 1), c;
+  }, { total: 0, todo: 0, doing: 0, done: 0 }), F = I.total > 0 ? Math.round(I.done / I.total * 100) : 0, C = [1, 2, 3].map((c) => ({
     priority: c,
-    list: a.filter((p) => (p.priority ?? 1) === c)
+    list: s.filter((f) => (f.priority ?? 1) === c)
   }));
-  return /* @__PURE__ */ e.jsxs("div", { style: { display: "flex", flexDirection: "column", gap: 16 }, children: [
-    /* @__PURE__ */ e.jsx(S, { children: /* @__PURE__ */ e.jsxs(k, { wrap: !0, children: [
-      /* @__PURE__ */ e.jsx(ve, { style: { fontSize: 18, color: "#1677ff" } }),
-      /* @__PURE__ */ e.jsx(oe, { strong: !0, children: "选择项目：" }),
-      /* @__PURE__ */ e.jsx(
-        L,
+  return /* @__PURE__ */ i("div", { style: { display: "flex", flexDirection: "column", gap: 16 }, children: [
+    /* @__PURE__ */ e(z, { children: /* @__PURE__ */ i(w, { wrap: !0, children: [
+      /* @__PURE__ */ e(De, { style: { fontSize: 18, color: "#1677ff" } }),
+      /* @__PURE__ */ e(de, { strong: !0, children: "选择项目：" }),
+      /* @__PURE__ */ e(
+        S,
         {
-          value: i,
-          onChange: n,
+          value: n,
+          onChange: o,
           style: { width: 280 },
-          loading: x,
+          loading: h,
           placeholder: "选择项目",
-          options: r.map((c) => ({ label: c.name, value: c.id }))
+          options: a.map((c) => ({ label: c.name, value: c.id }))
         }
       ),
-      /* @__PURE__ */ e.jsxs("a", { onClick: () => D(), children: [
-        /* @__PURE__ */ e.jsx(Pe, {}),
+      /* @__PURE__ */ i("a", { onClick: () => O(), children: [
+        /* @__PURE__ */ e(Oe, {}),
         " 刷新项目"
       ] })
     ] }) }),
-    /* @__PURE__ */ e.jsxs(xe, { spinning: m, children: [
-      /* @__PURE__ */ e.jsxs(le, { gutter: 16, children: [
-        /* @__PURE__ */ e.jsx(N, { span: 6, children: /* @__PURE__ */ e.jsx(S, { children: /* @__PURE__ */ e.jsx(H, { title: "总任务数", value: f.total }) }) }),
-        /* @__PURE__ */ e.jsx(N, { span: 6, children: /* @__PURE__ */ e.jsx(S, { children: /* @__PURE__ */ e.jsx(
-          H,
+    /* @__PURE__ */ i(he, { spinning: b, children: [
+      /* @__PURE__ */ i(ae, { gutter: 16, children: [
+        /* @__PURE__ */ e(U, { span: 6, children: /* @__PURE__ */ e(z, { children: /* @__PURE__ */ e(G, { title: "总任务数", value: I.total }) }) }),
+        /* @__PURE__ */ e(U, { span: 6, children: /* @__PURE__ */ e(z, { children: /* @__PURE__ */ e(
+          G,
           {
             title: "待办",
-            value: f.todo,
+            value: I.todo,
             styles: { content: { color: "#8c8c8c" } },
-            prefix: /* @__PURE__ */ e.jsx(ye, {})
+            prefix: /* @__PURE__ */ e(be, {})
           }
         ) }) }),
-        /* @__PURE__ */ e.jsx(N, { span: 6, children: /* @__PURE__ */ e.jsx(S, { children: /* @__PURE__ */ e.jsx(
-          H,
+        /* @__PURE__ */ e(U, { span: 6, children: /* @__PURE__ */ e(z, { children: /* @__PURE__ */ e(
+          G,
           {
             title: "进行中",
-            value: f.doing,
+            value: I.doing,
             styles: { content: { color: "#1677ff" } },
-            prefix: /* @__PURE__ */ e.jsx(fe, {})
+            prefix: /* @__PURE__ */ e(Ie, {})
           }
         ) }) }),
-        /* @__PURE__ */ e.jsx(N, { span: 6, children: /* @__PURE__ */ e.jsx(S, { children: /* @__PURE__ */ e.jsx(
-          H,
+        /* @__PURE__ */ e(U, { span: 6, children: /* @__PURE__ */ e(z, { children: /* @__PURE__ */ e(
+          G,
           {
             title: "已完成",
-            value: f.done,
+            value: I.done,
             styles: { content: { color: "#52c41a" } },
-            prefix: /* @__PURE__ */ e.jsx(W, {})
+            prefix: /* @__PURE__ */ e(W, {})
           }
         ) }) })
       ] }),
-      /* @__PURE__ */ e.jsx(S, { style: { marginTop: 16 }, title: "完成率", children: /* @__PURE__ */ e.jsx(Ie, { percent: F, status: F === 100 ? "success" : "active" }) }),
-      /* @__PURE__ */ e.jsx(le, { gutter: 16, style: { marginTop: 16 }, children: C.map(({ priority: c, list: p }) => /* @__PURE__ */ e.jsx(N, { span: 8, children: /* @__PURE__ */ e.jsx(S, { size: "small", title: /* @__PURE__ */ e.jsxs(k, { children: [
-        /* @__PURE__ */ e.jsx(w, { color: c === 3 ? "red" : c === 2 ? "orange" : "default", children: c === 3 ? "高" : c === 2 ? "中" : "低" }),
-        /* @__PURE__ */ e.jsxs("span", { children: [
+      /* @__PURE__ */ e(z, { style: { marginTop: 16 }, title: "完成率", children: /* @__PURE__ */ e(je, { percent: F, status: F === 100 ? "success" : "active" }) }),
+      /* @__PURE__ */ e(ae, { gutter: 16, style: { marginTop: 16 }, children: C.map(({ priority: c, list: f }) => /* @__PURE__ */ e(U, { span: 8, children: /* @__PURE__ */ e(z, { size: "small", title: /* @__PURE__ */ i(w, { children: [
+        /* @__PURE__ */ e(v, { color: c === 3 ? "red" : c === 2 ? "orange" : "default", children: c === 3 ? "高" : c === 2 ? "中" : "低" }),
+        /* @__PURE__ */ i("span", { children: [
           "优先级 (",
-          p.length,
+          f.length,
           ")"
         ] })
-      ] }), children: p.length === 0 ? /* @__PURE__ */ e.jsx(Z, { image: Z.PRESENTED_IMAGE_SIMPLE, description: "无任务" }) : /* @__PURE__ */ e.jsx(
+      ] }), children: f.length === 0 ? /* @__PURE__ */ e(ee, { image: ee.PRESENTED_IMAGE_SIMPLE, description: "无任务" }) : /* @__PURE__ */ e(
         q,
         {
           size: "small",
-          dataSource: p.slice(0, 8),
-          renderItem: (v) => {
-            const M = de[v.status ?? 0] || de[0];
-            return /* @__PURE__ */ e.jsx(q.Item, { children: /* @__PURE__ */ e.jsx(
+          dataSource: f.slice(0, 8),
+          renderItem: (P) => {
+            const A = ue[P.status ?? 0] || ue[0];
+            return /* @__PURE__ */ e(q.Item, { children: /* @__PURE__ */ e(
               q.Item.Meta,
               {
-                avatar: M.icon,
-                title: /* @__PURE__ */ e.jsxs(k, { children: [
-                  /* @__PURE__ */ e.jsx(oe, { children: v.title }),
-                  /* @__PURE__ */ e.jsx(w, { color: M.color, style: { margin: 0 }, children: M.text })
+                avatar: A.icon,
+                title: /* @__PURE__ */ i(w, { children: [
+                  /* @__PURE__ */ e(de, { children: P.title }),
+                  /* @__PURE__ */ e(v, { color: A.color, style: { margin: 0 }, children: A.text })
                 ] }),
-                description: v.dueDate ? `截止: ${v.dueDate}` : "无截止时间"
+                description: P.dueDate ? `截止: ${P.dueDate}` : "无截止时间"
               }
             ) });
           }
@@ -835,25 +832,44 @@ function Ve({ apiBaseURL: l }) {
     ] })
   ] });
 }
-function Ze() {
-  return /* @__PURE__ */ e.jsxs(Se, { children: [
-    /* @__PURE__ */ e.jsx(V, { index: !0, element: /* @__PURE__ */ e.jsx(Me, { to: "dashboard", replace: !0 }) }),
-    /* @__PURE__ */ e.jsx(V, { path: "dashboard", element: /* @__PURE__ */ e.jsx(Ve, {}) }),
-    /* @__PURE__ */ e.jsx(V, { path: "project", element: /* @__PURE__ */ e.jsx(ae, {}) }),
-    /* @__PURE__ */ e.jsx(V, { path: "project/*", element: /* @__PURE__ */ e.jsx(ae, {}) }),
-    /* @__PURE__ */ e.jsx(V, { path: "task", element: /* @__PURE__ */ e.jsx(ce, {}) }),
-    /* @__PURE__ */ e.jsx(V, { path: "task/*", element: /* @__PURE__ */ e.jsx(ce, {}) })
+function tt() {
+  return /* @__PURE__ */ i(Ae, { children: [
+    /* @__PURE__ */ e(V, { index: !0, element: /* @__PURE__ */ e(Be, { to: "dashboard", replace: !0 }) }),
+    /* @__PURE__ */ e(V, { path: "dashboard", element: /* @__PURE__ */ e(qe, {}) }),
+    /* @__PURE__ */ e(V, { path: "project", element: /* @__PURE__ */ e(se, {}) }),
+    /* @__PURE__ */ e(V, { path: "project/*", element: /* @__PURE__ */ e(se, {}) }),
+    /* @__PURE__ */ e(V, { path: "task", element: /* @__PURE__ */ e(ce, {}) }),
+    /* @__PURE__ */ e(V, { path: "task/*", element: /* @__PURE__ */ e(ce, {}) })
   ] });
 }
 export {
-  st as ComponentDocPage,
-  ae as ProjectList,
-  Qe as ProjectSelect,
-  Ze as TaskApp,
-  Ye as TaskCard,
-  Ve as TaskDashboard,
+  at as ComponentDocPage,
+  it as DRAG_COLUMN_MIME,
+  st as DRAG_ITEM_MIME,
+  se as ProjectList,
+  Ze as ProjectSelect,
+  tt as TaskApp,
+  Qe as TaskCard,
+  qe as TaskDashboard,
   ce as TaskList,
-  Je as TaskTable,
-  b as api,
-  b as taskApi
+  Xe as TaskTable,
+  nt as TodoTab,
+  ot as addNoteLink,
+  x as api,
+  ct as apiBase,
+  dt as buildTodoProjectContext,
+  ut as configureApiBase,
+  ht as configureTask,
+  pt as configureTodoStore,
+  mt as findTodosLinkedToNote,
+  yt as flattenTodoOptions,
+  ft as linkedTodoChipLabel,
+  gt as readCurrentUser,
+  bt as readToken,
+  It as removeNoteLink,
+  Tt as removeProjectLink,
+  xt as resetTodoStore,
+  x as taskApi,
+  kt as todoHasNoteLink,
+  jt as todoProjectLabel
 };

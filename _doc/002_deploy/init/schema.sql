@@ -216,3 +216,72 @@ CREATE TABLE IF NOT EXISTS z_activity
     KEY idx_task_id (task_id),
     KEY idx_created_at (created_at)
 ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COMMENT ='活动记录表(预留)';
+
+-- =============================================================================
+-- 待办两表 (2026-11-02 自 z-team 迁入)
+-- -----------------------------------------------------------------------------
+-- 原表: z_team_todo_project / z_team_todo_item (z-team 库)
+-- 列名与 id 值域**逐字保留**旧表 ⇒ 存量数据可用 INSERT...SELECT 直接搬迁,
+-- 父子事项的 parent_id、事项的 agent_session_id 等软引用全部继续有效。
+--
+-- ⚠ 不并入 z_task_project / z_task_task 的原因见 _doc/001_arch/todo-migration-from-z-team.md:
+--   两者语义不等价 (todo 是字符串状态 + 父子树 + 成员共享 + 自定义看板列,
+--   task 是数字状态 + board/list 两级归置), 且 z_task_task 有活跃消费方
+--   (z-opc/z-opcs-bridge 撮合桥接), 并表会有损且会波及撮合链路。
+-- =============================================================================
+
+CREATE TABLE IF NOT EXISTS z_task_todo_project
+(
+    id              BIGINT      NOT NULL AUTO_INCREMENT COMMENT '主键(保留旧表id值域)',
+    user_id         VARCHAR(64) NOT NULL COMMENT 'owner 用户ID(z-ctc userId)',
+    title           VARCHAR(128) NOT NULL COMMENT '项目名',
+    icon            VARCHAR(32)  NULL DEFAULT NULL COMMENT '图标(emoji)',
+    description     VARCHAR(512) NULL DEFAULT NULL COMMENT '项目描述',
+    visibility      VARCHAR(16)  NOT NULL DEFAULT 'private' COMMENT '可见性 private|shared',
+    members         JSON         NULL COMMENT '成员数组JSON [{userId,userName}](不含owner)',
+    sort_order      INT          NOT NULL DEFAULT 0 COMMENT '同级排序',
+    extra_info      JSON         NULL COMMENT '项目空间扩展信息JSON(看板列配置等)',
+    create_time     DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+    update_time     DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+    create_by       VARCHAR(64)  NULL DEFAULT NULL COMMENT '创建人ID',
+    update_by       VARCHAR(64)  NULL DEFAULT NULL COMMENT '更新人ID',
+    deleted         TINYINT      NOT NULL DEFAULT 0 COMMENT '逻辑删除 0否 1是',
+    create_by_name  VARCHAR(64)  NULL DEFAULT NULL COMMENT '创建人名称',
+    update_by_name  VARCHAR(64)  NULL DEFAULT NULL COMMENT '更新人名称',
+    PRIMARY KEY (id),
+    KEY idx_user (user_id)
+) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COMMENT ='待办-项目';
+
+CREATE TABLE IF NOT EXISTS z_task_todo_item
+(
+    id               BIGINT      NOT NULL AUTO_INCREMENT COMMENT '主键(保留旧表id值域)',
+    project_id       BIGINT      NULL DEFAULT NULL COMMENT '所属项目id,NULL=收集箱',
+    user_id          VARCHAR(64) NOT NULL COMMENT '创建人用户ID',
+    title            VARCHAR(256) NOT NULL COMMENT '事项标题',
+    detail           MEDIUMTEXT  NULL COMMENT 'markdown 详情',
+    status           VARCHAR(16) NOT NULL DEFAULT 'TODO' COMMENT '状态 TODO|DOING|DONE|ARCHIVED',
+    priority         VARCHAR(8)  NOT NULL DEFAULT 'MEDIUM' COMMENT '优先级 HIGH|MEDIUM|LOW',
+    due_date         DATE        NULL DEFAULT NULL COMMENT '截止日期',
+    assignee_user_id VARCHAR(64) NULL DEFAULT NULL COMMENT '指派人用户ID,NULL=未指派',
+    tags             JSON        NULL COMMENT '标签数组',
+    links            JSON        NULL COMMENT '关联 [{type:note|project|url,id,title}]',
+    parent_id        BIGINT      NOT NULL DEFAULT 0 COMMENT '父事项id,0=顶层',
+    sort_order       INT         NOT NULL DEFAULT 0 COMMENT '同组排序',
+    completed_at     DATETIME    NULL DEFAULT NULL COMMENT '完成时间',
+    completed_by     VARCHAR(64) NULL DEFAULT NULL COMMENT '完成人用户ID',
+    agent_id         BIGINT      NULL DEFAULT NULL COMMENT '派发目标个人Agent id(z-team侧,跨仓软外键)',
+    agent_session_id BIGINT      NULL DEFAULT NULL COMMENT '对应单聊会话id(z-team侧,跨仓软外键)',
+    create_time      DATETIME    NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+    update_time      DATETIME    NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+    create_by        VARCHAR(64) NULL DEFAULT NULL COMMENT '创建人ID',
+    update_by        VARCHAR(64) NULL DEFAULT NULL COMMENT '更新人ID',
+    deleted          TINYINT     NOT NULL DEFAULT 0 COMMENT '逻辑删除 0否 1是',
+    create_by_name   VARCHAR(64) NULL DEFAULT NULL COMMENT '创建人名称',
+    update_by_name   VARCHAR(64) NULL DEFAULT NULL COMMENT '更新人名称',
+    PRIMARY KEY (id),
+    KEY idx_project_status (project_id, status),
+    KEY idx_assignee (assignee_user_id, status),
+    KEY idx_due (due_date),
+    KEY idx_parent (parent_id),
+    KEY idx_agent_session (agent_session_id)
+) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COMMENT ='待办-事项';

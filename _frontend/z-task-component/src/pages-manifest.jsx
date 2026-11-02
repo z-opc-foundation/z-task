@@ -1,6 +1,7 @@
 import HomePage from './pages/HomePage'
 import TaskApp from './pages/TaskApp.jsx'
 import ComponentDocPage from './pages/ComponentDoc.jsx'
+import TodoPage from './pages/TodoPage.jsx'
 
 /**
  * 路由清单（lead 008 §10/§14/§16 批量落地）。App 壳在 suit 侧组装。
@@ -22,6 +23,9 @@ export const routes = [
     { path: '/z-task/task/edit/:id?', Component: null },
     { path: '/z-task/project', Component: null },
     { path: '/z-task/user', Component: null },
+    // 待办（2026-11-02 从 z-team 迁入）：待办能力归属 z-task，
+    // 但「打开笔记 / 打开群聊项目」两个回调的宿主在 z-team ⇒ 由 TodoPage 做降级适配。
+    { path: '/z-task/todo', Component: TodoPage },
     { path: '/z-task/docs', Component: ComponentDocPage },
     { path: '/z-task/:rest*', Component: TaskApp },
 ]
@@ -36,5 +40,7 @@ export {default as ProjectList} from './pages/project/ProjectList'
 export {default as TaskList} from './pages/task/TaskList'
 export {default as TaskEdit} from './pages/task/TaskEdit'
 export {default as UserList} from './pages/user/UserList'
+// 待办页（宿主适配层，见 pages/TodoPage.jsx 的注释）
+export {default as TodoPage} from './pages/TodoPage.jsx'
 // 主壳接线用：文档页统一以 ComponentDocPage 这个名字从主入口导出。
 export {default as ComponentDocPage} from './pages/ComponentDoc.jsx'

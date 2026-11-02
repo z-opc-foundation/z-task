@@ -20,7 +20,16 @@ spring:
     exclude:
       - org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration
       - org.springframework.boot.autoconfigure.jdbc.DataSourceTransactionManagerAutoConfiguration
+      # ⚠ Druid 有两个包名，按**依赖的 starter 版本线**选：
+      #   SB2 (druid-spring-boot-starter)      → com.alibaba.druid.spring.boot.autoconfigure.DruidDataSourceAutoConfigure
+      #   SB3 (druid-spring-boot-3-starter)    → com.alibaba.druid.spring.boot3.autoconfigure.DruidDataSourceAutoConfigure
+      # 本项目在 SB3 线上（jar 内是 druid-spring-boot-3-starter-1.2.23）。
+      # 历史上这里只写了 SB2 的那个包名 ⇒ **排除静默失效**，Druid 仍然接管数据源，
+      # 于是本地启动报「Failed to determine suitable jdbc url」（它去找 spring.datasource.url，
+      # 而本项目的数据源走 z.base.db.task.*，根本没这项）。
+      # 两个包名都列上：切换 starter 版本线时不用再回来改这一行。
       - com.alibaba.druid.spring.boot.autoconfigure.DruidDataSourceAutoConfigure
+      - com.alibaba.druid.spring.boot3.autoconfigure.DruidDataSourceAutoConfigure
       - com.baomidou.mybatisplus.autoconfigure.MybatisPlusAutoConfiguration
   jackson:
     date-format: yyyy-MM-dd HH:mm:ss
@@ -45,6 +54,19 @@ z:
         database: ${ZTASK_DB_NAME:z_task}
         username: ${ZTASK_DB_USER:root}
         password: ${ZTASK_DB_PASSWORD:}
+
+# ------------------------------------------------------------
+# 工作区根目录: 待办的「项目空间」落在 {base-dir}/todo/{projectId}/
+# ⚠ 与 z-team 的 z-team.workspace.base-dir 必须是**同一物理目录**:
+#    目录名由 projectId 确定性推导, 两侧一致 ⇒ 存量空间文件零迁移;
+#    分叉 ⇒ 变成两份互不相干的目录, 一边写一边读不到。
+# ⚠ 生产(k8s)通过 ZTASK_WORKSPACE_BASE_DIR 指向挂载点 /data/z_team;
+#    本地默认 ${user.home}/z_team, 与 z-team 本地默认值逐字相同。
+# ------------------------------------------------------------
+z-task:
+  workspace:
+    base-dir: ${ZTASK_WORKSPACE_BASE_DIR:${user.home}/z_team}
+    env: ${ZTASK_WORKSPACE_ENV:prod}
 
 # ------------------------------------------------------------
 # 4A 中心 SSO (z-ctc-sso): JWT 鉴权

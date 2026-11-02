@@ -90,6 +90,11 @@ spec:
                 secretKeyRef:
                   name: sso-jwt
                   key: sso-jwt-secret
+            # 工作区根目录：必须与下面 volumeMounts 的 mountPath 逐字一致。
+            # ⚠ 项目空间的读写**只在 z-task 侧**（z-team 已不碰 todo/ 目录），
+            #    ⇒ base-dir 一致性由本仓单侧保证，z-team 无需同步改。
+            - name: ZTASK_WORKSPACE_BASE_DIR
+              value: /data/z_team
           resources:
             limits:
               cpu: "2"
@@ -97,6 +102,15 @@ spec:
             requests:
               cpu: 300m
               memory: 1280Mi
+          # ===== 项目空间文件：必须挂持久卷 =====
+          # 待办的「项目空间」= 服务器上一个文件夹，落在 {base-dir}/todo/{projectId}/。
+          # 不挂卷 ⇒ 文件写在容器可写层 ⇒ Pod 重启 / 迁移 / 滚动更新后**全部消失**，
+          # 而数据库里的待办记录还在 ⇒ 用户看到「事项在、文件没了」。
+          # ⚠ 2026-11-02：此前本 Deployment **一个 volume 都没有**（待办迁入后才暴露的缺口）。
+          # ⚠ base-dir 与 mountPath 必须一致（上面 ZTASK_WORKSPACE_BASE_DIR 已钉死同一路径）。
+          volumeMounts:
+            - name: workspace
+              mountPath: /data/z_team
           # 探针只探「端口在监听」。
           # ⚠ 本域 HTTP 端点被 SSO 闸门挡（/actuator/health 返回 302/401），
           #   不能用作探针；理由见文件头注释。
@@ -113,3 +127,12 @@ spec:
             initialDelaySeconds: 120
             periodSeconds: 30
             failureThreshold: 6
+      volumes:
+        - name: workspace
+          hostPath:
+            # ⚠ 铁律：本集群 imagePullPolicy=Never，镜像只存在于节点本地 content store。
+            #   同理，hostPath 只在**节点本地**有效 —— Pod 必须落在挂了这条路径的节点上。
+            #   集群是 k3s 单节点 ⇒ 目前无调度问题；若扩成多节点，须改用 PVC
+            #   （storageClass + ReadWriteMany）而不是 hostPath。
+            path: /data/z_team
+            type: DirectoryOrCreate
