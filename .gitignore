@@ -82,3 +82,8 @@ dist.bak-*/
 _frontend/z-task-suit/public/vditor/
 # 同理：vite build 会把 public/ 整个拷进 dist/ ⇒ dist 侧也要挡。
 _frontend/z-task-suit/dist/vditor/
+
+# 前端组件库 dist/：vite build 产物（public/ 才是源文件）。
+# npm publish 前必须先 npm run build，否则发出去是空包。
+_frontend/**/dist/
+dist/
