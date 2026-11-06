@@ -15,7 +15,7 @@
 |------|-----|
 | **仓库** | `z-task`（`git@github.com:z-opc-foundation/z-task.git`，分支 `main`） |
 | **Maven 坐标** | `io.github.yuku123:z-task:1.0.0`（根 POM `packaging=pom`；**没有 `<revision>` 属性**，版本是直写的 `<version>1.0.0</version>`，三个子模块的 parent 逐字同一面值） |
-| **父项目** | `io.github.yuku123:z-boot-parent:1.2.1`（`<relativePath/>` 留空，parent 在 repo1 不在磁盘）；父链自带第三方地板与兄弟仓权威表 |
+| **父项目** | `io.github.yuku123:z-boot-parent:1.2.2`（`<relativePath/>` 留空，parent 在 repo1 不在磁盘）；父链自带第三方地板与兄弟仓权威表 |
 | **Maven Central** | 已发布（2026-09-30 实测 200）：`z-task:1.0.0`（pom）、`z-task-core:1.0.0`、`z-task-web:1.0.0`（pom + jar 均可拉）；未发布（2026-09-30 实测 404）：`z-task-admin`、`z-task-frontend` |
 | **默认端口** | `8082`（`server.port`，`server.servlet.context-path: /`）· Docker 容器内 `8080` · 前端 Vite dev `3009`（`_frontend/z-task-suit/vite.config.js`） |
 | **运行口径** | Java 17（parent 下发 `maven.compiler.source/target=17`）· Spring Boot 3.3.13（实测产物 `spring-boot-2.7.18.jar`） |
@@ -52,7 +52,7 @@
 
 ```
 z-task/
-├── pom.xml                # 根聚合 POM：parent z-boot-parent:1.2.1、常开 flatten(oss)、central profile
+├── pom.xml                # 根聚合 POM：parent z-boot-parent:1.2.2、常开 flatten(oss)、central profile
 ├── Dockerfile             # eclipse-temurin:8-jdk，容器内 SERVER_PORT=8080
 ├── LICENSE                # MIT License
 ├── z-task-core/           # 领域层：11 个实体 + 11 个 Mapper + Service 接口/实现 + 决策层单测
@@ -115,7 +115,7 @@ z-task/
 | 层级 | 实测版本 |
 |------|----------|
 | 语言 / 运行时 | Java 17（Docker 基础镜像 `eclipse-temurin:8-jdk`） |
-| 框架 | Spring Boot 2.7.18（由 `z-boot-parent:1.2.1` 下发） |
+| 框架 | Spring Boot 2.7.18（由 `z-boot-parent:1.2.2` 下发） |
 | 持久层 | MyBatis-Plus 3.5.7 + mybatis 3.5.16 + Druid 1.2.23 |
 | 数据库驱动 | mysql-connector-j 8.4.0（生产 MySQL 8.0；仓内**没有** H2，profile `dev` 无对应 `application-dev.yml`） |
 | 模块数据源 | `z-boot-datasource-starter:1.0.21` 的 `ModuleDataSourceTemplate`，配置前缀 `z.base.db.task.*` |
@@ -135,7 +135,7 @@ z-task/
 
 ## 🚀 快速开始
 
-### 编译（需要能解析到 repo1 上的 z-boot-parent:1.2.1）
+### 编译（需要能解析到 repo1 上的 z-boot-parent:1.2.2）
 
 ```bash
 cd z-task
@@ -143,7 +143,7 @@ mvn clean install -DskipTests
 ```
 
 模块 POM 里不写字面第三方版本；若报"找不到版本"，先确认能解析
-`io.github.yuku123:z-boot-parent:1.2.1`（其父 `z-boot:1.0.19`；第三方地板与兄弟仓权威表均已并进 parent 自身）。
+`io.github.yuku123:z-boot-parent:1.2.2`（其父 `z-boot:1.0.19`；第三方地板与兄弟仓权威表均已并进 parent 自身）。
 
 ### 起后端
 
