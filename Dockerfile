@@ -1,5 +1,5 @@
 # 基础镜像：Eclipse Temurin 8 JDK（支持amd64/arm64架构，M系列Mac可用）
-FROM eclipse-temurin:8-jdk
+FROM eclipse-temurin:17-jdk
 # 高版本镜像（需要时启用）：
 # FROM eclipse-temurin:11-jdk
 # FROM eclipse-temurin:17-jdk
