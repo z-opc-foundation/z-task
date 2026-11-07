@@ -218,8 +218,8 @@ npm run build    # 产物在 _frontend/dist，需人工拷到 z-task-web/src/mai
 | `/api/task-label/task`、`/label` | GET | 按任务/按标签查关联 |
 | `/api/task-label/task/label/attach` | POST | 打标签 |
 | `/api/task-label/task/label/detach` | DELETE | 摘标签 |
-| `/api/sync-user?userId=` | GET | 查镜像用户（**免鉴权**，见风险表） |
-| `/api/sync-user/sync` | POST | 写入/更新镜像用户（**免鉴权**） |
+| `/api/sync-user?userId=` | GET | 查镜像用户（机对机，需 `X-ZTask-Sync-Token`，见「用户同步鉴权」） |
+| `/api/sync-user/sync` | POST | 写入/更新镜像用户（机对机，需 `X-ZTask-Sync-Token`；写库） |
 | `/api/todo/projects` | GET / POST | 待办项目列表（owner + joined）/ 新建 |
 | `/api/todo/projects/{id}` | GET / PUT / DELETE | 取单个项目 / 更新 / 删除 |
 | `/api/todo/projects/{id}/members` | POST | 加项目成员 |
@@ -256,7 +256,10 @@ mvn -pl z-task-core test
 `ProjectBizServiceImplTest`；支撑类 `support/Proxies` 用 JDK 动态代理 + 反射注入按方法名分发返回值，
 内存 Map 充当存储 —— **零 Mockito、零 DB 依赖**（家法：不引 Mockito）。
 `TodoSpaceServiceTest` 是待办项目空间的文件沙箱守卫（真实文件系统断言，14 个用例）。
-`z-task-admin` 另有 `E2ESqlMigrationRunnerTest`（迁移脚本端到端）；`z-task-web` 目前没有测试类。
+`z-task-admin` 另有 `E2ESqlMigrationRunnerTest`（迁移脚本端到端）与
+`SyncUserTokenInterceptorTest`（`/api/sync-user/**` 专用 token 闸门：无 token / 错 token /
+未配置 token / 正确 token 四种鉴权场景 + 拦截器注册契约）；`z-task-web` 目前没有测试类
+（闸门实现在 web、测试放在依赖它的 admin 模块执行）。
 
 本轮 README 更新按作业单要求未执行 `mvn`（禁止跑构建），所以这里只登记"用例数与构造方式"实测结论，
 不声明"跑绿"；`z-task-admin/target` 下存在 1.0.0/1.0.1 产物可反证该 reactor 能构建成功。
@@ -289,11 +292,30 @@ sh _doc/003_script/start.sh     # 打包后 mvn spring-boot:run
 
 | 级别 | 内容 |
 |------|------|
-| P1 | `/api/sync-user/**` 在 `sso.exclude-paths` 中**免鉴权**（服务端用户同步端点，没有 service token 机制）；独立部署时勿把该端口暴露公网 |
+| ~~P1 已闭环~~ | `/api/sync-user/**` 本轮已补上专用 service token 鉴权（见下「用户同步鉴权」）：已从 `sso.exclude-paths` 移除，未配置 token 时端点 401 fail-closed；旧「免鉴权 / 没有 service token 机制 / 已知风险」口径作废 |
 | P1 | [`Dockerfile`](Dockerfile) 的 `COPY z-task-admin/target/z-task-admin-1.0.1-SNAPSHOT.jar app.jar` 已过时：版本换 1.0.1 后实际产物是 `z-task-admin-1.0.1.jar`（无 classifier），照此 `docker build` 会 COPY 失败。本轮只改 README，脚本与 Dockerfile 待单独纠偏 |
 | P2 | [`_doc/003_script/package.sh`](_doc/003_script/package.sh) 仍 `cd z-task-frontend`（实际目录是 `_frontend`），并把 dist 拷进 `z-task-admin/src/main/resources/static`（该目录不存在，静态资源实际在 `z-task-web/src/main/resources/static`）；另硬编码了作者本机 `JAVA_HOME` |
 | P2 | DB 走 `z.base.db.task.*`，未注入时回退 `127.0.0.1:3306` / `root` / 空口令 —— 服务能起，但业务接口会因连不上库而失败 |
 | P2 | z-camuda（审批转任务）、z-schedule（到期提醒）联动为规划项，本仓代码未落地；`z_checklist` / `z_comment` / `z_attachment` / `z_activity` 四表建了但无实体 |
+
+### 🔐 用户同步鉴权（机对机，已闭环）
+
+`/api/sync-user/**` 是服务间同步用户镜像数据的入口（`POST /api/sync-user/sync` 会写
+`z_task_sync_user`），没有用户 SSO cookie，因此**不套用用户 SSO 拦截**：`SyncUserController`
+标注 `@NoLogin` 让 z-ctc-sso 的用户态闸门放行，改由 `SyncUserTokenInterceptor` 独立校验专用
+service token。已从 `sso.exclude-paths` 移除 `/api/sync-user/**`，旧「免鉴权 / 已知风险」口径作废。
+
+| 项 | 值 / 口径 |
+|----|-----------|
+| 服务端环境变量 | `ZTASK_SYNC_USER_TOKEN`（对应配置 `z-task.sync-user.token`） |
+| 调用方请求头 | `X-ZTask-Sync-Token: <token>` |
+| 未配置 token | 该组端点**一律返回 401（fail-closed）**，绝不静默放行 |
+| 缺失 / 错误 token | 401；比对用 `MessageDigest.isEqual` 常量时间；token 不进日志、不回显 |
+
+> **跨仓联动**：调用本端点的机对机发起方（含任何前端 / 网关代理）需同步带上上述请求头。
+> z-opc 仓 `z-opc-main-starter-frontend/src/api/types/schema.d.ts` 是 OpenAPI 生成的类型快照，
+> 若重新生成需一并带上该 header 声明。本仓内无调用方（`_frontend` 无引用，service 是被调方），
+> 故本轮无需改仓内调用点。
 
 ---
 

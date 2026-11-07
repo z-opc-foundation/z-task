@@ -67,20 +67,29 @@ z-task:
   workspace:
     base-dir: ${ZTASK_WORKSPACE_BASE_DIR:${user.home}/z_team}
     env: ${ZTASK_WORKSPACE_ENV:prod}
+  # ----------------------------------------------------------
+  # 用户同步端点的专用 service token (机对机, /api/sync-user/**).
+  # ⚠ 未配置 / 为空 ⇒ SyncUserTokenInterceptor 对该组端点一律 401 (fail-closed),
+  #    端点绝不静默放行。真实值只走环境变量 ZTASK_SYNC_USER_TOKEN, 不落仓库。
+  # ----------------------------------------------------------
+  sync-user:
+    token: ${ZTASK_SYNC_USER_TOKEN:}
 
 # ------------------------------------------------------------
-# 4A 中心 SSO (z-ctc-sso): JWT 鉴权
-# 注意: /api/sync-user/** 为服务端同步端点, 免鉴权 (已知风险, 见 README)
+# 4A 中心 SSO (z-ctc-sso): 用户态 JWT 鉴权
+# /api/sync-user/** 是机对机端点、没有用户 SSO cookie: Controller 标 @NoLogin 让用户 SSO
+# 闸门放行, 由 SyncUserTokenInterceptor 用专用 service token 独立把关
+# (环境变量 ZTASK_SYNC_USER_TOKEN, 请求头 X-ZTask-Sync-Token); 未配置 token 一律 401
+# (fail-closed)。详见 README「用户同步鉴权」。
 # ------------------------------------------------------------
 sso:
   enabled: true
   token-cookie-name: zifang_token
-  # SSO 排除路径 (不需要鉴权)
+  # SSO 排除路径 (不需要用户 SSO 鉴权)
   exclude-paths:
     - /login
     - /api/auth/login
     - /api/auth/register
-    - /api/sync-user/**
     - /doc.html
     - /v3/api-docs/**
     - /v2/api-docs/**

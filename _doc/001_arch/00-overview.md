@@ -64,6 +64,6 @@ z-task/
 
 | 级别 | 内容 |
 |-----|------|
-| P1 | `/api/sync-user/**` 在 SSO exclude-paths 中免鉴权（服务端同步端点，无 service token 机制，部署时勿暴露公网） |
+| ~~P1 已闭环~~ | `/api/sync-user/**` 已从 SSO exclude-paths 移除，改由专用 service token 校验（环境变量 `ZTASK_SYNC_USER_TOKEN` / 请求头 `X-ZTask-Sync-Token`，未配置即 401 fail-closed）；详见 README「用户同步鉴权」 |
 | P2 | z-camuda / z-schedule 联动为规划项，代码未落地 |
 | P2 | 实体通过 @TableField 桥接旧列名（title→name, dueDate→deadline, gmt_*），新表已按桥接后真实列名建表 |
