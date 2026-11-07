@@ -38,6 +38,13 @@ const zteamProxy = DIRECT_TO_ZTASK
 export default defineConfig({
     plugins: [safeEmptyOutDir(), react()],
     resolve: {
+        /**
+         * 2026-11-07：z-task-component 内兄弟包（@yuku123/z-markdown-component 等）以
+         * symlink 形式挂在 suit/node_modules。vite 默认 follow symlink ⇒ 解析沿
+         * realpath（../z-task-component/...）向上找 node_modules ⇒ 兄弟包解析失败。
+         * preserveSymlinks 让模块查找以 symlink 所在处（suit/node_modules）为基准。
+         */
+        preserveSymlinks: true,
         // react / antd / dayjs 必须 dedupe：组件包走软链（本地兄弟仓）时，
         // 否则会出现「一份在 z-task-component/node_modules、一份在 suit/node_modules」
         // ⇒ 双实例 React ⇒ Invalid hook call；dayjs 双实例则让 antd 的 locale 失效。

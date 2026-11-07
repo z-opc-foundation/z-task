@@ -15,7 +15,7 @@
     "@ant-design/icons": "^6.1.0",
     "@ant-design/pro-components": "^3.1.12-0",
     "@yuku123/z-frontend-common": "^1.1.7",
-    "@yuku123/z-markdown-component": "file:../../../z-markdown-component",
+    "@yuku123/z-markdown-component": "^0.1.0",
     "@yuku123/z-task-component": "file:../z-task-component",
     "antd": "^6.3.3",
     "axios": "^1.16.1",
