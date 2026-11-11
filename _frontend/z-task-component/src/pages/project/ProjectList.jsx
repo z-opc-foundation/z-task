@@ -1,6 +1,6 @@
 import {useEffect, useState} from 'react'
 import {Button, Form, Input, message, Modal, Space, Tag} from 'antd'
-import {EditOutlined, PlusOutlined} from '@ant-design/icons'
+import {PlusOutlined} from '@ant-design/icons';
 import {ListTable} from '@yuku123/z-frontend-common/ui'
 import {archiveProject, createProject, getProjectListByUser} from '../../services/api'
 
@@ -92,11 +92,11 @@ export default function ProjectList() {
             key: 'action',
             render: (_, record) => (
                 <Space size="middle">
-                    <Button type="link" icon={<EditOutlined/>}>
+                    <Button type="link" size="small">
                         编辑
                     </Button>
                     {record.status === 1 && (
-                        <Button type="link" danger onClick={() => handleArchive(record.id)}>
+                        <Button type="link" size="small" danger onClick={() => handleArchive(record.id)}>
                             归档
                         </Button>
                     )}

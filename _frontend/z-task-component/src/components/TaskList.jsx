@@ -1,6 +1,6 @@
 import {useEffect, useState} from 'react'
 import {Button, Form, Input, message, Modal, Select, Space, Tag} from 'antd'
-import {CheckOutlined, EyeOutlined, PlusOutlined} from '@ant-design/icons'
+import {PlusOutlined} from '@ant-design/icons';
 import {taskApi} from '../api'
 import {ErrorState, ListTable, PageHeader, TableToolbar} from '@yuku123/z-frontend-common/ui'
 import TaskDetailDrawer from './TaskDetailDrawer'
@@ -118,14 +118,14 @@ export default function TaskList({apiBaseURL, back}) {
             title: '操作', width: 200, fixed: 'right',
             render: (_, row) => (
                 <Space>
-                    <Button size="small" icon={<EyeOutlined/>}
+                    <Button type="link" size="small"
                             onClick={() => {
                                 setSelectedTask(row);
                                 setDetailOpen(true)
                             }}>
                         查看
                     </Button>
-                    <Button size="small" type="primary" icon={<CheckOutlined/>}
+                    <Button size="small" type="primary"
                             onClick={() => onComplete(row.id)}
                             disabled={row.status === 2}>
                         完成

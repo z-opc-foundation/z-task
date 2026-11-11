@@ -5,7 +5,7 @@
  * 本仓不再手写 pagination={{...}}，避免各页分页参数口径分裂。
  */
 import {Button, Space, Tag} from 'antd'
-import {CheckCircleOutlined, DeleteOutlined, EditOutlined} from '@ant-design/icons'
+
 import {ListTable} from '@yuku123/z-frontend-common/ui'
 
 const priorityMap = {high: 'red', medium: 'orange', low: 'green'}
@@ -41,14 +41,14 @@ export default function TaskTable({dataSource, loading, onEdit, onDelete, onComp
             render: (_, record) => (
                 <Space>
                     {record.status !== 'completed' && (
-                        <Button size="small" icon={<CheckCircleOutlined/>} onClick={() => onComplete?.(record)}>
+                        <Button type="link" size="small" onClick={() => onComplete?.(record)}>
                             完成
                         </Button>
                     )}
-                    <Button size="small" icon={<EditOutlined/>} onClick={() => onEdit?.(record)}>
+                    <Button type="link" size="small" onClick={() => onEdit?.(record)}>
                         编辑
                     </Button>
-                    <Button size="small" danger icon={<DeleteOutlined/>} onClick={() => onDelete?.(record)}>
+                    <Button type="link" size="small" danger onClick={() => onDelete?.(record)}>
                         删除
                     </Button>
                 </Space>

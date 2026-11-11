@@ -17,12 +17,10 @@ import {
 } from 'antd'
 import {
     CheckOutlined,
-    DeleteOutlined,
-    EditOutlined,
     InboxOutlined,
     PlusOutlined,
-    UnorderedListOutlined
-} from '@ant-design/icons'
+    UnorderedListOutlined,
+} from '@ant-design/icons';
 import {ListTable} from '@yuku123/z-frontend-common/ui'
 import {taskApi} from '../api'
 
@@ -174,9 +172,9 @@ export default function ProjectList({apiBaseURL}) {
             title: '操作', width: 160, fixed: 'right',
             render: (_, row) => (
                 <Space>
-                    <Button size="small" icon={<EditOutlined/>} onClick={() => onEdit(row)}>编辑</Button>
+                    <Button type="link" size="small" onClick={() => onEdit(row)}>编辑</Button>
                     <Popconfirm title="确定归档该项目?" onConfirm={() => onArchive(row.id)}>
-                        <Button size="small" danger icon={<DeleteOutlined/>}>归档</Button>
+                        <Button type="link" size="small" danger>归档</Button>
                     </Popconfirm>
                 </Space>
             ),

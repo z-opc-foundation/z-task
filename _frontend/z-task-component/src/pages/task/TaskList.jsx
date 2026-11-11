@@ -1,6 +1,6 @@
 import {useEffect, useState} from 'react'
 import {Button, message, Select, Space, Tag} from 'antd'
-import {EditOutlined, PlusOutlined} from '@ant-design/icons'
+import {PlusOutlined} from '@ant-design/icons';
 import {useNavigate} from 'react-router-dom'
 import {ListTable} from '@yuku123/z-frontend-common/ui'
 import {completeTask, getTaskListByList, reopenTask} from '../../services/api'
@@ -86,13 +86,13 @@ export default function TaskList() {
             key: 'action',
             render: (_, record) => (
                 <Space size="middle">
-                    <Button type="link" icon={<EditOutlined/>} onClick={() => navigate(`/z-task/task/edit/${record.id}`)}>
+                    <Button type="link" size="small" onClick={() => navigate(`/z-task/task/edit/${record.id}`)}>
                         编辑
                     </Button>
                     {record.status === 2 ? (
-                        <Button type="link" onClick={() => handleReopen(record.id)}>重新打开</Button>
+                        <Button type="link" size="small" onClick={() => handleReopen(record.id)}>重新打开</Button>
                     ) : (
-                        <Button type="link" onClick={() => handleComplete(record.id)}>完成</Button>
+                        <Button type="link" size="small" onClick={() => handleComplete(record.id)}>完成</Button>
                     )}
                 </Space>
             )
