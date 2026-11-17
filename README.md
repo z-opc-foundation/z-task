@@ -296,7 +296,7 @@ sh _doc/003_script/start.sh     # 打包后 mvn spring-boot:run
 | P1 | [`Dockerfile`](Dockerfile) 的 `COPY z-task-admin/target/z-task-admin-1.0.1-SNAPSHOT.jar app.jar` 已过时：版本换 1.0.1 后实际产物是 `z-task-admin-1.0.1.jar`（无 classifier），照此 `docker build` 会 COPY 失败。本轮只改 README，脚本与 Dockerfile 待单独纠偏 |
 | P2 | [`_doc/003_script/package.sh`](_doc/003_script/package.sh) 仍 `cd z-task-frontend`（实际目录是 `_frontend`），并把 dist 拷进 `z-task-admin/src/main/resources/static`（该目录不存在，静态资源实际在 `z-task-web/src/main/resources/static`）；另硬编码了作者本机 `JAVA_HOME` |
 | P2 | DB 走 `z.base.db.task.*`，未注入时回退 `127.0.0.1:3306` / `root` / 空口令 —— 服务能起，但业务接口会因连不上库而失败 |
-| P2 | z-camuda（审批转任务）、z-schedule（到期提醒）联动为规划项，本仓代码未落地；`z_checklist` / `z_comment` / `z_attachment` / `z_activity` 四表建了但无实体 |
+| P2 | z-wf（原 z-camuda，2026-11-17 退役归档后由 z-wf-admin 兼容层承接；审批转任务）、z-schedule（到期提醒）联动为规划项，本仓代码未落地；`z_checklist` / `z_comment` / `z_attachment` / `z_activity` 四表建了但无实体 |
 
 ### 🔐 用户同步鉴权（机对机，已闭环）
 
