@@ -28,8 +28,8 @@
 
 | 仓 | 技术栈 | 证据 |
 |---|---|---|
-| **z-opc（主壳）** | Spring Boot 2.7.18 / Java 8 | `z-opc/pom.xml` parent `z-boot-parent:1.0.21`，pluginManagement 下发 `spring-boot.version=2.7.18`、`maven.compiler.source/target=8` |
-| **z-team** | Spring Boot 2.7.18 / Java 8 | parent `z-boot-parent:1.1.0`，同口径 |
+| **z-opc（主壳）** | Spring Boot 2.7.18 / Java 8 | `z-opc/pom.xml` parent `z-boot-parent:1.2.4`，pluginManagement 下发 `spring-boot.version=2.7.18`、`maven.compiler.source/target=8` |
+| **z-team** | Spring Boot 2.7.18 / Java 8 | parent `z-boot-parent:1.2.4`，同口径 |
 | **z-task（仓内）** | Spring Boot 3 / Java 17 | 提交 `22e7770 chore(java17): 迁移至 JDK 17 + Spring Boot 3 火车`；实测 `mvn compile` 输出 `javac [debug target 17]` |
 | **z-task（中央已发布 1.0.0）** | Spring Boot 2 / Java 8 | `~/.m2/.../z-task-web-1.0.0.jar` 内 `TaskMyBatisConfig.class` 实测 **major version 52**（= Java 8），签名用 `javax.sql.DataSource`；jar 内是 `META-INF/spring.factories`（SB2 形态） |
 

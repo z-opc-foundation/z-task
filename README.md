@@ -15,7 +15,7 @@
 |------|-----|
 | **仓库** | `z-task`（`git@github.com:z-opc-foundation/z-task.git`，分支 `main`） |
 | **Maven 坐标** | `io.github.yuku123:z-task:1.0.1`（根 POM `packaging=pom`；**没有 `<revision>` 属性**，版本是直写的 `<version>1.0.1</version>`，三个子模块的 parent 逐字同一面值） |
-| **父项目** | `io.github.yuku123:z-boot-parent:1.2.2`（`<relativePath/>` 留空，parent 在 repo1 不在磁盘）；父链自带第三方地板与兄弟仓权威表 |
+| **父项目** | `io.github.yuku123:z-boot-parent:1.2.4`（`<relativePath/>` 留空，parent 在 repo1 不在磁盘）；父链自带第三方地板与兄弟仓权威表 |
 | **Maven Central** | 已发布（2026-09-30 实测 200）：`z-task:1.0.0`（pom）、`z-task-core:1.0.0`、`z-task-web:1.0.0`（pom + jar 均可拉）；未发布（2026-09-30 实测 404）：`z-task-admin`、`z-task-frontend` |
 | **默认端口** | `8082`（`server.port`，`server.servlet.context-path: /`）· Docker 容器内 `8080` · 前端 Vite dev `3009`（`_frontend/z-task-suit/vite.config.js`） |
 | **运行口径** | Java 17（parent 下发 `maven.compiler.source/target=17`）· Spring Boot 3.3.13（实测产物 `spring-boot-2.7.18.jar`） |
@@ -52,7 +52,7 @@
 
 ```
 z-task/
-├── pom.xml                # 根聚合 POM：parent z-boot-parent:1.2.2、常开 flatten(oss)、central profile
+├── pom.xml                # 根聚合 POM：parent z-boot-parent:1.2.4、常开 flatten(oss)、central profile
 ├── Dockerfile             # eclipse-temurin:8-jdk，容器内 SERVER_PORT=8080
 ├── LICENSE                # MIT License
 ├── z-task-core/           # 领域层：11 个实体 + 11 个 Mapper + Service 接口/实现 + 决策层单测
@@ -115,7 +115,7 @@ z-task/
 | 层级 | 实测版本 |
 |------|----------|
 | 语言 / 运行时 | Java 17（Docker 基础镜像 `eclipse-temurin:8-jdk`） |
-| 框架 | Spring Boot 2.7.18（由 `z-boot-parent:1.2.2` 下发） |
+| 框架 | Spring Boot 2.7.18（由 `z-boot-parent:1.2.4` 下发） |
 | 持久层 | MyBatis-Plus 3.5.7 + mybatis 3.5.16 + Druid 1.2.23 |
 | 数据库驱动 | mysql-connector-j 8.4.0（生产 MySQL 8.0；仓内**没有** H2，profile `dev` 无对应 `application-dev.yml`） |
 | 模块数据源 | `z-boot-datasource-starter:1.0.21` 的 `ModuleDataSourceTemplate`，配置前缀 `z.base.db.task.*` |
@@ -135,7 +135,7 @@ z-task/
 
 ## 🚀 快速开始
 
-### 编译（需要能解析到 repo1 上的 z-boot-parent:1.2.2）
+### 编译（需要能解析到 repo1 上的 z-boot-parent:1.2.4）
 
 ```bash
 cd z-task
@@ -143,7 +143,7 @@ mvn clean install -DskipTests
 ```
 
 模块 POM 里不写字面第三方版本；若报"找不到版本"，先确认能解析
-`io.github.yuku123:z-boot-parent:1.2.2`（其父 `z-boot:1.0.19`；第三方地板与兄弟仓权威表均已并进 parent 自身）。
+`io.github.yuku123:z-boot-parent:1.2.4`（其父 `z-boot:1.0.19`；第三方地板与兄弟仓权威表均已并进 parent 自身）。
 
 ### 起后端
 
@@ -325,8 +325,8 @@ service token。已从 `sso.exclude-paths` 移除 `/api/sync-user/**`，旧「�
 |-------------|------|
 | —— · `1f37340` | 启动模块 `z-task-starter` 改名 `z-task-admin`（模块划分对齐组织规范）；本 README 中所有启动模块路径已同步 |
 | `1.0.1` · `44f55fc` | 坐标换 `io.github.yuku123:z-task:1.0.1`（原 `com.zifang:z-task:1.0.1-SNAPSHOT`），补 central 发布通道（flatten(oss) 常开 + `excludeArtifacts z-task-starter`），`z-task`/`z-task-core`/`z-task-web` 三件上中央；Java 包名保持 `com.zifang.*` |
-| —— · `6661606` | 消费入口抬到 `z-boot-parent:1.0.21`（Spring Boot 随之回到 2.7.18，此前 README/文档写的 2.7.12 已失效） |
-| —— · `c2e0e9d` | 消费入口从悬空的 `com.zifang:z-opc` 换成 `io.github.yuku123:z-boot-parent:1.0.19`，删除四个死属性（`z-boot.version` / `z-ctc.version` / `knife4j.version` / `java.version`） |
+| —— · `6661606` | 消费入口抬到 `z-boot-parent:1.2.4`（Spring Boot 随之回到 2.7.18，此前 README/文档写的 2.7.12 已失效） |
+| —— · `c2e0e9d` | 消费入口从悬空的 `com.zifang:z-opc` 换成 `io.github.yuku123:z-boot-parent:1.2.4`，删除四个死属性（`z-boot.version` / `z-ctc.version` / `knife4j.version` / `java.version`） |
 | `2026-09-24` · `394fcf7` | 对齐 z-boot 家族标准架构：配置去明文凭证改环境变量、删除死配置 `spring.datasource`、`TaskController` 迁移到 `api/` + Req/Resp DTO、SQL 三方漂移收口为权威 `schema.sql`、补 37 例决策层单测 |
 | `2026-09-06` · `40e3b9c` | 从 z-opc monorepo 拆出独立仓（组织级历史塌缩） |
 
