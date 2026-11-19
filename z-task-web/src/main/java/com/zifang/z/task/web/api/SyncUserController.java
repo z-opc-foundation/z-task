@@ -1,14 +1,16 @@
 package com.zifang.z.task.web.api;
 
 import com.zifang.util.core.meta.Result;
+import com.zifang.z.meta.api.annotation.BizApi;
+import com.zifang.z.meta.api.annotation.BizField;
+import com.zifang.z.meta.api.annotation.BizParam;
 import com.zifang.z.task.core.domain.entity.SyncUser;
 import com.zifang.z.task.core.service.SyncUserService;
 import com.zifang.z.task.web.security.NoLogin;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import org.springframework.web.bind.annotation.*;
-
 import jakarta.annotation.Resource;
+import org.springframework.web.bind.annotation.*;
 
 /**
  * 用户同步 Controller (z-task 镜像 z-ctc-ac 用户表).
@@ -47,7 +49,8 @@ public class SyncUserController {
      */
     @Operation(summary = "按 userId 查")
     @GetMapping
-    public Result<SyncUser> getByUserId(@RequestParam String userId) {
+    @BizApi(summary = "按 userId 查询同步用户", description = "按 userId 查询同步用户.", tags = { "z-task" })
+    public Result<SyncUser> getByUserId(@RequestParam @BizParam(name = "userId", type = BizField.FieldType.STRING, description = "用户 ID", position = BizParam.Position.QUERY) String userId) {
         return Result.success(syncUserService.getByUserId(userId));
     }
 
@@ -59,7 +62,11 @@ public class SyncUserController {
      */
     @Operation(summary = "同步或更新用户")
     @PostMapping("/sync")
-    public Result<Boolean> sync(@RequestBody SyncUser syncUser) {
+    @BizApi(summary = "同步或更新用户", description = "同步或更新用户.", tags = { "z-task" })
+    public Result<Boolean> sync(@RequestBody @BizParam(name = "syncUser", type = BizField.FieldType.STRING, description = "同步用户实体", position = BizParam.Position.BODY) SyncUser syncUser) {
         return Result.success(syncUserService.syncUser(syncUser));
     }
 }
+
+
+

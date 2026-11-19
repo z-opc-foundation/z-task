@@ -2,14 +2,17 @@ package com.zifang.z.task.web.api;
 
 import com.zifang.ctc.sso.model.UserInfo;
 import com.zifang.util.core.meta.Result;
+import com.zifang.z.meta.api.annotation.BizApi;
+import com.zifang.z.meta.api.annotation.BizField;
+import com.zifang.z.meta.api.annotation.BizParam;
 import com.zifang.z.task.core.domain.entity.TaskList;
 import com.zifang.z.task.core.service.TaskListService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import org.springframework.web.bind.annotation.*;
-
 import jakarta.annotation.Resource;
 import jakarta.servlet.http.HttpServletRequest;
+import org.springframework.web.bind.annotation.*;
+
 import java.util.List;
 
 /**
@@ -59,7 +62,8 @@ public class TaskListController {
      */
     @Operation(summary = "按看板列任务列表")
     @GetMapping("/board")
-    public Result<List<TaskList>> listByBoard(@RequestParam Long boardId) {
+    @BizApi(summary = "按看板列任务列表", description = "按看板列任务列表.", tags = { "z-task" })
+    public Result<List<TaskList>> listByBoard(@RequestParam @BizParam(name = "boardId", type = BizField.FieldType.INTEGER, description = "看板 ID", position = BizParam.Position.QUERY) Long boardId) {
         return Result.success(taskListService.getListsByBoard(boardId));
     }
 
@@ -69,8 +73,10 @@ public class TaskListController {
      */
     @Operation(summary = "按 listId 列出 (makeApi 友好)")
     @GetMapping("/list")
+    @BizApi(summary = "按 listId 列出 (FE makeApi('task-list').list 友好别名)", description = "按 listId 列出 (FE makeApi('task-list').list 友好别名). GET /api/task-list/list?listId=1 — 单条 listId 时返回单条;不带参数时列出全部.", tags = { "z-task" })
     public Result<List<TaskList>> listByListIdAlias(
-            @RequestParam(required = false) Long listId) {
+            @RequestParam(required = false)
+            @BizParam(name = "listId", type = BizField.FieldType.INTEGER, description = "", position = BizParam.Position.QUERY) Long listId) {
         if (listId == null) {
             return Result.success(taskListService.list());
         }
@@ -84,9 +90,12 @@ public class TaskListController {
      */
     @Operation(summary = "分页列出 (makeApi 友好)")
     @GetMapping("/page")
+    @BizApi(summary = "分页列出所有任务列表 (FE makeApi('task-list').page 友好别名)", description = "分页列出所有任务列表 (FE makeApi('task-list').page 友好别名). GET /api/task-list/page?pageNum=1&pageSize=20", tags = { "z-task" })
     public Result<com.baomidou.mybatisplus.core.metadata.IPage<TaskList>> pageAlias(
-            @RequestParam(defaultValue = "1") Integer pageNum,
-            @RequestParam(defaultValue = "20") Integer pageSize) {
+            @RequestParam(defaultValue = "1")
+            @BizParam(name = "pageNum", type = BizField.FieldType.INTEGER, description = "", position = BizParam.Position.QUERY) Integer pageNum,
+            @RequestParam(defaultValue = "20")
+            @BizParam(name = "pageSize", type = BizField.FieldType.INTEGER, description = "", position = BizParam.Position.QUERY) Integer pageSize) {
         com.baomidou.mybatisplus.extension.plugins.pagination.Page<TaskList> page =
                 new com.baomidou.mybatisplus.extension.plugins.pagination.Page<>(pageNum, pageSize);
         return Result.success(taskListService.page(page));
@@ -100,7 +109,8 @@ public class TaskListController {
      */
     @Operation(summary = "详情")
     @GetMapping
-    public Result<TaskList> get(@RequestParam(required = false) Long id) {
+    @BizApi(summary = "查询任务列表详情", description = "查询任务列表详情.", tags = { "z-task" })
+    public Result<TaskList> get(@RequestParam(required = false) @BizParam(name = "id", type = BizField.FieldType.INTEGER, description = "任务列表 ID", position = BizParam.Position.QUERY) Long id) {
         if (id == null) {
             return Result.success(null);
         }
@@ -116,7 +126,8 @@ public class TaskListController {
      */
     @Operation(summary = "新建任务列表")
     @PostMapping
-    public Result<TaskList> create(@RequestBody TaskList taskList, HttpServletRequest request) {
+    @BizApi(summary = "新建任务列表", description = "新建任务列表.", tags = { "z-task" })
+    public Result<TaskList> create(@RequestBody @BizParam(name = "taskList", type = BizField.FieldType.STRING, description = "任务列表实体", position = BizParam.Position.BODY) TaskList taskList, HttpServletRequest request) {
         return Result.success(taskListService.createList(taskList, userId(request)));
     }
 
@@ -128,7 +139,8 @@ public class TaskListController {
      */
     @Operation(summary = "更新任务列表")
     @PutMapping
-    public Result<Boolean> update(@RequestBody TaskList taskList) {
+    @BizApi(summary = "更新任务列表", description = "更新任务列表.", tags = { "z-task" })
+    public Result<Boolean> update(@RequestBody @BizParam(name = "taskList", type = BizField.FieldType.STRING, description = "任务列表实体", position = BizParam.Position.BODY) TaskList taskList) {
         return Result.success(taskListService.updateById(taskList));
     }
 
@@ -140,7 +152,8 @@ public class TaskListController {
      */
     @Operation(summary = "删除任务列表")
     @DeleteMapping
-    public Result<Boolean> delete(@RequestParam Long id) {
+    @BizApi(summary = "删除任务列表", description = "删除任务列表.", tags = { "z-task" })
+    public Result<Boolean> delete(@RequestParam @BizParam(name = "id", type = BizField.FieldType.INTEGER, description = "任务列表 ID", position = BizParam.Position.QUERY) Long id) {
         return Result.success(taskListService.removeById(id));
     }
 
@@ -153,7 +166,8 @@ public class TaskListController {
      */
     @Operation(summary = "归档任务列表")
     @PutMapping("/archive")
-    public Result<Boolean> archive(@RequestParam Long id, HttpServletRequest request) {
+    @BizApi(summary = "归档任务列表", description = "归档任务列表.", tags = { "z-task" })
+    public Result<Boolean> archive(@RequestParam @BizParam(name = "id", type = BizField.FieldType.INTEGER, description = "任务列表 ID", position = BizParam.Position.QUERY) Long id, HttpServletRequest request) {
         return Result.success(taskListService.archiveList(id, userId(request)));
     }
 
@@ -166,7 +180,11 @@ public class TaskListController {
      */
     @Operation(summary = "更新排序")
     @PutMapping("/sort")
-    public Result<Boolean> updateSort(@RequestParam Long id, @RequestParam Integer sortOrder) {
+    @BizApi(summary = "更新任务列表排序", description = "更新任务列表排序.", tags = { "z-task" })
+    public Result<Boolean> updateSort(@RequestParam @BizParam(name = "id", type = BizField.FieldType.INTEGER, description = "任务列表 ID", position = BizParam.Position.QUERY) Long id, @RequestParam @BizParam(name = "sortOrder", type = BizField.FieldType.INTEGER, description = "新的排序值", position = BizParam.Position.QUERY) Integer sortOrder) {
         return Result.success(taskListService.updateSortOrder(id, sortOrder));
     }
 }
+
+
+

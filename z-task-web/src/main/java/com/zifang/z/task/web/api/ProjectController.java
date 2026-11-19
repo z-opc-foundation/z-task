@@ -2,17 +2,20 @@ package com.zifang.z.task.web.api;
 
 import com.zifang.ctc.sso.model.UserInfo;
 import com.zifang.util.core.meta.Result;
+import com.zifang.z.meta.api.annotation.BizApi;
+import com.zifang.z.meta.api.annotation.BizField;
+import com.zifang.z.meta.api.annotation.BizParam;
 import com.zifang.z.task.core.service.ProjectBizService;
 import com.zifang.z.task.core.service.dto.ProjectDTO;
 import com.zifang.z.task.web.api.request.ProjectReq;
 import com.zifang.z.task.web.api.response.ProjectResp;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.annotation.Resource;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.BeanUtils;
 import org.springframework.web.bind.annotation.*;
 
-import jakarta.annotation.Resource;
-import jakarta.servlet.http.HttpServletRequest;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -58,6 +61,7 @@ public class ProjectController {
      */
     @Operation(summary = "获取当前用户参与的项目")
     @GetMapping("/user/list")
+    @BizApi(summary = "获取当前用户参与的项目", description = "获取当前用户参与的项目.", tags = { "z-task" })
     public Result<List<ProjectResp>> listByUser(HttpServletRequest request) {
         List<ProjectResp> data = projectBizService.listByUser(userId(request)).stream()
                 .map(this::toResp).collect(Collectors.toList());
@@ -73,7 +77,8 @@ public class ProjectController {
      */
     @Operation(summary = "创建项目")
     @PostMapping
-    public Result<ProjectResp> create(@RequestBody ProjectReq req, HttpServletRequest request) {
+    @BizApi(summary = "创建项目", description = "创建项目.", tags = { "z-task" })
+    public Result<ProjectResp> create(@RequestBody @BizParam(name = "req", type = BizField.FieldType.STRING, description = "项目创建请求", position = BizParam.Position.BODY) ProjectReq req, HttpServletRequest request) {
         ProjectDTO dto = new ProjectDTO();
         BeanUtils.copyProperties(req, dto);
         return Result.success(toResp(projectBizService.create(dto, userId(request))));
@@ -89,7 +94,8 @@ public class ProjectController {
      */
     @Operation(summary = "更新项目")
     @PutMapping
-    public Result<ProjectResp> update(@RequestParam Long projectId, @RequestBody ProjectReq req, HttpServletRequest request) {
+    @BizApi(summary = "更新项目", description = "更新项目.", tags = { "z-task" })
+    public Result<ProjectResp> update(@RequestParam @BizParam(name = "projectId", type = BizField.FieldType.INTEGER, description = "项目 ID", position = BizParam.Position.QUERY) Long projectId, @RequestBody @BizParam(name = "req", type = BizField.FieldType.STRING, description = "项目更新请求", position = BizParam.Position.BODY) ProjectReq req, HttpServletRequest request) {
         req.setId(projectId);
         ProjectDTO dto = new ProjectDTO();
         BeanUtils.copyProperties(req, dto);
@@ -105,7 +111,8 @@ public class ProjectController {
      */
     @Operation(summary = "归档项目")
     @PutMapping("/archive")
-    public Result<Boolean> archive(@RequestParam Long projectId, HttpServletRequest request) {
+    @BizApi(summary = "归档项目", description = "归档项目.", tags = { "z-task" })
+    public Result<Boolean> archive(@RequestParam @BizParam(name = "projectId", type = BizField.FieldType.INTEGER, description = "项目 ID", position = BizParam.Position.QUERY) Long projectId, HttpServletRequest request) {
         return Result.success(projectBizService.archive(projectId, userId(request)));
     }
 
@@ -122,3 +129,6 @@ public class ProjectController {
         return resp;
     }
 }
+
+
+

@@ -2,6 +2,7 @@ package com.zifang.z.task.core.service.impl;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.zifang.util.core.meta.ResultCode;
+import com.zifang.z.meta.api.annotation.BizMethod;
 import com.zifang.z.task.core.common.exception.BusinessException;
 import com.zifang.z.task.core.domain.entity.Board;
 import com.zifang.z.task.core.domain.entity.TaskList;
@@ -34,6 +35,7 @@ public class TaskListServiceImpl extends ServiceImpl<TaskListMapper, TaskList> i
     private ProjectMemberService projectMemberService;
 
     @Override
+    @BizMethod(name = "createList", module = "z-task", description = "", operation = BizMethod.Operation.CREATE)
     public TaskList createList(TaskList taskList, String userId) {
         // 获取看板信息
         Board board = boardService.getById(taskList.getBoardId());
@@ -59,11 +61,13 @@ public class TaskListServiceImpl extends ServiceImpl<TaskListMapper, TaskList> i
     }
 
     @Override
+    @BizMethod(name = "getListsByBoard", module = "z-task", description = "", operation = BizMethod.Operation.QUERY)
     public List<TaskList> getListsByBoard(Long boardId) {
         return baseMapper.selectByBoardId(boardId);
     }
 
     @Override
+    @BizMethod(name = "archiveList", module = "z-task", description = "", operation = BizMethod.Operation.ACTION)
     public boolean archiveList(Long listId, String userId) {
         TaskList taskList = this.getById(listId);
         if (taskList == null) {
@@ -92,6 +96,7 @@ public class TaskListServiceImpl extends ServiceImpl<TaskListMapper, TaskList> i
     }
 
     @Override
+    @BizMethod(name = "updateSortOrder", module = "z-task", description = "", operation = BizMethod.Operation.UPDATE)
     public boolean updateSortOrder(Long listId, Integer sortOrder) {
         TaskList taskList = this.getById(listId);
         if (taskList == null) {
@@ -102,3 +107,6 @@ public class TaskListServiceImpl extends ServiceImpl<TaskListMapper, TaskList> i
         return this.updateById(taskList);
     }
 }
+
+
+

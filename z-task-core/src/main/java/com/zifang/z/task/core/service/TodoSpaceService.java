@@ -1,11 +1,12 @@
 package com.zifang.z.task.core.service;
 
+import com.zifang.z.meta.api.annotation.BizMethod;
 import com.zifang.z.task.core.config.TaskWorkspaceProperties;
+import jakarta.annotation.Resource;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.stereotype.Service;
 
-import jakarta.annotation.Resource;
 import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.nio.charset.StandardCharsets;
@@ -90,6 +91,7 @@ public class TodoSpaceService {
      * @param projectId 待办项目 id
      * @return 规范化的绝对路径
      */
+    @BizMethod(name = "项目空间根目录 {base-dir/todo/{projectId}}，不存在则创建", module = "z-task", description = "项目空间根目录 {base-dir/todo/{projectId}}，不存在则创建。", operation = BizMethod.Operation.ACTION)
     public Path resolveRoot(Long projectId) {
         if (projectId == null || projectId <= 0) {
             throw new IllegalArgumentException("项目 id 不能为空");
@@ -114,6 +116,7 @@ public class TodoSpaceService {
      * @param relPath   相对路径（空串/null = 根）
      * @return 沙箱内的绝对路径（未创建）
      */
+    @BizMethod(name = "把相对路径收口到项目空间内；任何越界写法直接抛 IllegalArgumentException", module = "z-task", description = "把相对路径收口到项目空间内；任何越界写法直接抛 IllegalArgumentException。", operation = BizMethod.Operation.ACTION)
     public Path resolveSafe(Long projectId, String relPath) {
         Path root = resolveRoot(projectId);
         String rel = relPath == null ? "" : relPath.trim().replace('\\', '/');
@@ -140,6 +143,7 @@ public class TodoSpaceService {
     }
 
     /** 相对根路径展示用（统一 / 分隔）。 */
+    @BizMethod(name = "相对根路径展示用（统一 / 分隔）", module = "z-task", description = "相对根路径展示用（统一 / 分隔）。", operation = BizMethod.Operation.ACTION)
     public String relativize(Long projectId, Path target) {
         Path root = resolveRoot(projectId);
         return root.relativize(target).toString().replace('\\', '/');
@@ -154,6 +158,7 @@ public class TodoSpaceService {
      * @param maxDepth  最大深度（1 = 只看根下第一层）
      * @return 条目列表，每项 {@code {path, name, dir, size}}
      */
+    @BizMethod(name = "列目录树（深度优先，目录在前，按名称排序）", module = "z-task", description = "列目录树（深度优先，目录在前，按名称排序）。", operation = BizMethod.Operation.ACTION)
     public List<Map<String, Object>> tree(Long projectId, int maxDepth) {
         Path root = resolveRoot(projectId);
         int depth = maxDepth <= 0 ? 3 : Math.min(maxDepth, 6);
@@ -214,6 +219,7 @@ public class TodoSpaceService {
      *
      * @throws IllegalArgumentException 文件不存在 / 超出体积 / 看起来是二进制
      */
+    @BizMethod(name = "读文本文件（UTF-8）", module = "z-task", description = "读文本文件（UTF-8）。", operation = BizMethod.Operation.ACTION)
     public String read(Long projectId, String relPath) {
         Path target = resolveSafe(projectId, relPath);
         if (!Files.exists(target)) {
@@ -258,6 +264,7 @@ public class TodoSpaceService {
      * @param append true=追加，false=覆盖
      * @return 写入后的相对路径
      */
+    @BizMethod(name = "写文本文件（自动创建父目录）", module = "z-task", description = "写文本文件（自动创建父目录）。", operation = BizMethod.Operation.ACTION)
     public String write(Long projectId, String relPath, String content, boolean append) {
         String text = content == null ? "" : content;
         long bytes = text.getBytes(StandardCharsets.UTF_8).length;
@@ -284,6 +291,7 @@ public class TodoSpaceService {
     }
 
     /** 建目录（递归）。返回相对路径。 */
+    @BizMethod(name = "建目录（递归）。返回相对路径", module = "z-task", description = "建目录（递归）。返回相对路径。", operation = BizMethod.Operation.ACTION)
     public String mkdir(Long projectId, String relPath) {
         Path target = resolveSafe(projectId, relPath);
         try {
@@ -295,6 +303,7 @@ public class TodoSpaceService {
     }
 
     /** 删除文件/空目录（不做递归删除，防一手误删整棵树）。 */
+    @BizMethod(name = "删除文件/空目录（不做递归删除，防一手误删整棵树）", module = "z-task", description = "删除文件/空目录（不做递归删除，防一手误删整棵树）。", operation = BizMethod.Operation.DELETE)
     public boolean delete(Long projectId, String relPath) {
         Path target = resolveSafe(projectId, relPath);
         if (target.equals(resolveRoot(projectId))) {
@@ -320,6 +329,7 @@ public class TodoSpaceService {
      * @param maxHits 命中上限
      * @return 命中项 {@code {path, name, hit: name|content, snippet}}
      */
+    @BizMethod(name = "按关键字检索：先匹配文件名，再匹配文本内容（单文件 ≤ #MAX_READ_BYTES）", module = "z-task", description = "按关键字检索：先匹配文件名，再匹配文本内容（单文件 ≤ #MAX_READ_BYTES）。", operation = BizMethod.Operation.QUERY)
     public List<Map<String, Object>> search(Long projectId, String keyword, int maxHits) {
         String kw = keyword == null ? "" : keyword.trim().toLowerCase();
         List<Map<String, Object>> out = new ArrayList<>();
@@ -364,3 +374,6 @@ public class TodoSpaceService {
         return out;
     }
 }
+
+
+

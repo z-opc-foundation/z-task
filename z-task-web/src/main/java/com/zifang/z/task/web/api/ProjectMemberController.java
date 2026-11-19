@@ -2,14 +2,17 @@ package com.zifang.z.task.web.api;
 
 import com.zifang.ctc.sso.model.UserInfo;
 import com.zifang.util.core.meta.Result;
+import com.zifang.z.meta.api.annotation.BizApi;
+import com.zifang.z.meta.api.annotation.BizField;
+import com.zifang.z.meta.api.annotation.BizParam;
 import com.zifang.z.task.core.domain.entity.ProjectMember;
 import com.zifang.z.task.core.service.ProjectMemberService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import org.springframework.web.bind.annotation.*;
-
 import jakarta.annotation.Resource;
 import jakarta.servlet.http.HttpServletRequest;
+import org.springframework.web.bind.annotation.*;
+
 import java.util.List;
 
 /**
@@ -54,7 +57,8 @@ public class ProjectMemberController {
      */
     @Operation(summary = "按用户查所有项目 ID")
     @GetMapping("/user/projects")
-    public Result<List<Long>> projectsByUser(@RequestParam String userId) {
+    @BizApi(summary = "按用户查所有项目 ID", description = "按用户查所有项目 ID.", tags = { "z-task" })
+    public Result<List<Long>> projectsByUser(@RequestParam @BizParam(name = "userId", type = BizField.FieldType.STRING, description = "用户 ID", position = BizParam.Position.QUERY) String userId) {
         return Result.success(projectMemberService.getProjectIdsByUserId(userId));
     }
 
@@ -67,7 +71,8 @@ public class ProjectMemberController {
      */
     @Operation(summary = "项目成员详情")
     @GetMapping("/project/user")
-    public Result<ProjectMember> getMember(@RequestParam Long projectId, @RequestParam String userId) {
+    @BizApi(summary = "查询项目成员详情", description = "查询项目成员详情.", tags = { "z-task" })
+    public Result<ProjectMember> getMember(@RequestParam @BizParam(name = "projectId", type = BizField.FieldType.INTEGER, description = "项目 ID", position = BizParam.Position.QUERY) Long projectId, @RequestParam @BizParam(name = "userId", type = BizField.FieldType.STRING, description = "用户 ID", position = BizParam.Position.QUERY) String userId) {
         return Result.success(projectMemberService.getMember(projectId, userId));
     }
 
@@ -81,9 +86,10 @@ public class ProjectMemberController {
      */
     @Operation(summary = "添加项目成员")
     @PostMapping("/project/user/role")
-    public Result<Boolean> add(@RequestParam Long projectId,
-                               @RequestParam String userId,
-                               @RequestParam Integer role) {
+    @BizApi(summary = "添加项目成员", description = "添加项目成员.", tags = { "z-task" })
+    public Result<Boolean> add(@RequestParam @BizParam(name = "projectId", type = BizField.FieldType.INTEGER, description = "项目 ID", position = BizParam.Position.QUERY) Long projectId,
+                               @RequestParam @BizParam(name = "userId", type = BizField.FieldType.STRING, description = "用户 ID", position = BizParam.Position.QUERY) String userId,
+                               @RequestParam @BizParam(name = "role", type = BizField.FieldType.INTEGER, description = "角色", position = BizParam.Position.QUERY) Integer role) {
         return Result.success(projectMemberService.addMember(projectId, userId, role));
     }
 
@@ -96,7 +102,11 @@ public class ProjectMemberController {
      */
     @Operation(summary = "移除项目成员")
     @DeleteMapping("/project/user")
-    public Result<Boolean> remove(@RequestParam Long projectId, @RequestParam String userId) {
+    @BizApi(summary = "移除项目成员", description = "移除项目成员.", tags = { "z-task" })
+    public Result<Boolean> remove(@RequestParam @BizParam(name = "projectId", type = BizField.FieldType.INTEGER, description = "项目 ID", position = BizParam.Position.QUERY) Long projectId, @RequestParam @BizParam(name = "userId", type = BizField.FieldType.STRING, description = "用户 ID", position = BizParam.Position.QUERY) String userId) {
         return Result.success(projectMemberService.removeMember(projectId, userId));
     }
 }
+
+
+

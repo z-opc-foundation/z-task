@@ -2,6 +2,7 @@ package com.zifang.z.task.core.service;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.zifang.z.meta.api.annotation.BizMethod;
 import com.zifang.z.task.core.domain.entity.TaskLabel;
 import com.zifang.z.task.core.domain.mapper.TaskLabelMapper;
 import org.springframework.stereotype.Service;
@@ -15,17 +16,20 @@ import java.util.List;
 @Service
 public class TaskLabelService extends ServiceImpl<TaskLabelMapper, TaskLabel> {
 
+    @BizMethod(name = "listByTask", module = "z-task", description = "", operation = BizMethod.Operation.QUERY)
     public List<TaskLabel> listByTask(Long taskId) {
         if (taskId == null) return java.util.Collections.emptyList();
         return this.list(new LambdaQueryWrapper<TaskLabel>().eq(TaskLabel::getTaskId, taskId));
     }
 
+    @BizMethod(name = "listByLabel", module = "z-task", description = "", operation = BizMethod.Operation.QUERY)
     public List<TaskLabel> listByLabel(Long labelId) {
         if (labelId == null) return java.util.Collections.emptyList();
         return this.list(new LambdaQueryWrapper<TaskLabel>().eq(TaskLabel::getLabelId, labelId));
     }
 
     @Transactional
+    @BizMethod(name = "attach", module = "z-task", description = "", operation = BizMethod.Operation.ACTION)
     public boolean attach(Long taskId, Long labelId) {
         if (taskId == null || labelId == null) return false;
         TaskLabel existed = this.getOne(new LambdaQueryWrapper<TaskLabel>()
@@ -40,6 +44,7 @@ public class TaskLabelService extends ServiceImpl<TaskLabelMapper, TaskLabel> {
     }
 
     @Transactional
+    @BizMethod(name = "detach", module = "z-task", description = "", operation = BizMethod.Operation.ACTION)
     public boolean detach(Long taskId, Long labelId) {
         if (taskId == null || labelId == null) return false;
         return this.remove(new LambdaQueryWrapper<TaskLabel>()
@@ -47,3 +52,6 @@ public class TaskLabelService extends ServiceImpl<TaskLabelMapper, TaskLabel> {
                 .eq(TaskLabel::getLabelId, labelId));
     }
 }
+
+
+

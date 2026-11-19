@@ -2,6 +2,7 @@ package com.zifang.z.task.core.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.zifang.z.meta.api.annotation.BizMethod;
 import com.zifang.z.task.core.domain.entity.ProjectMember;
 import com.zifang.z.task.core.domain.mapper.ProjectMemberMapper;
 import com.zifang.z.task.core.service.ProjectMemberService;
@@ -24,21 +25,25 @@ public class ProjectMemberServiceImpl extends ServiceImpl<ProjectMemberMapper, P
 
 
     @Override
+    @BizMethod(name = "getProjectIdsByUserId", module = "z-task", description = "", operation = BizMethod.Operation.QUERY)
     public List<Long> getProjectIdsByUserId(String userId) {
         return baseMapper.selectProjectIdsByUserId(userId);
     }
 
     @Override
+    @BizMethod(name = "getMember", module = "z-task", description = "", operation = BizMethod.Operation.QUERY)
     public ProjectMember getMember(Long projectId, String userId) {
         return baseMapper.selectByProjectAndUser(projectId, userId);
     }
 
     @Override
+    @BizMethod(name = "isMember", module = "z-task", description = "", operation = BizMethod.Operation.ACTION)
     public boolean isMember(Long projectId, String userId) {
         return baseMapper.selectCountByProjectAndUser(projectId, userId) > 0;
     }
 
     @Override
+    @BizMethod(name = "addMember", module = "z-task", description = "", operation = BizMethod.Operation.CREATE)
     public boolean addMember(Long projectId, String userId, Integer role) {
         // 检查是否已经是成员
         if (isMember(projectId, userId)) {
@@ -60,6 +65,7 @@ public class ProjectMemberServiceImpl extends ServiceImpl<ProjectMemberMapper, P
     }
 
     @Override
+    @BizMethod(name = "removeMember", module = "z-task", description = "", operation = BizMethod.Operation.DELETE)
     public boolean removeMember(Long projectId, String userId) {
         LambdaQueryWrapper<ProjectMember> wrapper = new LambdaQueryWrapper<>();
         wrapper.eq(ProjectMember::getProjectId, projectId);
@@ -72,3 +78,6 @@ public class ProjectMemberServiceImpl extends ServiceImpl<ProjectMemberMapper, P
         return success;
     }
 }
+
+
+

@@ -3,6 +3,8 @@ package com.zifang.z.task.core.domain.entity;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.zifang.z.meta.api.annotation.BizField;
+import com.zifang.z.meta.api.annotation.BizModel;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
@@ -12,6 +14,7 @@ import java.time.LocalDateTime;
  *
  * @author zifang
  */
+@BizModel(name = "标签表", module = "z-task", description = "标签表")
 @TableName("z_task_label")
 public class Label implements Serializable {
 
@@ -21,26 +24,31 @@ public class Label implements Serializable {
      * 主键ID
      */
     @TableId(type = IdType.AUTO)
+    @BizField(name = "主键ID", type = BizField.FieldType.INTEGER)
     private Long id;
 
     /**
      * 项目ID
      */
+    @BizField(name = "项目ID", type = BizField.FieldType.INTEGER)
     private Long projectId;
 
     /**
      * 标签名称
      */
+    @BizField(name = "标签名称", type = BizField.FieldType.STRING)
     private String name;
 
     /**
      * 标签颜色
      */
+    @BizField(name = "标签颜色", type = BizField.FieldType.STRING)
     private String color;
 
     /**
      * 创建时间
      */
+    @BizField(name = "创建时间", type = BizField.FieldType.DATETIME)
     private LocalDateTime createdAt;
 
     public Long getId() {
@@ -83,3 +91,6 @@ public class Label implements Serializable {
         this.createdAt = createdAt;
     }
 }
+
+
+

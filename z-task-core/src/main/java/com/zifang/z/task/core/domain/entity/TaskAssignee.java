@@ -1,6 +1,8 @@
 package com.zifang.z.task.core.domain.entity;
 
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.zifang.z.meta.api.annotation.BizField;
+import com.zifang.z.meta.api.annotation.BizModel;
 
 import java.io.Serializable;
 
@@ -9,6 +11,7 @@ import java.io.Serializable;
  *
  * @author zifang
  */
+@BizModel(name = "任务执行者关联表", module = "z-task", description = "任务执行者关联表")
 @TableName("z_task_task_assignee")
 public class TaskAssignee implements Serializable {
 
@@ -17,11 +20,13 @@ public class TaskAssignee implements Serializable {
     /**
      * 任务ID
      */
+    @BizField(name = "任务ID", type = BizField.FieldType.INTEGER)
     private Long taskId;
 
     /**
      * 用户ID(来自zb-ctc)
      */
+    @BizField(name = "用户ID(来自zb-ctc)", type = BizField.FieldType.STRING)
     private String userId;
 
     public TaskAssignee(Long taskId, String userId) {
@@ -48,3 +53,6 @@ public class TaskAssignee implements Serializable {
         this.userId = userId;
     }
 }
+
+
+

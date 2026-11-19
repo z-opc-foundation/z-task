@@ -5,6 +5,8 @@ import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.zifang.z.meta.api.annotation.BizField;
+import com.zifang.z.meta.api.annotation.BizModel;
 import com.zifang.z.task.core.domain.entity.base.TodoAuditDO;
 
 /**
@@ -26,6 +28,7 @@ import com.zifang.z.task.core.domain.entity.base.TodoAuditDO;
  *
  * @author z-task
  */
+@BizModel(name = "待办项目实体（表 z_task_todo_project）", module = "z-task", description = "待办项目实体（表 z_task_todo_project）。 项目是待办事项的组织容器：默认私有（仅 owner），可转共享（owner + members 可见可编辑）。 members 为成员 z-ctc userId 数组的 JSON 字符串（不含 owner），序列化在 Service 层完成。 extraInfo 为项目空间扩展信息 JSON，当前承载看板列配置 {\"statusColumns\":[{status,label]}}：列与状态 1:1 绑定，状态含内置 TODO/DOING/DONE/ARCHIVED 与项目自定义（C_ 前缀）两类。 2026-11-02 自 z-team 迁入（原表 z_team_todo_project）。 迁移动机：待办能力归属 z-task —— z-task 已迁 Spring Boot 3 / Java 17， 而 z-team 与主壳仍在 Spring Boot 2 / Java 8，两侧无法共享 jar（lead 003 原则 21： 跨板块只走 HTTP、零 jar 边界）。 ⚠ 列名与 id 值域逐字保留旧表：存量数据搬迁后父子引用、Agent 会话关联全部继续有效。")
 @TableName("z_task_todo_project")
 public class TodoProject extends TodoAuditDO {
 
@@ -46,41 +49,49 @@ public class TodoProject extends TodoAuditDO {
      * （父类 {@code AuditDO} 默认是雪花 {@code ASSIGN_ID}）。
      */
     @TableId(type = IdType.AUTO)
+    @BizField(name = "主键ID", type = BizField.FieldType.INTEGER)
     private Long id;
 
     /**
      * owner z-ctc userId
      */
+    @BizField(name = "owner z-ctc userId", type = BizField.FieldType.STRING)
     private String userId;
 
     /**
      * 项目名
      */
+    @BizField(name = "项目名", type = BizField.FieldType.STRING)
     private String title;
 
     /**
      * 图标（emoji）
      */
+    @BizField(name = "图标（emoji）", type = BizField.FieldType.STRING)
     private String icon;
 
     /**
      * 项目描述
      */
+    @BizField(name = "项目描述", type = BizField.FieldType.STRING)
     private String description;
 
     /**
      * 可见性 private|shared
      */
+    @BizField(name = "可见性 private|shared", type = BizField.FieldType.STRING)
     private String visibility;
 
     /**
      * 成员 userId 数组 JSON（不含 owner）
      */
+    @BizField(name = "成员 userId 数组 JSON（不含 owner）", type = BizField.FieldType.STRING)
     private String members;
 
     /**
      * 同级排序
      */
+    @BizField(name = "同级排序", type = BizField.FieldType.INTEGER)
     private Integer sortOrder;
 
     /**
@@ -91,6 +102,7 @@ public class TodoProject extends TodoAuditDO {
      * 用户「恢复默认列」会静默无效。IGNORED 让显式传的 null 也能落库。
      */
     @TableField(updateStrategy = FieldStrategy.IGNORED)
+    @BizField(name = "项目空间扩展信息 JSON（看板列配置等）", type = BizField.FieldType.STRING)
     private String extraInfo;
 
     public TodoProject() {
@@ -174,3 +186,6 @@ public class TodoProject extends TodoAuditDO {
                 + "', visibility='" + getVisibility() + "'}";
     }
 }
+
+
+

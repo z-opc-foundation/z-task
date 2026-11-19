@@ -2,6 +2,7 @@ package com.zifang.z.task.core.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.zifang.z.meta.api.annotation.BizMethod;
 import com.zifang.z.task.core.domain.entity.SyncUser;
 import com.zifang.z.task.core.domain.mapper.SyncUserMapper;
 import com.zifang.z.task.core.service.SyncUserService;
@@ -22,6 +23,7 @@ public class SyncUserServiceImpl extends ServiceImpl<SyncUserMapper, SyncUser> i
     private static final Logger log = LogManager.getLogger(SyncUserServiceImpl.class);
 
     @Override
+    @BizMethod(name = "getByUserId", module = "z-task", description = "", operation = BizMethod.Operation.QUERY)
     public SyncUser getByUserId(String userId) {
         LambdaQueryWrapper<SyncUser> wrapper = new LambdaQueryWrapper<>();
         wrapper.eq(SyncUser::getUserId, userId);
@@ -29,6 +31,7 @@ public class SyncUserServiceImpl extends ServiceImpl<SyncUserMapper, SyncUser> i
     }
 
     @Override
+    @BizMethod(name = "syncUser", module = "z-task", description = "", operation = BizMethod.Operation.ACTION)
     public boolean syncUser(SyncUser syncUser) {
         if (syncUser == null || syncUser.getUserId() == null) {
             log.warn("同步用户信息失败: 用户信息为空");
@@ -63,3 +66,6 @@ public class SyncUserServiceImpl extends ServiceImpl<SyncUserMapper, SyncUser> i
         }
     }
 }
+
+
+

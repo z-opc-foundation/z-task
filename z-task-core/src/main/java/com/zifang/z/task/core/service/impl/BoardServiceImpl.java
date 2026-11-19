@@ -3,6 +3,7 @@ package com.zifang.z.task.core.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.zifang.util.core.meta.ResultCode;
+import com.zifang.z.meta.api.annotation.BizMethod;
 import com.zifang.z.task.core.common.exception.BusinessException;
 import com.zifang.z.task.core.domain.entity.Board;
 import com.zifang.z.task.core.domain.mapper.BoardMapper;
@@ -29,6 +30,7 @@ public class BoardServiceImpl extends ServiceImpl<BoardMapper, Board> implements
     private ProjectMemberService projectMemberService;
 
     @Override
+    @BizMethod(name = "createBoard", module = "z-task", description = "", operation = BizMethod.Operation.CREATE)
     public Board createBoard(Board board, String userId) {
         // 检查是否是项目成员
         if (!projectMemberService.isMember(board.getProjectId(), userId)) {
@@ -55,6 +57,7 @@ public class BoardServiceImpl extends ServiceImpl<BoardMapper, Board> implements
     }
 
     @Override
+    @BizMethod(name = "getBoardsByProject", module = "z-task", description = "", operation = BizMethod.Operation.QUERY)
     public List<Board> getBoardsByProject(Long projectId) {
         LambdaQueryWrapper<Board> wrapper = new LambdaQueryWrapper<Board>();
         wrapper.eq(Board::getProjectId, projectId);
@@ -63,6 +66,7 @@ public class BoardServiceImpl extends ServiceImpl<BoardMapper, Board> implements
     }
 
     @Override
+    @BizMethod(name = "updateSortOrder", module = "z-task", description = "", operation = BizMethod.Operation.UPDATE)
     public boolean updateSortOrder(Long boardId, Long sortOrder) {
         Board board = this.getById(boardId);
         if (board == null) {
@@ -73,3 +77,6 @@ public class BoardServiceImpl extends ServiceImpl<BoardMapper, Board> implements
         return this.updateById(board);
     }
 }
+
+
+

@@ -3,9 +3,14 @@ package com.zifang.z.task.web.api;
 import com.zifang.ctc.sso.model.UserInfo;
 import com.zifang.util.core.meta.BaseStatusCode;
 import com.zifang.util.core.meta.Result;
+import com.zifang.z.meta.api.annotation.BizApi;
+import com.zifang.z.meta.api.annotation.BizField;
+import com.zifang.z.meta.api.annotation.BizParam;
 import com.zifang.z.task.core.integration.team.RemoteTeamClient;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.annotation.Resource;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -16,8 +21,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
-import jakarta.annotation.Resource;
-import jakarta.servlet.http.HttpServletRequest;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -61,7 +64,8 @@ public class TodoCrossDomainController {
 
     @Operation(summary = "笔记树（代理 z-team）")
     @GetMapping("/notes/tree")
-    public Result<Object> noteTree(@RequestParam(required = false, defaultValue = "") String token,
+    @BizApi(summary = "noteTree", description = "", tags = { "z-task" })
+    public Result<Object> noteTree(@RequestParam(required = false, defaultValue = "") @BizParam(name = "token", type = BizField.FieldType.STRING, description = "", position = BizParam.Position.QUERY) String token,
                                     HttpServletRequest request) {
         try {
             return Result.success(teamClient.noteTree(requireUserId(request, token)));
@@ -74,8 +78,10 @@ public class TodoCrossDomainController {
 
     @Operation(summary = "笔记详情（代理 z-team）")
     @GetMapping("/notes/{id}")
-    public Result<Object> noteDetail(@PathVariable String id,
-                                      @RequestParam(required = false, defaultValue = "") String token,
+    @BizApi(summary = "noteDetail", description = "", tags = { "z-task" })
+    public Result<Object> noteDetail(@PathVariable @BizParam(name = "id", type = BizField.FieldType.STRING, description = "", position = BizParam.Position.PATH) String id,
+                                      @RequestParam(required = false, defaultValue = "")
+                                      @BizParam(name = "token", type = BizField.FieldType.STRING, description = "", position = BizParam.Position.QUERY) String token,
                                       HttpServletRequest request) {
         try {
             return Result.success(teamClient.noteDetail(requireUserId(request, token), id));
@@ -88,9 +94,11 @@ public class TodoCrossDomainController {
 
     @Operation(summary = "更新笔记（代理 z-team）")
     @PutMapping("/notes/{id}")
-    public Result<Object> updateNote(@PathVariable String id,
-                                      @RequestBody Map<String, Object> body,
-                                      @RequestParam(required = false, defaultValue = "") String token,
+    @BizApi(summary = "updateNote", description = "", tags = { "z-task" })
+    public Result<Object> updateNote(@PathVariable @BizParam(name = "id", type = BizField.FieldType.STRING, description = "", position = BizParam.Position.PATH) String id,
+                                      @RequestBody @BizParam(name = "body", type = BizField.FieldType.JSON, description = "", position = BizParam.Position.BODY) Map<String, Object> body,
+                                      @RequestParam(required = false, defaultValue = "")
+                                      @BizParam(name = "token", type = BizField.FieldType.STRING, description = "", position = BizParam.Position.QUERY) String token,
                                       HttpServletRequest request) {
         try {
             return Result.success(teamClient.updateNote(requireUserId(request, token), id, body));
@@ -103,7 +111,8 @@ public class TodoCrossDomainController {
 
     @Operation(summary = "收藏夹（代理 z-team）")
     @GetMapping("/notes/favorites")
-    public Result<Object> noteFavorites(@RequestParam(required = false, defaultValue = "") String token,
+    @BizApi(summary = "noteFavorites", description = "", tags = { "z-task" })
+    public Result<Object> noteFavorites(@RequestParam(required = false, defaultValue = "") @BizParam(name = "token", type = BizField.FieldType.STRING, description = "", position = BizParam.Position.QUERY) String token,
                                          HttpServletRequest request) {
         try {
             return Result.success(teamClient.noteFavorites(requireUserId(request, token)));
@@ -116,8 +125,10 @@ public class TodoCrossDomainController {
 
     @Operation(summary = "收藏笔记（代理 z-team）")
     @PostMapping("/notes/{id}/favorite")
-    public Result<Object> favoriteNote(@PathVariable String id,
-                                        @RequestParam(required = false, defaultValue = "") String token,
+    @BizApi(summary = "favoriteNote", description = "", tags = { "z-task" })
+    public Result<Object> favoriteNote(@PathVariable @BizParam(name = "id", type = BizField.FieldType.STRING, description = "", position = BizParam.Position.PATH) String id,
+                                        @RequestParam(required = false, defaultValue = "")
+                                        @BizParam(name = "token", type = BizField.FieldType.STRING, description = "", position = BizParam.Position.QUERY) String token,
                                         HttpServletRequest request) {
         try {
             return Result.success(teamClient.favoriteNote(requireUserId(request, token), id));
@@ -130,8 +141,10 @@ public class TodoCrossDomainController {
 
     @Operation(summary = "取消收藏（代理 z-team）")
     @PostMapping("/notes/{id}/unfavorite")
-    public Result<Object> unfavoriteNote(@PathVariable String id,
-                                          @RequestParam(required = false, defaultValue = "") String token,
+    @BizApi(summary = "unfavoriteNote", description = "", tags = { "z-task" })
+    public Result<Object> unfavoriteNote(@PathVariable @BizParam(name = "id", type = BizField.FieldType.STRING, description = "", position = BizParam.Position.PATH) String id,
+                                          @RequestParam(required = false, defaultValue = "")
+                                          @BizParam(name = "token", type = BizField.FieldType.STRING, description = "", position = BizParam.Position.QUERY) String token,
                                           HttpServletRequest request) {
         try {
             return Result.success(teamClient.unfavoriteNote(requireUserId(request, token), id));
@@ -144,8 +157,10 @@ public class TodoCrossDomainController {
 
     @Operation(summary = "分享笔记（代理 z-team）")
     @PostMapping("/notes/{id}/share")
-    public Result<Object> shareNote(@PathVariable String id,
-                                     @RequestParam(required = false, defaultValue = "") String token,
+    @BizApi(summary = "shareNote", description = "", tags = { "z-task" })
+    public Result<Object> shareNote(@PathVariable @BizParam(name = "id", type = BizField.FieldType.STRING, description = "", position = BizParam.Position.PATH) String id,
+                                     @RequestParam(required = false, defaultValue = "")
+                                     @BizParam(name = "token", type = BizField.FieldType.STRING, description = "", position = BizParam.Position.QUERY) String token,
                                      HttpServletRequest request) {
         try {
             return Result.success(teamClient.shareNote(requireUserId(request, token), id));
@@ -160,7 +175,8 @@ public class TodoCrossDomainController {
 
     @Operation(summary = "个人 Agent 列表（代理 z-team）")
     @GetMapping("/agents")
-    public Result<Object> personalAgents(@RequestParam(required = false, defaultValue = "") String token,
+    @BizApi(summary = "personalAgents", description = "", tags = { "z-task" })
+    public Result<Object> personalAgents(@RequestParam(required = false, defaultValue = "") @BizParam(name = "token", type = BizField.FieldType.STRING, description = "", position = BizParam.Position.QUERY) String token,
                                           HttpServletRequest request) {
         try {
             return Result.success(teamClient.personalAgents(requireUserId(request, token)));
@@ -175,9 +191,12 @@ public class TodoCrossDomainController {
 
     @Operation(summary = "员工目录搜索（代理 z-team）")
     @GetMapping("/staff")
-    public Result<Object> searchStaff(@RequestParam(required = false, defaultValue = "") String keyword,
-                                       @RequestParam(required = false, defaultValue = "0") long agentId,
-                                       @RequestParam(required = false, defaultValue = "") String token,
+    @BizApi(summary = "searchStaff", description = "", tags = { "z-task" })
+    public Result<Object> searchStaff(@RequestParam(required = false, defaultValue = "") @BizParam(name = "keyword", type = BizField.FieldType.STRING, description = "", position = BizParam.Position.QUERY) String keyword,
+                                       @RequestParam(required = false, defaultValue = "0")
+                                       @BizParam(name = "agentId", type = BizField.FieldType.INTEGER, description = "", position = BizParam.Position.QUERY) long agentId,
+                                       @RequestParam(required = false, defaultValue = "")
+                                       @BizParam(name = "token", type = BizField.FieldType.STRING, description = "", position = BizParam.Position.QUERY) String token,
                                        HttpServletRequest request) {
         try {
             return Result.success(teamClient.searchStaff(requireUserId(request, token), agentId, keyword));
@@ -192,8 +211,10 @@ public class TodoCrossDomainController {
 
     @Operation(summary = "群聊场景实例列表（代理 z-team）")
     @GetMapping("/scenarios")
-    public Result<Object> scenarioInstances(@RequestParam(required = false, defaultValue = "") String createTimeStart,
-                                             @RequestParam(required = false, defaultValue = "") String token,
+    @BizApi(summary = "scenarioInstances", description = "", tags = { "z-task" })
+    public Result<Object> scenarioInstances(@RequestParam(required = false, defaultValue = "") @BizParam(name = "createTimeStart", type = BizField.FieldType.STRING, description = "", position = BizParam.Position.QUERY) String createTimeStart,
+                                             @RequestParam(required = false, defaultValue = "")
+                                             @BizParam(name = "token", type = BizField.FieldType.STRING, description = "", position = BizParam.Position.QUERY) String token,
                                              HttpServletRequest request) {
         try {
             return Result.success(teamClient.scenarioInstances(requireUserId(request, token), createTimeStart));
@@ -208,8 +229,10 @@ public class TodoCrossDomainController {
 
     @Operation(summary = "图片上传（代理 z-team）")
     @PostMapping("/images")
-    public Result<Object> uploadImage(@RequestParam("file") MultipartFile file,
-                                       @RequestParam(required = false, defaultValue = "") String token,
+    @BizApi(summary = "uploadImage", description = "", tags = { "z-task" })
+    public Result<Object> uploadImage(@RequestParam("file") @BizParam(name = "file", type = BizField.FieldType.STRING, description = "", position = BizParam.Position.QUERY) MultipartFile file,
+                                       @RequestParam(required = false, defaultValue = "")
+                                       @BizParam(name = "token", type = BizField.FieldType.STRING, description = "", position = BizParam.Position.QUERY) String token,
                                        HttpServletRequest request) {
         try {
             if (file == null || file.isEmpty()) {
@@ -254,3 +277,6 @@ public class TodoCrossDomainController {
         return uid;
     }
 }
+
+
+

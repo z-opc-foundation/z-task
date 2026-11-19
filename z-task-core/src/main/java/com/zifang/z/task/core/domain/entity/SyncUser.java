@@ -3,6 +3,8 @@ package com.zifang.z.task.core.domain.entity;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.zifang.z.meta.api.annotation.BizField;
+import com.zifang.z.meta.api.annotation.BizModel;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
@@ -12,6 +14,7 @@ import java.time.LocalDateTime;
  *
  * @author zifang
  */
+@BizModel(name = "用户同步表 (来自 zb-ctc)", module = "z-task", description = "用户同步表 (来自 zb-ctc)")
 @TableName("z_task_sync_user")
 public class SyncUser implements Serializable {
 
@@ -21,56 +24,67 @@ public class SyncUser implements Serializable {
      * 主键ID
      */
     @TableId(type = IdType.INPUT)
+    @BizField(name = "主键ID", type = BizField.FieldType.INTEGER)
     private Long id;
 
     /**
      * zb-ctc 用户ID
      */
+    @BizField(name = "zb-ctc 用户ID", type = BizField.FieldType.STRING)
     private String userId;
 
     /**
      * 用户名
      */
+    @BizField(name = "用户名", type = BizField.FieldType.STRING)
     private String username;
 
     /**
      * 昵称
      */
+    @BizField(name = "昵称", type = BizField.FieldType.STRING)
     private String nickname;
 
     /**
      * 邮箱
      */
+    @BizField(name = "邮箱", type = BizField.FieldType.STRING)
     private String email;
 
     /**
      * 头像URL
      */
+    @BizField(name = "头像URL", type = BizField.FieldType.STRING)
     private String avatar;
 
     /**
      * 状态:0禁用,1正常
      */
+    @BizField(name = "状态:0禁用,1正常", type = BizField.FieldType.INTEGER)
     private Integer status;
 
     /**
      * 用户来源
      */
+    @BizField(name = "用户来源", type = BizField.FieldType.STRING)
     private String source;
 
     /**
      * 最后同步时间
      */
+    @BizField(name = "最后同步时间", type = BizField.FieldType.DATETIME)
     private LocalDateTime lastSyncAt;
 
     /**
      * 创建时间
      */
+    @BizField(name = "创建时间", type = BizField.FieldType.DATETIME)
     private LocalDateTime createdAt;
 
     /**
      * 更新时间
      */
+    @BizField(name = "更新时间", type = BizField.FieldType.DATETIME)
     private LocalDateTime updatedAt;
 
     public Long getId() {
@@ -161,3 +175,6 @@ public class SyncUser implements Serializable {
         this.updatedAt = updatedAt;
     }
 }
+
+
+

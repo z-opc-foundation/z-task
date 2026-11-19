@@ -5,6 +5,8 @@ import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.zifang.z.meta.api.annotation.BizField;
+import com.zifang.z.meta.api.annotation.BizModel;
 import com.zifang.z.task.core.domain.entity.base.TodoAuditDO;
 
 import java.time.LocalDate;
@@ -29,6 +31,7 @@ import java.time.LocalDateTime;
  *
  * @author z-task
  */
+@BizModel(name = "待办事项实体（表 z_task_todo_item）", module = "z-task", description = "待办事项实体（表 z_task_todo_item）。 projectId 为 null 表示收集箱散件；tags/links 为 JSON 字符串， 序列化在 Service 层完成；parentId 为 0 表示顶层事项。 projectId/dueDate/assigneeUserId/completedAt/completedBy 标注 updateStrategy = IGNORED： 这些字段存在「清空」语义（移入收集箱、取消指派、重开事项），需允许 updateById 写入 NULL， 否则默认 NOT_NULL 策略会静默丢弃置空操作。 2026-11-02 自 z-team 迁入（原表 z_team_todo_item）。 ⚠ agentId/agentSessionId 是跨仓软外键： 它们指向 z-team 的个人 Agent 与会话（z_team_personal_agent.id / z_team_personal_chat_session.id）。待办归 z-task、Agent 归 z-team， 两侧独立部署 ⇒ 这里不建物理外键，只保留 id 值，由 z-team 侧负责解释与校验。")
 @TableName("z_task_todo_item")
 public class TodoItem extends TodoAuditDO {
 
@@ -69,81 +72,96 @@ public class TodoItem extends TodoAuditDO {
      * （父类 {@code AuditDO} 默认是雪花 {@code ASSIGN_ID}）。
      */
     @TableId(type = IdType.AUTO)
+    @BizField(name = "主键ID", type = BizField.FieldType.INTEGER)
     private Long id;
 
     /**
      * 所属项目id，null=收集箱
      */
     @TableField(updateStrategy = FieldStrategy.IGNORED)
+    @BizField(name = "所属项目id,NULL=收集箱", type = BizField.FieldType.INTEGER)
     private Long projectId;
 
     /**
      * 创建人 z-ctc userId
      */
+    @BizField(name = "创建人 z-ctc userId", type = BizField.FieldType.STRING)
     private String userId;
 
     /**
      * 事项标题
      */
+    @BizField(name = "事项标题", type = BizField.FieldType.STRING)
     private String title;
 
     /**
      * markdown 详情
      */
+    @BizField(name = "markdown 详情", type = BizField.FieldType.STRING)
     private String detail;
 
     /**
      * 状态 TODO|DOING|DONE|ARCHIVED
      */
+    @BizField(name = "状态 TODO|DOING|DONE|ARCHIVED", type = BizField.FieldType.STRING)
     private String status;
 
     /**
      * 优先级 HIGH|MEDIUM|LOW
      */
+    @BizField(name = "优先级 HIGH|MEDIUM|LOW", type = BizField.FieldType.STRING)
     private String priority;
 
     /**
      * 截止日期
      */
     @TableField(updateStrategy = FieldStrategy.IGNORED)
+    @BizField(name = "截止日期", type = BizField.FieldType.DATE)
     private LocalDate dueDate;
 
     /**
      * 指派人 z-ctc userId，null=未指派
      */
     @TableField(updateStrategy = FieldStrategy.IGNORED)
+    @BizField(name = "指派人用户ID,NULL=未指派", type = BizField.FieldType.STRING)
     private String assigneeUserId;
 
     /**
      * 标签数组JSON
      */
+    @BizField(name = "标签数组JSON", type = BizField.FieldType.STRING)
     private String tags;
 
     /**
      * 关联JSON [{type:note|project|url,id,title}]
      */
+    @BizField(name = "关联 [{type:note|project|url,id,title}]", type = BizField.FieldType.STRING)
     private String links;
 
     /**
      * 父事项id，0=顶层
      */
+    @BizField(name = "父事项id,0=顶层", type = BizField.FieldType.INTEGER)
     private Long parentId;
 
     /**
      * 同组排序
      */
+    @BizField(name = "同组排序", type = BizField.FieldType.INTEGER)
     private Integer sortOrder;
 
     /**
      * 完成时间
      */
     @TableField(updateStrategy = FieldStrategy.IGNORED)
+    @BizField(name = "完成时间", type = BizField.FieldType.DATETIME)
     private LocalDateTime completedAt;
 
     /**
      * 完成人 z-ctc userId
      */
     @TableField(updateStrategy = FieldStrategy.IGNORED)
+    @BizField(name = "完成人 z-ctc userId", type = BizField.FieldType.STRING)
     private String completedBy;
 
     /**
@@ -155,6 +173,7 @@ public class TodoItem extends TodoAuditDO {
      * 不建物理外键，只保留 id 值。写入由 z-team 侧通过 todo API 完成。
      */
     @TableField(updateStrategy = FieldStrategy.IGNORED)
+    @BizField(name = "派发目标个人Agent id(z-team侧,跨仓软外键)", type = BizField.FieldType.INTEGER)
     private Long agentId;
 
     /**
@@ -163,6 +182,7 @@ public class TodoItem extends TodoAuditDO {
      * <p>非空即「已派发」，派发接口以此做幂等：重复点「交给 Agent」不会开出第二个会话。
      */
     @TableField(updateStrategy = FieldStrategy.IGNORED)
+    @BizField(name = "对应单聊会话id(z-team侧,跨仓软外键)", type = BizField.FieldType.INTEGER)
     private Long agentSessionId;
 
     public TodoItem() {
@@ -310,3 +330,6 @@ public class TodoItem extends TodoAuditDO {
                 + "', title='" + getTitle() + "', status='" + getStatus() + "'}";
     }
 }
+
+
+

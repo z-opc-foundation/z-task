@@ -2,6 +2,7 @@ package com.zifang.z.task.core.service;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.zifang.util.json.JsonUtil;
+import com.zifang.z.meta.api.annotation.BizMethod;
 import com.zifang.z.task.core.domain.entity.TodoItem;
 import com.zifang.z.task.core.domain.entity.TodoProject;
 import com.zifang.z.task.core.domain.mapper.TodoItemMapper;
@@ -9,10 +10,10 @@ import com.zifang.z.task.core.domain.mapper.TodoProjectMapper;
 import com.zifang.z.task.core.service.dto.TodoProjectBundle;
 import com.zifang.z.task.core.service.dto.TodoProjectBundle.TodoMember;
 import com.zifang.z.task.core.service.dto.TodoProjectBundle.TodoProjectSummary;
+import jakarta.annotation.Resource;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import jakarta.annotation.Resource;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -59,6 +60,7 @@ public class TodoProjectService {
     /**
      * 项目列表（我拥有的 + 我加入的两组，含未完成计数与成员明细）。
      */
+    @BizMethod(name = "项目列表（我拥有的 + 我加入的两组，含未完成计数与成员明细）", module = "z-task", description = "项目列表（我拥有的 + 我加入的两组，含未完成计数与成员明细）。", operation = BizMethod.Operation.QUERY)
     public TodoProjectBundle listBundle(String userId) {
         List<TodoProject> all = todoProjectMapper.selectList(
                 new LambdaQueryWrapper<TodoProject>()
@@ -82,6 +84,7 @@ public class TodoProjectService {
     /**
      * 当前用户可见的项目 id 集合（收集箱语义在事项侧单独处理）。
      */
+    @BizMethod(name = "当前用户可见的项目 id 集合（收集箱语义在事项侧单独处理）", module = "z-task", description = "当前用户可见的项目 id 集合（收集箱语义在事项侧单独处理）。", operation = BizMethod.Operation.ACTION)
     public List<Long> visibleProjectIds(String userId) {
         List<TodoProject> all = todoProjectMapper.selectList(null);
         return all.stream()
@@ -93,6 +96,7 @@ public class TodoProjectService {
     /**
      * 新建项目（默认私有）。
      */
+    @BizMethod(name = "新建项目（默认私有）", module = "z-task", description = "新建项目（默认私有）。", operation = BizMethod.Operation.CREATE)
     public TodoProject create(String userId, String title, String icon, String visibility) {
         if (title == null || title.trim().isEmpty()) {
             throw new IllegalArgumentException("项目名不能为空");
@@ -114,6 +118,7 @@ public class TodoProjectService {
     /**
      * 更新项目（仅 owner）。
      */
+    @BizMethod(name = "更新项目（仅 owner）", module = "z-task", description = "更新项目（仅 owner）。", operation = BizMethod.Operation.UPDATE)
     public TodoProject update(String userId, Long projectId, String title, String icon,
                               String description, String visibility, Integer sortOrder,
                               String extraInfo) {
@@ -177,6 +182,7 @@ public class TodoProjectService {
      * 删除项目（仅 owner，项目下事项级联逻辑删除）。
      */
     @Transactional(rollbackFor = Exception.class)
+    @BizMethod(name = "删除项目（仅 owner，项目下事项级联逻辑删除）", module = "z-task", description = "删除项目（仅 owner，项目下事项级联逻辑删除）。", operation = BizMethod.Operation.DELETE)
     public void delete(String userId, Long projectId) {
         requireOwner(userId, projectId);
         List<TodoItem> items = todoItemMapper.selectList(
@@ -190,6 +196,7 @@ public class TodoProjectService {
     /**
      * 添加成员（仅 owner；成员不能是 owner 自己、不能重复）。
      */
+    @BizMethod(name = "添加成员（仅 owner；成员不能是 owner 自己、不能重复）", module = "z-task", description = "添加成员（仅 owner；成员不能是 owner 自己、不能重复）。", operation = BizMethod.Operation.CREATE)
     public TodoProject addMember(String userId, Long projectId, String memberUserId,
                                  String memberUserName) {
         TodoProject project = requireOwner(userId, projectId);
@@ -216,6 +223,7 @@ public class TodoProjectService {
     /**
      * 移除成员（仅 owner）。
      */
+    @BizMethod(name = "移除成员（仅 owner）", module = "z-task", description = "移除成员（仅 owner）。", operation = BizMethod.Operation.DELETE)
     public TodoProject removeMember(String userId, Long projectId, String memberUserId) {
         TodoProject project = requireOwner(userId, projectId);
         List<TodoMember> members = parseMembers(project);
@@ -232,6 +240,7 @@ public class TodoProjectService {
      * 批量调整项目排序（侧栏拖拽落地）。仅 owner；updates 元素：{id, sortOrder}。
      */
     @Transactional(rollbackFor = Exception.class)
+    @BizMethod(name = "批量调整项目排序（侧栏拖拽落地）。仅 owner；updates 元素：{id, sortOrder}", module = "z-task", description = "批量调整项目排序（侧栏拖拽落地）。仅 owner；updates 元素：{id, sortOrder}。", operation = BizMethod.Operation.ACTION)
     public void reorderBatch(String userId, List<Map<String, Object>> updates) {
         if (updates == null || updates.isEmpty()) {
             return;
@@ -251,6 +260,7 @@ public class TodoProjectService {
     /**
      * 可见性：owner 或（shared 且在 members 内）。
      */
+    @BizMethod(name = "可见性：owner 或（shared 且在 members 内）", module = "z-task", description = "可见性：owner 或（shared 且在 members 内）。", operation = BizMethod.Operation.ACTION)
     public boolean isVisible(String userId, TodoProject project) {
         if (project == null) {
             return false;
@@ -267,6 +277,7 @@ public class TodoProjectService {
     /**
      * 校验项目可见并返回实体，否则抛出异常。
      */
+    @BizMethod(name = "校验项目可见并返回实体，否则抛出异常", module = "z-task", description = "校验项目可见并返回实体，否则抛出异常。", operation = BizMethod.Operation.ACTION)
     public TodoProject requireVisible(String userId, Long projectId) {
         TodoProject project = projectId == null ? null : todoProjectMapper.selectById(projectId);
         if (!isVisible(userId, project)) {
@@ -278,6 +289,7 @@ public class TodoProjectService {
     /**
      * 校验指派目标合法性：owner 或项目成员。
      */
+    @BizMethod(name = "校验指派目标合法性：owner 或项目成员", module = "z-task", description = "校验指派目标合法性：owner 或项目成员。", operation = BizMethod.Operation.ACTION)
     public void requireAssignable(String userId, TodoProject project, String assigneeUserId) {
         if (assigneeUserId == null || assigneeUserId.trim().isEmpty()) {
             return;
@@ -314,6 +326,7 @@ public class TodoProjectService {
     /**
      * members JSON 字符串 → 成员列表（坏数据容错为空列表）
      */
+    @BizMethod(name = "members JSON 字符串 → 成员列表（坏数据容错为空列表）", module = "z-task", description = "members JSON 字符串 → 成员列表（坏数据容错为空列表）", operation = BizMethod.Operation.ACTION)
     public List<TodoMember> parseMembers(TodoProject project) {
         String raw = project.getMembers();
         if (raw == null || raw.trim().isEmpty()) {
@@ -368,3 +381,6 @@ public class TodoProjectService {
                         .in(TodoItem::getStatus, TodoItem.STATUS_TODO, TodoItem.STATUS_DOING));
     }
 }
+
+
+

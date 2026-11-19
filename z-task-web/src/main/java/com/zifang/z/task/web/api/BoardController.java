@@ -2,14 +2,17 @@ package com.zifang.z.task.web.api;
 
 import com.zifang.ctc.sso.model.UserInfo;
 import com.zifang.util.core.meta.Result;
+import com.zifang.z.meta.api.annotation.BizApi;
+import com.zifang.z.meta.api.annotation.BizField;
+import com.zifang.z.meta.api.annotation.BizParam;
 import com.zifang.z.task.core.domain.entity.Board;
 import com.zifang.z.task.core.service.BoardService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import org.springframework.web.bind.annotation.*;
-
 import jakarta.annotation.Resource;
 import jakarta.servlet.http.HttpServletRequest;
+import org.springframework.web.bind.annotation.*;
+
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -57,7 +60,8 @@ public class BoardController {
      */
     @Operation(summary = "按项目列看板")
     @GetMapping("/project")
-    public Result<List<Board>> listByProject(@RequestParam Long projectId) {
+    @BizApi(summary = "按项目列看板", description = "按项目列看板.", tags = { "z-task" })
+    public Result<List<Board>> listByProject(@RequestParam @BizParam(name = "projectId", type = BizField.FieldType.INTEGER, description = "项目 ID", position = BizParam.Position.QUERY) Long projectId) {
         return Result.success(boardService.getBoardsByProject(projectId));
     }
 
@@ -69,7 +73,8 @@ public class BoardController {
      */
     @Operation(summary = "详情")
     @GetMapping
-    public Result<Board> get(@RequestParam(required = false) Long id) {
+    @BizApi(summary = "查询看板详情", description = "查询看板详情.", tags = { "z-task" })
+    public Result<Board> get(@RequestParam(required = false) @BizParam(name = "id", type = BizField.FieldType.INTEGER, description = "看板 ID", position = BizParam.Position.QUERY) Long id) {
         if (id == null) {
             // 没有 id 时返回 null,避免空指针
             return Result.success(null);
@@ -86,7 +91,8 @@ public class BoardController {
      */
     @Operation(summary = "新建看板")
     @PostMapping
-    public Result<Board> create(@RequestBody Board board, HttpServletRequest request) {
+    @BizApi(summary = "新建看板", description = "新建看板.", tags = { "z-task" })
+    public Result<Board> create(@RequestBody @BizParam(name = "board", type = BizField.FieldType.STRING, description = "看板实体", position = BizParam.Position.BODY) Board board, HttpServletRequest request) {
         board.setCreatedAt(LocalDateTime.now());
         board.setUpdatedAt(LocalDateTime.now());
         if (board.getSortOrder() == null) board.setSortOrder(0L);
@@ -101,7 +107,8 @@ public class BoardController {
      */
     @Operation(summary = "更新看板")
     @PutMapping
-    public Result<Boolean> update(@RequestBody Board board) {
+    @BizApi(summary = "更新看板", description = "更新看板.", tags = { "z-task" })
+    public Result<Boolean> update(@RequestBody @BizParam(name = "board", type = BizField.FieldType.STRING, description = "看板实体", position = BizParam.Position.BODY) Board board) {
         board.setUpdatedAt(LocalDateTime.now());
         return Result.success(boardService.updateById(board));
     }
@@ -114,7 +121,8 @@ public class BoardController {
      */
     @Operation(summary = "删除看板")
     @DeleteMapping
-    public Result<Boolean> delete(@RequestParam Long id) {
+    @BizApi(summary = "删除看板", description = "删除看板.", tags = { "z-task" })
+    public Result<Boolean> delete(@RequestParam @BizParam(name = "id", type = BizField.FieldType.INTEGER, description = "看板 ID", position = BizParam.Position.QUERY) Long id) {
         return Result.success(boardService.removeById(id));
     }
 
@@ -127,7 +135,11 @@ public class BoardController {
      */
     @Operation(summary = "更新排序")
     @PutMapping("/sort")
-    public Result<Boolean> updateSort(@RequestParam Long id, @RequestParam Long sortOrder) {
+    @BizApi(summary = "更新看板排序", description = "更新看板排序.", tags = { "z-task" })
+    public Result<Boolean> updateSort(@RequestParam @BizParam(name = "id", type = BizField.FieldType.INTEGER, description = "看板 ID", position = BizParam.Position.QUERY) Long id, @RequestParam @BizParam(name = "sortOrder", type = BizField.FieldType.INTEGER, description = "新的排序值", position = BizParam.Position.QUERY) Long sortOrder) {
         return Result.success(boardService.updateSortOrder(id, sortOrder));
     }
 }
+
+
+

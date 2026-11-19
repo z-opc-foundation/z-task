@@ -2,6 +2,7 @@ package com.zifang.z.task.core.service;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.zifang.z.meta.api.annotation.BizMethod;
 import com.zifang.z.task.core.domain.entity.Label;
 import com.zifang.z.task.core.domain.mapper.LabelMapper;
 import org.springframework.stereotype.Service;
@@ -18,6 +19,7 @@ import java.util.List;
 @Service
 public class LabelService extends ServiceImpl<LabelMapper, Label> {
 
+    @BizMethod(name = "listByProject", module = "z-task", description = "", operation = BizMethod.Operation.QUERY)
     public List<Label> listByProject(Long projectId) {
         if (projectId == null) return java.util.Collections.emptyList();
         return this.list(new LambdaQueryWrapper<Label>()
@@ -26,6 +28,7 @@ public class LabelService extends ServiceImpl<LabelMapper, Label> {
     }
 
     @Transactional
+    @BizMethod(name = "createLabel", module = "z-task", description = "", operation = BizMethod.Operation.CREATE)
     public Label createLabel(Label label) {
         if (label == null) throw new IllegalArgumentException("label must not be null");
         if (label.getProjectId() == null) throw new IllegalArgumentException("projectId 必填");
@@ -42,8 +45,12 @@ public class LabelService extends ServiceImpl<LabelMapper, Label> {
     }
 
     @Transactional
+    @BizMethod(name = "removeLabel", module = "z-task", description = "", operation = BizMethod.Operation.DELETE)
     public boolean removeLabel(Long id) {
         if (id == null) return false;
         return this.removeById(id);
     }
 }
+
+
+

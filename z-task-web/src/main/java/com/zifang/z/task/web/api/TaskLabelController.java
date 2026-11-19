@@ -1,13 +1,16 @@
 package com.zifang.z.task.web.api;
 
 import com.zifang.util.core.meta.Result;
+import com.zifang.z.meta.api.annotation.BizApi;
+import com.zifang.z.meta.api.annotation.BizField;
+import com.zifang.z.meta.api.annotation.BizParam;
 import com.zifang.z.task.core.domain.entity.TaskLabel;
 import com.zifang.z.task.core.service.TaskLabelService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.annotation.Resource;
 import org.springframework.web.bind.annotation.*;
 
-import jakarta.annotation.Resource;
 import java.util.List;
 
 /**
@@ -41,7 +44,8 @@ public class TaskLabelController {
      */
     @Operation(summary = "按任务列关联")
     @GetMapping("/task")
-    public Result<List<TaskLabel>> listByTask(@RequestParam Long taskId) {
+    @BizApi(summary = "按任务列关联", description = "按任务列关联.", tags = { "z-task" })
+    public Result<List<TaskLabel>> listByTask(@RequestParam @BizParam(name = "taskId", type = BizField.FieldType.INTEGER, description = "任务 ID", position = BizParam.Position.QUERY) Long taskId) {
         return Result.success(taskLabelService.listByTask(taskId));
     }
 
@@ -53,7 +57,8 @@ public class TaskLabelController {
      */
     @Operation(summary = "按标签列关联")
     @GetMapping("/label")
-    public Result<List<TaskLabel>> listByLabel(@RequestParam Long labelId) {
+    @BizApi(summary = "按标签列关联", description = "按标签列关联.", tags = { "z-task" })
+    public Result<List<TaskLabel>> listByLabel(@RequestParam @BizParam(name = "labelId", type = BizField.FieldType.INTEGER, description = "标签 ID", position = BizParam.Position.QUERY) Long labelId) {
         return Result.success(taskLabelService.listByLabel(labelId));
     }
 
@@ -66,7 +71,8 @@ public class TaskLabelController {
      */
     @Operation(summary = "给任务添加标签")
     @PostMapping("/task/label/attach")
-    public Result<Boolean> attach(@RequestParam Long taskId, @RequestParam Long labelId) {
+    @BizApi(summary = "给任务添加标签", description = "给任务添加标签.", tags = { "z-task" })
+    public Result<Boolean> attach(@RequestParam @BizParam(name = "taskId", type = BizField.FieldType.INTEGER, description = "任务 ID", position = BizParam.Position.QUERY) Long taskId, @RequestParam @BizParam(name = "labelId", type = BizField.FieldType.INTEGER, description = "标签 ID", position = BizParam.Position.QUERY) Long labelId) {
         return Result.success(taskLabelService.attach(taskId, labelId));
     }
 
@@ -79,7 +85,11 @@ public class TaskLabelController {
      */
     @Operation(summary = "从任务移除标签")
     @DeleteMapping("/task/label/detach")
-    public Result<Boolean> detach(@RequestParam Long taskId, @RequestParam Long labelId) {
+    @BizApi(summary = "从任务移除标签", description = "从任务移除标签.", tags = { "z-task" })
+    public Result<Boolean> detach(@RequestParam @BizParam(name = "taskId", type = BizField.FieldType.INTEGER, description = "任务 ID", position = BizParam.Position.QUERY) Long taskId, @RequestParam @BizParam(name = "labelId", type = BizField.FieldType.INTEGER, description = "标签 ID", position = BizParam.Position.QUERY) Long labelId) {
         return Result.success(taskLabelService.detach(taskId, labelId));
     }
 }
+
+
+

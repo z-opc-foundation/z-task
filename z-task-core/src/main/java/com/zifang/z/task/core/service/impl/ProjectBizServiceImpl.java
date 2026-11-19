@@ -1,13 +1,14 @@
 package com.zifang.z.task.core.service.impl;
 
+import com.zifang.z.meta.api.annotation.BizMethod;
 import com.zifang.z.task.core.domain.entity.Project;
 import com.zifang.z.task.core.domain.service.IProjectDomainService;
 import com.zifang.z.task.core.service.ProjectBizService;
 import com.zifang.z.task.core.service.dto.ProjectDTO;
+import jakarta.annotation.Resource;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
-import jakarta.annotation.Resource;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -33,6 +34,7 @@ public class ProjectBizServiceImpl implements ProjectBizService {
     }
 
     @Override
+    @BizMethod(name = "listByUser", module = "z-task", description = "", operation = BizMethod.Operation.QUERY)
     public List<ProjectDTO> listByUser(String userId) {
         // 之前是 `if (list == null) return null;` —— 当 MyBatis 在空结果时返回 null，
         // controller 又对这个 null 调用 .stream()，会抛 NPE（code=510）。
@@ -45,6 +47,7 @@ public class ProjectBizServiceImpl implements ProjectBizService {
     }
 
     @Override
+    @BizMethod(name = "create", module = "z-task", description = "", operation = BizMethod.Operation.CREATE)
     public ProjectDTO create(ProjectDTO dto, String ownerId) {
         Project p = toDO(dto);
         Project created = projectDomainService.createProject(p, ownerId);
@@ -52,18 +55,24 @@ public class ProjectBizServiceImpl implements ProjectBizService {
     }
 
     @Override
+    @BizMethod(name = "update", module = "z-task", description = "", operation = BizMethod.Operation.UPDATE)
     public ProjectDTO update(ProjectDTO dto, String userId) {
         Project p = toDO(dto);
         Project updated = projectDomainService.updateProject(p, userId);
         return toDTO(updated);
     }
 
+    @BizMethod(name = "archive", module = "z-task", description = "", operation = BizMethod.Operation.ACTION)
     public boolean archive(Long projectId, String userId) {
         return projectDomainService.archiveProject(projectId, userId);
     }
 
     @Override
+    @BizMethod(name = "isMember", module = "z-task", description = "", operation = BizMethod.Operation.ACTION)
     public boolean isMember(Long projectId, String userId) {
         return projectDomainService.isProjectMember(projectId, userId);
     }
 }
+
+
+

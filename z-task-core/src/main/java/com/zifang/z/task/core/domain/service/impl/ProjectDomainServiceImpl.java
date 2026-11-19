@@ -3,6 +3,7 @@ package com.zifang.z.task.core.domain.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.zifang.util.core.meta.ResultCode;
+import com.zifang.z.meta.api.annotation.BizMethod;
 import com.zifang.z.task.core.common.exception.BusinessException;
 import com.zifang.z.task.core.domain.entity.Project;
 import com.zifang.z.task.core.domain.entity.ProjectMember;
@@ -27,6 +28,7 @@ public class ProjectDomainServiceImpl extends ServiceImpl<ProjectMapper, Project
 
     @Override
     @Transactional(rollbackFor = Exception.class)
+    @BizMethod(name = "createProject", module = "z-task", description = "", operation = BizMethod.Operation.CREATE)
     public Project createProject(Project project, String ownerId) {
         project.setOwnerId(ownerId);
         project.setStatus(1);
@@ -46,6 +48,7 @@ public class ProjectDomainServiceImpl extends ServiceImpl<ProjectMapper, Project
     }
 
     @Override
+    @BizMethod(name = "getUserProjects", module = "z-task", description = "", operation = BizMethod.Operation.QUERY)
     public List<Project> getUserProjects(String userId) {
         // 同时查「我作为 owner 的项目」和「我被加为 member 的项目」——
         // 旧的逻辑只查后者，导致 owner 看不到自己创建的项目（project_member 表经常是空的）。
@@ -64,6 +67,7 @@ public class ProjectDomainServiceImpl extends ServiceImpl<ProjectMapper, Project
 
     @Override
     @Transactional(rollbackFor = Exception.class)
+    @BizMethod(name = "updateProject", module = "z-task", description = "", operation = BizMethod.Operation.UPDATE)
     public Project updateProject(Project project, String userId) {
         Project existing = this.getById(project.getId());
         if (existing == null) {
@@ -82,6 +86,7 @@ public class ProjectDomainServiceImpl extends ServiceImpl<ProjectMapper, Project
         return this.getById(project.getId());
     }
 
+    @BizMethod(name = "archiveProject", module = "z-task", description = "", operation = BizMethod.Operation.ACTION)
     public boolean archiveProject(Long projectId, String userId) {
         Project project = this.getById(projectId);
         if (project == null) {
@@ -103,7 +108,11 @@ public class ProjectDomainServiceImpl extends ServiceImpl<ProjectMapper, Project
     }
 
     @Override
+    @BizMethod(name = "isProjectMember", module = "z-task", description = "", operation = BizMethod.Operation.ACTION)
     public boolean isProjectMember(Long projectId, String userId) {
         return projectMemberService.isMember(projectId, userId);
     }
 }
+
+
+

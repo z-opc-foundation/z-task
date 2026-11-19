@@ -2,13 +2,14 @@ package com.zifang.z.task.core.service;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.zifang.util.json.JsonUtil;
+import com.zifang.z.meta.api.annotation.BizMethod;
 import com.zifang.z.task.core.domain.entity.TodoItem;
 import com.zifang.z.task.core.domain.entity.TodoProject;
 import com.zifang.z.task.core.domain.mapper.TodoItemMapper;
+import jakarta.annotation.Resource;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import jakarta.annotation.Resource;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -148,6 +149,7 @@ public class TodoItemService {
      * @param status    状态覆盖过滤（可选）
      * @param keyword   标题模糊（可选）
      */
+    @BizMethod(name = "视图查询", module = "z-task", description = "视图查询。", operation = BizMethod.Operation.QUERY)
     public List<TodoItem> list(String userId, String view, Long projectId, String status,
                                String keyword) {
         List<Long> visibleIds = todoProjectService.visibleProjectIds(userId);
@@ -205,6 +207,7 @@ public class TodoItemService {
     /**
      * 新建事项。projectId 为 null 表示收集箱。
      */
+    @BizMethod(name = "新建事项。projectId 为 null 表示收集箱", module = "z-task", description = "新建事项。projectId 为 null 表示收集箱。", operation = BizMethod.Operation.CREATE)
     public TodoItem create(String userId, Long projectId, String title, String detail,
                            String priority, String dueDate, String assigneeUserId,
                            Object tags, Object links, Long parentId) {
@@ -239,6 +242,7 @@ public class TodoItemService {
     /**
      * 更新事项（可见即可编辑）。字段为 null 跳过；dueDate/assigneeUserId 传空串表示清空。
      */
+    @BizMethod(name = "更新事项（可见即可编辑）。字段为 null 跳过；dueDate/assigneeUserId 传空串表示清空", module = "z-task", description = "更新事项（可见即可编辑）。字段为 null 跳过；dueDate/assigneeUserId 传空串表示清空。", operation = BizMethod.Operation.UPDATE)
     public TodoItem update(String userId, Long itemId, String title, String detail,
                            String priority, String dueDate, String status,
                            String assigneeUserId, Object tags, Object links, Long projectId) {
@@ -299,6 +303,7 @@ public class TodoItemService {
     /**
      * 完成事项（可见即可操作；记录完成人与完成备注）。
      */
+    @BizMethod(name = "完成事项（可见即可操作；记录完成人与完成备注）", module = "z-task", description = "完成事项（可见即可操作；记录完成人与完成备注）。", operation = BizMethod.Operation.ACTION)
     public TodoItem complete(String userId, Long itemId, String result) {
         TodoItem item = requireItemVisible(userId, itemId);
         item.setStatus(TodoItem.STATUS_DONE);
@@ -316,6 +321,7 @@ public class TodoItemService {
     /**
      * 重开事项（DONE → TODO）。
      */
+    @BizMethod(name = "重开事项（DONE → TODO）", module = "z-task", description = "重开事项（DONE → TODO）。", operation = BizMethod.Operation.ACTION)
     public TodoItem reopen(String userId, Long itemId) {
         TodoItem item = requireItemVisible(userId, itemId);
         item.setStatus(TodoItem.STATUS_TODO);
@@ -333,6 +339,7 @@ public class TodoItemService {
      * @return 事项实体
      * @throws IllegalArgumentException 不存在或无权访问
      */
+    @BizMethod(name = "取一条对当前用户可见的事项（供派发 / 项目空间等外部服务复用）", module = "z-task", description = "取一条对当前用户可见的事项（供派发 / 项目空间等外部服务复用）。", operation = BizMethod.Operation.QUERY)
     public TodoItem get(String userId, Long itemId) {
         return requireItemVisible(userId, itemId);
     }
@@ -354,6 +361,7 @@ public class TodoItemService {
      * @return 更新后的事项
      */
     @Transactional(rollbackFor = Exception.class)
+    @BizMethod(name = "标记事项已派发给某个 Agent 会话（幂等键 = agentSessionId）", module = "z-task", description = "标记事项已派发给某个 Agent 会话（幂等键 = agentSessionId）。 派发后状态置 TodoItem#STATUS_DOING：待办从「待办」变成「进行中」， 是用户视角唯一有意义的信号 —— Agent 是否真的干完由会话里的 complete_todo 或用户手动勾选收口，本方法不预设完成。 ⚠ agentId/agentSessionId 指向 z-team 的个人 Agent 与会话 （跨仓软外键，不建物理外键）。", operation = BizMethod.Operation.ACTION)
     public TodoItem markDispatched(String userId, Long itemId, Long agentId, Long sessionId) {
         TodoItem item = requireItemVisible(userId, itemId);
         item.setAgentId(agentId);
@@ -376,6 +384,7 @@ public class TodoItemService {
      * @return 更新后的事项
      */
     @Transactional(rollbackFor = Exception.class)
+    @BizMethod(name = "取消派发：清空 agentId/agentSessionId，状态回落 TodoItem#STATUS_TODO", module = "z-task", description = "取消派发：清空 agentId/agentSessionId，状态回落 TodoItem#STATUS_TODO。 只解除绑定， 不删会话 —— 会话里可能已经有一段有价值的执行记录， 删掉等于让用户丢掉产出。会话仍留在项目空间的「聊天记录」里。", operation = BizMethod.Operation.DELETE)
     public TodoItem clearDispatch(String userId, Long itemId) {
         TodoItem item = requireItemVisible(userId, itemId);
         item.setAgentId(null);
@@ -390,6 +399,7 @@ public class TodoItemService {
     /**
      * 调整排序（可同时移动到另一项目/收集箱）。
      */
+    @BizMethod(name = "调整排序（可同时移动到另一项目/收集箱）", module = "z-task", description = "调整排序（可同时移动到另一项目/收集箱）。", operation = BizMethod.Operation.ACTION)
     public TodoItem reorder(String userId, Long itemId, Integer sortOrder, Long projectId) {
         TodoItem item = requireItemVisible(userId, itemId);
         boolean projectChanged = false;
@@ -421,6 +431,7 @@ public class TodoItemService {
      * 批量调整排序/移动（前端拖拽落地）。updates 元素：{id, sortOrder?, projectId?}。
      */
     @Transactional(rollbackFor = Exception.class)
+    @BizMethod(name = "批量调整排序/移动（前端拖拽落地）。updates 元素：{id, sortOrder?, projectId?}", module = "z-task", description = "批量调整排序/移动（前端拖拽落地）。updates 元素：{id, sortOrder?, projectId?}。", operation = BizMethod.Operation.ACTION)
     public void reorderBatch(String userId, List<Map<String, Object>> updates) {
         if (updates == null || updates.isEmpty()) {
             return;
@@ -438,6 +449,7 @@ public class TodoItemService {
      * 删除事项（创建人或项目 owner；级联删除子事项）。
      */
     @Transactional(rollbackFor = Exception.class)
+    @BizMethod(name = "删除事项（创建人或项目 owner；级联删除子事项）", module = "z-task", description = "删除事项（创建人或项目 owner；级联删除子事项）。", operation = BizMethod.Operation.DELETE)
     public void delete(String userId, Long itemId) {
         TodoItem item = requireItemVisible(userId, itemId);
         boolean isCreator = userId.equals(item.getUserId());
@@ -510,3 +522,6 @@ public class TodoItemService {
         todoItemMapper.deleteById(itemId);
     }
 }
+
+
+

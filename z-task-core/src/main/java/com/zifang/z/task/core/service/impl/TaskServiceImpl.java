@@ -3,6 +3,7 @@ package com.zifang.z.task.core.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.zifang.util.core.meta.ResultCode;
+import com.zifang.z.meta.api.annotation.BizMethod;
 import com.zifang.z.task.core.common.exception.BusinessException;
 import com.zifang.z.task.core.domain.entity.Task;
 import com.zifang.z.task.core.domain.entity.TaskAssignee;
@@ -42,6 +43,7 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper, Task> implements Ta
 
     @Override
     @Transactional(rollbackFor = Exception.class)
+    @BizMethod(name = "createTask", module = "z-task", description = "", operation = BizMethod.Operation.CREATE)
     public Task createTask(Task task, String userId) {
         // 获取列表信息
         TaskList taskList = taskListService.getById(task.getListId());
@@ -78,22 +80,26 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper, Task> implements Ta
     }
 
     @Override
+    @BizMethod(name = "getTasksByList", module = "z-task", description = "", operation = BizMethod.Operation.QUERY)
     public List<Task> getTasksByList(Long listId) {
         return baseMapper.selectByListId(listId);
     }
 
     @Override
+    @BizMethod(name = "getTasksByProject", module = "z-task", description = "", operation = BizMethod.Operation.QUERY)
     public List<Task> getTasksByProject(Long projectId) {
         return baseMapper.selectByProjectId(projectId);
     }
 
     @Override
+    @BizMethod(name = "getTasksByAssignee", module = "z-task", description = "", operation = BizMethod.Operation.QUERY)
     public List<Task> getTasksByAssignee(String userId) {
         return baseMapper.selectByAssignee(userId);
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
+    @BizMethod(name = "moveTask", module = "z-task", description = "", operation = BizMethod.Operation.ACTION)
     public boolean moveTask(Long taskId, Long targetListId, String position, String userId) {
         Task task = this.getById(taskId);
         if (task == null) {
@@ -122,6 +128,7 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper, Task> implements Ta
 
     @Override
     @Transactional(rollbackFor = Exception.class)
+    @BizMethod(name = "addAssignee", module = "z-task", description = "", operation = BizMethod.Operation.CREATE)
     public boolean addAssignee(Long taskId, String userId, String operatorId) {
         Task task = this.getById(taskId);
         if (task == null) {
@@ -156,6 +163,7 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper, Task> implements Ta
 
     @Override
     @Transactional(rollbackFor = Exception.class)
+    @BizMethod(name = "removeAssignee", module = "z-task", description = "", operation = BizMethod.Operation.DELETE)
     public boolean removeAssignee(Long taskId, String userId, String operatorId) {
         Task task = this.getById(taskId);
         if (task == null) {
@@ -180,6 +188,7 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper, Task> implements Ta
 
     @Override
     @Transactional(rollbackFor = Exception.class)
+    @BizMethod(name = "completeTask", module = "z-task", description = "", operation = BizMethod.Operation.ACTION)
     public boolean completeTask(Long taskId, String userId) {
         Task task = this.getById(taskId);
         if (task == null) {
@@ -204,6 +213,7 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper, Task> implements Ta
 
     @Override
     @Transactional(rollbackFor = Exception.class)
+    @BizMethod(name = "reopenTask", module = "z-task", description = "", operation = BizMethod.Operation.ACTION)
     public boolean reopenTask(Long taskId, String userId) {
         Task task = this.getById(taskId);
         if (task == null) {
@@ -226,3 +236,6 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper, Task> implements Ta
         return success;
     }
 }
+
+
+

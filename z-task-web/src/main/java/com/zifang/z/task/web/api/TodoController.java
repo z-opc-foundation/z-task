@@ -3,6 +3,9 @@ package com.zifang.z.task.web.api;
 import com.zifang.ctc.sso.model.UserInfo;
 import com.zifang.util.core.meta.BaseStatusCode;
 import com.zifang.util.core.meta.Result;
+import com.zifang.z.meta.api.annotation.BizApi;
+import com.zifang.z.meta.api.annotation.BizField;
+import com.zifang.z.meta.api.annotation.BizParam;
 import com.zifang.z.task.core.domain.entity.TodoItem;
 import com.zifang.z.task.core.domain.entity.TodoProject;
 import com.zifang.z.task.core.service.TodoItemService;
@@ -11,6 +14,8 @@ import com.zifang.z.task.core.service.TodoSpaceService;
 import com.zifang.z.task.core.service.dto.TodoProjectBundle;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.annotation.Resource;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -21,8 +26,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import jakarta.annotation.Resource;
-import jakarta.servlet.http.HttpServletRequest;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -113,8 +116,10 @@ public class TodoController {
 
     @Operation(summary = "项目列表（我拥有的 + 我加入的）")
     @GetMapping("/projects")
+    @BizApi(summary = "listProjects", description = "", tags = { "z-task" })
     public Result<TodoProjectBundle> listProjects(
-            @RequestParam(required = false, defaultValue = "") String token,
+            @RequestParam(required = false, defaultValue = "")
+            @BizParam(name = "token", type = BizField.FieldType.STRING, description = "", position = BizParam.Position.QUERY) String token,
             HttpServletRequest request) {
         return Result.success(
                 todoProjectService.listBundle(requireUserId(request, token)));
@@ -122,9 +127,11 @@ public class TodoController {
 
     @Operation(summary = "新建项目")
     @PostMapping("/projects")
+    @BizApi(summary = "createProject", description = "", tags = { "z-task" })
     public Result<TodoProject> createProject(
-            @RequestBody Map<String, Object> body,
-            @RequestParam(required = false, defaultValue = "") String token,
+            @RequestBody @BizParam(name = "body", type = BizField.FieldType.JSON, description = "", position = BizParam.Position.BODY) Map<String, Object> body,
+            @RequestParam(required = false, defaultValue = "")
+            @BizParam(name = "token", type = BizField.FieldType.STRING, description = "", position = BizParam.Position.QUERY) String token,
             HttpServletRequest request) {
         try {
             return Result.success(todoProjectService.create(
@@ -139,9 +146,11 @@ public class TodoController {
 
     @Operation(summary = "取单个项目（owner 或成员可见）")
     @GetMapping("/projects/{id}")
+    @BizApi(summary = "getProject", description = "", tags = { "z-task" })
     public Result<TodoProject> getProject(
-            @PathVariable Long id,
-            @RequestParam(required = false, defaultValue = "") String token,
+            @PathVariable @BizParam(name = "id", type = BizField.FieldType.INTEGER, description = "", position = BizParam.Position.PATH) Long id,
+            @RequestParam(required = false, defaultValue = "")
+            @BizParam(name = "token", type = BizField.FieldType.STRING, description = "", position = BizParam.Position.QUERY) String token,
             HttpServletRequest request) {
         try {
             return Result.success(todoProjectService.requireVisible(requireUserId(request, token), id));
@@ -152,10 +161,12 @@ public class TodoController {
 
     @Operation(summary = "更新项目（仅 owner）")
     @PutMapping("/projects/{id}")
+    @BizApi(summary = "updateProject", description = "", tags = { "z-task" })
     public Result<TodoProject> updateProject(
-            @PathVariable Long id,
-            @RequestBody Map<String, Object> body,
-            @RequestParam(required = false, defaultValue = "") String token,
+            @PathVariable @BizParam(name = "id", type = BizField.FieldType.INTEGER, description = "", position = BizParam.Position.PATH) Long id,
+            @RequestBody @BizParam(name = "body", type = BizField.FieldType.JSON, description = "", position = BizParam.Position.BODY) Map<String, Object> body,
+            @RequestParam(required = false, defaultValue = "")
+            @BizParam(name = "token", type = BizField.FieldType.STRING, description = "", position = BizParam.Position.QUERY) String token,
             HttpServletRequest request) {
         try {
             Integer sortOrder = intOrNull(body.get("sortOrder"));
@@ -176,9 +187,11 @@ public class TodoController {
 
     @Operation(summary = "删除项目（仅 owner，事项级联删除）")
     @DeleteMapping("/projects/{id}")
+    @BizApi(summary = "deleteProject", description = "", tags = { "z-task" })
     public Result<Boolean> deleteProject(
-            @PathVariable Long id,
-            @RequestParam(required = false, defaultValue = "") String token,
+            @PathVariable @BizParam(name = "id", type = BizField.FieldType.INTEGER, description = "", position = BizParam.Position.PATH) Long id,
+            @RequestParam(required = false, defaultValue = "")
+            @BizParam(name = "token", type = BizField.FieldType.STRING, description = "", position = BizParam.Position.QUERY) String token,
             HttpServletRequest request) {
         try {
             todoProjectService.delete(requireUserId(request, token), id);
@@ -190,10 +203,12 @@ public class TodoController {
 
     @Operation(summary = "添加成员（仅 owner，自动转为 shared）")
     @PostMapping("/projects/{id}/members")
+    @BizApi(summary = "addMember", description = "", tags = { "z-task" })
     public Result<TodoProject> addMember(
-            @PathVariable Long id,
-            @RequestBody Map<String, Object> body,
-            @RequestParam(required = false, defaultValue = "") String token,
+            @PathVariable @BizParam(name = "id", type = BizField.FieldType.INTEGER, description = "", position = BizParam.Position.PATH) Long id,
+            @RequestBody @BizParam(name = "body", type = BizField.FieldType.JSON, description = "", position = BizParam.Position.BODY) Map<String, Object> body,
+            @RequestParam(required = false, defaultValue = "")
+            @BizParam(name = "token", type = BizField.FieldType.STRING, description = "", position = BizParam.Position.QUERY) String token,
             HttpServletRequest request) {
         try {
             return Result.success(todoProjectService.addMember(
@@ -207,10 +222,12 @@ public class TodoController {
 
     @Operation(summary = "移除成员（仅 owner）")
     @DeleteMapping("/projects/{id}/members/{userId}")
+    @BizApi(summary = "removeMember", description = "", tags = { "z-task" })
     public Result<TodoProject> removeMember(
-            @PathVariable Long id,
-            @PathVariable String userId,
-            @RequestParam(required = false, defaultValue = "") String token,
+            @PathVariable @BizParam(name = "id", type = BizField.FieldType.INTEGER, description = "", position = BizParam.Position.PATH) Long id,
+            @PathVariable @BizParam(name = "userId", type = BizField.FieldType.STRING, description = "", position = BizParam.Position.PATH) String userId,
+            @RequestParam(required = false, defaultValue = "")
+            @BizParam(name = "token", type = BizField.FieldType.STRING, description = "", position = BizParam.Position.QUERY) String token,
             HttpServletRequest request) {
         try {
             return Result.success(todoProjectService.removeMember(
@@ -224,12 +241,18 @@ public class TodoController {
 
     @Operation(summary = "事项视图查询")
     @GetMapping("/items")
+    @BizApi(summary = "listItems", description = "", tags = { "z-task" })
     public Result<List<TodoItem>> listItems(
-            @RequestParam(required = false, defaultValue = "all") String view,
-            @RequestParam(required = false) Long projectId,
-            @RequestParam(required = false) String status,
-            @RequestParam(required = false) String keyword,
-            @RequestParam(required = false, defaultValue = "") String token,
+            @RequestParam(required = false, defaultValue = "all")
+            @BizParam(name = "view", type = BizField.FieldType.STRING, description = "", position = BizParam.Position.QUERY) String view,
+            @RequestParam(required = false)
+            @BizParam(name = "projectId", type = BizField.FieldType.INTEGER, description = "", position = BizParam.Position.QUERY) Long projectId,
+            @RequestParam(required = false)
+            @BizParam(name = "status", type = BizField.FieldType.STRING, description = "", position = BizParam.Position.QUERY) String status,
+            @RequestParam(required = false)
+            @BizParam(name = "keyword", type = BizField.FieldType.STRING, description = "", position = BizParam.Position.QUERY) String keyword,
+            @RequestParam(required = false, defaultValue = "")
+            @BizParam(name = "token", type = BizField.FieldType.STRING, description = "", position = BizParam.Position.QUERY) String token,
             HttpServletRequest request) {
         return Result.success(todoItemService.list(
                 requireUserId(request, token),
@@ -238,9 +261,11 @@ public class TodoController {
 
     @Operation(summary = "新建事项（projectId 为空 = 收集箱）")
     @PostMapping("/items")
+    @BizApi(summary = "createItem", description = "", tags = { "z-task" })
     public Result<TodoItem> createItem(
-            @RequestBody Map<String, Object> body,
-            @RequestParam(required = false, defaultValue = "") String token,
+            @RequestBody @BizParam(name = "body", type = BizField.FieldType.JSON, description = "", position = BizParam.Position.BODY) Map<String, Object> body,
+            @RequestParam(required = false, defaultValue = "")
+            @BizParam(name = "token", type = BizField.FieldType.STRING, description = "", position = BizParam.Position.QUERY) String token,
             HttpServletRequest request) {
         try {
             return Result.success(todoItemService.create(
@@ -261,10 +286,12 @@ public class TodoController {
 
     @Operation(summary = "更新事项")
     @PutMapping("/items/{id}")
+    @BizApi(summary = "updateItem", description = "", tags = { "z-task" })
     public Result<TodoItem> updateItem(
-            @PathVariable Long id,
-            @RequestBody Map<String, Object> body,
-            @RequestParam(required = false, defaultValue = "") String token,
+            @PathVariable @BizParam(name = "id", type = BizField.FieldType.INTEGER, description = "", position = BizParam.Position.PATH) Long id,
+            @RequestBody @BizParam(name = "body", type = BizField.FieldType.JSON, description = "", position = BizParam.Position.BODY) Map<String, Object> body,
+            @RequestParam(required = false, defaultValue = "")
+            @BizParam(name = "token", type = BizField.FieldType.STRING, description = "", position = BizParam.Position.QUERY) String token,
             HttpServletRequest request) {
         try {
             return Result.success(todoItemService.update(
@@ -285,10 +312,13 @@ public class TodoController {
 
     @Operation(summary = "完成事项（记完成人与备注）")
     @PostMapping("/items/{id}/complete")
+    @BizApi(summary = "completeItem", description = "", tags = { "z-task" })
     public Result<TodoItem> completeItem(
-            @PathVariable Long id,
-            @RequestBody(required = false) Map<String, Object> body,
-            @RequestParam(required = false, defaultValue = "") String token,
+            @PathVariable @BizParam(name = "id", type = BizField.FieldType.INTEGER, description = "", position = BizParam.Position.PATH) Long id,
+            @RequestBody(required = false)
+            @BizParam(name = "body", type = BizField.FieldType.JSON, description = "", position = BizParam.Position.BODY) Map<String, Object> body,
+            @RequestParam(required = false, defaultValue = "")
+            @BizParam(name = "token", type = BizField.FieldType.STRING, description = "", position = BizParam.Position.QUERY) String token,
             HttpServletRequest request) {
         try {
             String result = body == null ? null : str(body.get("result"));
@@ -301,9 +331,11 @@ public class TodoController {
 
     @Operation(summary = "重开事项（DONE → TODO）")
     @PostMapping("/items/{id}/reopen")
+    @BizApi(summary = "reopenItem", description = "", tags = { "z-task" })
     public Result<TodoItem> reopenItem(
-            @PathVariable Long id,
-            @RequestParam(required = false, defaultValue = "") String token,
+            @PathVariable @BizParam(name = "id", type = BizField.FieldType.INTEGER, description = "", position = BizParam.Position.PATH) Long id,
+            @RequestParam(required = false, defaultValue = "")
+            @BizParam(name = "token", type = BizField.FieldType.STRING, description = "", position = BizParam.Position.QUERY) String token,
             HttpServletRequest request) {
         try {
             return Result.success(todoItemService.reopen(
@@ -315,10 +347,13 @@ public class TodoController {
 
     @Operation(summary = "调整排序（可同时换项目，projectId=0 表示移入收集箱）")
     @PostMapping("/items/{id}/reorder")
+    @BizApi(summary = "reorderItem", description = "", tags = { "z-task" })
     public Result<TodoItem> reorderItem(
-            @PathVariable Long id,
-            @RequestBody(required = false) Map<String, Object> body,
-            @RequestParam(required = false, defaultValue = "") String token,
+            @PathVariable @BizParam(name = "id", type = BizField.FieldType.INTEGER, description = "", position = BizParam.Position.PATH) Long id,
+            @RequestBody(required = false)
+            @BizParam(name = "body", type = BizField.FieldType.JSON, description = "", position = BizParam.Position.BODY) Map<String, Object> body,
+            @RequestParam(required = false, defaultValue = "")
+            @BizParam(name = "token", type = BizField.FieldType.STRING, description = "", position = BizParam.Position.QUERY) String token,
             HttpServletRequest request) {
         try {
             Integer sortOrder = body == null ? null : intOrNull(body.get("sortOrder"));
@@ -333,9 +368,11 @@ public class TodoController {
     @Operation(summary = "批量调整排序/移动（拖拽落地；updates=[{id,sortOrder?,projectId?}]）")
     @PostMapping("/items/reorder-batch")
     @SuppressWarnings("unchecked")
+    @BizApi(summary = "reorderItemsBatch", description = "", tags = { "z-task" })
     public Result<Boolean> reorderItemsBatch(
-            @RequestBody Map<String, Object> body,
-            @RequestParam(required = false, defaultValue = "") String token,
+            @RequestBody @BizParam(name = "body", type = BizField.FieldType.JSON, description = "", position = BizParam.Position.BODY) Map<String, Object> body,
+            @RequestParam(required = false, defaultValue = "")
+            @BizParam(name = "token", type = BizField.FieldType.STRING, description = "", position = BizParam.Position.QUERY) String token,
             HttpServletRequest request) {
         Object raw = body == null ? null : body.get("updates");
         if (!(raw instanceof List)) {
@@ -354,9 +391,11 @@ public class TodoController {
     @Operation(summary = "批量调整项目排序（侧栏拖拽；updates=[{id,sortOrder}]，仅 owner）")
     @PostMapping("/projects/reorder-batch")
     @SuppressWarnings("unchecked")
+    @BizApi(summary = "reorderProjectsBatch", description = "", tags = { "z-task" })
     public Result<Boolean> reorderProjectsBatch(
-            @RequestBody Map<String, Object> body,
-            @RequestParam(required = false, defaultValue = "") String token,
+            @RequestBody @BizParam(name = "body", type = BizField.FieldType.JSON, description = "", position = BizParam.Position.BODY) Map<String, Object> body,
+            @RequestParam(required = false, defaultValue = "")
+            @BizParam(name = "token", type = BizField.FieldType.STRING, description = "", position = BizParam.Position.QUERY) String token,
             HttpServletRequest request) {
         Object raw = body == null ? null : body.get("updates");
         if (!(raw instanceof List)) {
@@ -374,9 +413,11 @@ public class TodoController {
 
     @Operation(summary = "删除事项（创建人或项目 owner，子事项级联删除）")
     @DeleteMapping("/items/{id}")
+    @BizApi(summary = "deleteItem", description = "", tags = { "z-task" })
     public Result<Boolean> deleteItem(
-            @PathVariable Long id,
-            @RequestParam(required = false, defaultValue = "") String token,
+            @PathVariable @BizParam(name = "id", type = BizField.FieldType.INTEGER, description = "", position = BizParam.Position.PATH) Long id,
+            @RequestParam(required = false, defaultValue = "")
+            @BizParam(name = "token", type = BizField.FieldType.STRING, description = "", position = BizParam.Position.QUERY) String token,
             HttpServletRequest request) {
         try {
             todoItemService.delete(requireUserId(request, token), id);
@@ -394,10 +435,12 @@ public class TodoController {
 
     @Operation(summary = "标记事项已派发给 Agent 会话（由 z-team 回调）")
     @PostMapping("/items/{id}/dispatch-agent")
+    @BizApi(summary = "markDispatched", description = "", tags = { "z-task" })
     public Result<TodoItem> markDispatched(
-            @PathVariable Long id,
-            @RequestBody Map<String, Object> body,
-            @RequestParam(required = false, defaultValue = "") String token,
+            @PathVariable @BizParam(name = "id", type = BizField.FieldType.INTEGER, description = "", position = BizParam.Position.PATH) Long id,
+            @RequestBody @BizParam(name = "body", type = BizField.FieldType.JSON, description = "", position = BizParam.Position.BODY) Map<String, Object> body,
+            @RequestParam(required = false, defaultValue = "")
+            @BizParam(name = "token", type = BizField.FieldType.STRING, description = "", position = BizParam.Position.QUERY) String token,
             HttpServletRequest request) {
         try {
             Long agentId = body == null ? null : longOrNull(body.get("agentId"));
@@ -411,9 +454,11 @@ public class TodoController {
 
     @Operation(summary = "取消派发绑定（由 z-team 回调；只解绑不删会话）")
     @PostMapping("/items/{id}/undispatch-agent")
+    @BizApi(summary = "clearDispatch", description = "", tags = { "z-task" })
     public Result<TodoItem> clearDispatch(
-            @PathVariable Long id,
-            @RequestParam(required = false, defaultValue = "") String token,
+            @PathVariable @BizParam(name = "id", type = BizField.FieldType.INTEGER, description = "", position = BizParam.Position.PATH) Long id,
+            @RequestParam(required = false, defaultValue = "")
+            @BizParam(name = "token", type = BizField.FieldType.STRING, description = "", position = BizParam.Position.QUERY) String token,
             HttpServletRequest request) {
         try {
             return Result.success(todoItemService.clearDispatch(
@@ -427,10 +472,13 @@ public class TodoController {
 
     @Operation(summary = "项目空间目录树")
     @GetMapping("/projects/{id}/space/tree")
+    @BizApi(summary = "spaceTree", description = "", tags = { "z-task" })
     public Result<Map<String, Object>> spaceTree(
-            @PathVariable Long id,
-            @RequestParam(required = false, defaultValue = "3") int depth,
-            @RequestParam(required = false, defaultValue = "") String token,
+            @PathVariable @BizParam(name = "id", type = BizField.FieldType.INTEGER, description = "", position = BizParam.Position.PATH) Long id,
+            @RequestParam(required = false, defaultValue = "3")
+            @BizParam(name = "depth", type = BizField.FieldType.INTEGER, description = "", position = BizParam.Position.QUERY) int depth,
+            @RequestParam(required = false, defaultValue = "")
+            @BizParam(name = "token", type = BizField.FieldType.STRING, description = "", position = BizParam.Position.QUERY) String token,
             HttpServletRequest request) {
         try {
             String uid = requireUserId(request, token);
@@ -448,10 +496,12 @@ public class TodoController {
 
     @Operation(summary = "读项目空间文件（相对路径）")
     @GetMapping("/projects/{id}/space/file")
+    @BizApi(summary = "readSpaceFile", description = "", tags = { "z-task" })
     public Result<Map<String, Object>> readSpaceFile(
-            @PathVariable Long id,
-            @RequestParam String path,
-            @RequestParam(required = false, defaultValue = "") String token,
+            @PathVariable @BizParam(name = "id", type = BizField.FieldType.INTEGER, description = "", position = BizParam.Position.PATH) Long id,
+            @RequestParam @BizParam(name = "path", type = BizField.FieldType.STRING, description = "", position = BizParam.Position.QUERY) String path,
+            @RequestParam(required = false, defaultValue = "")
+            @BizParam(name = "token", type = BizField.FieldType.STRING, description = "", position = BizParam.Position.QUERY) String token,
             HttpServletRequest request) {
         try {
             String uid = requireUserId(request, token);
@@ -467,10 +517,12 @@ public class TodoController {
 
     @Operation(summary = "写项目空间文件（相对路径；自动建父目录）")
     @PutMapping("/projects/{id}/space/file")
+    @BizApi(summary = "writeSpaceFile", description = "", tags = { "z-task" })
     public Result<Map<String, Object>> writeSpaceFile(
-            @PathVariable Long id,
-            @RequestBody Map<String, Object> body,
-            @RequestParam(required = false, defaultValue = "") String token,
+            @PathVariable @BizParam(name = "id", type = BizField.FieldType.INTEGER, description = "", position = BizParam.Position.PATH) Long id,
+            @RequestBody @BizParam(name = "body", type = BizField.FieldType.JSON, description = "", position = BizParam.Position.BODY) Map<String, Object> body,
+            @RequestParam(required = false, defaultValue = "")
+            @BizParam(name = "token", type = BizField.FieldType.STRING, description = "", position = BizParam.Position.QUERY) String token,
             HttpServletRequest request) {
         try {
             String uid = requireUserId(request, token);
@@ -492,10 +544,12 @@ public class TodoController {
 
     @Operation(summary = "建项目空间目录（相对路径；递归创建）")
     @PostMapping("/projects/{id}/space/dir")
+    @BizApi(summary = "mkdirSpace", description = "", tags = { "z-task" })
     public Result<Map<String, Object>> mkdirSpace(
-            @PathVariable Long id,
-            @RequestBody Map<String, Object> body,
-            @RequestParam(required = false, defaultValue = "") String token,
+            @PathVariable @BizParam(name = "id", type = BizField.FieldType.INTEGER, description = "", position = BizParam.Position.PATH) Long id,
+            @RequestBody @BizParam(name = "body", type = BizField.FieldType.JSON, description = "", position = BizParam.Position.BODY) Map<String, Object> body,
+            @RequestParam(required = false, defaultValue = "")
+            @BizParam(name = "token", type = BizField.FieldType.STRING, description = "", position = BizParam.Position.QUERY) String token,
             HttpServletRequest request) {
         try {
             String uid = requireUserId(request, token);
@@ -515,10 +569,12 @@ public class TodoController {
 
     @Operation(summary = "删项目空间文件/空目录（不递归删整棵树）")
     @DeleteMapping("/projects/{id}/space/file")
+    @BizApi(summary = "deleteSpaceFile", description = "", tags = { "z-task" })
     public Result<Map<String, Object>> deleteSpaceFile(
-            @PathVariable Long id,
-            @RequestParam String path,
-            @RequestParam(required = false, defaultValue = "") String token,
+            @PathVariable @BizParam(name = "id", type = BizField.FieldType.INTEGER, description = "", position = BizParam.Position.PATH) Long id,
+            @RequestParam @BizParam(name = "path", type = BizField.FieldType.STRING, description = "", position = BizParam.Position.QUERY) String path,
+            @RequestParam(required = false, defaultValue = "")
+            @BizParam(name = "token", type = BizField.FieldType.STRING, description = "", position = BizParam.Position.QUERY) String token,
             HttpServletRequest request) {
         try {
             String uid = requireUserId(request, token);
@@ -535,11 +591,14 @@ public class TodoController {
 
     @Operation(summary = "检索项目空间（文件名 + 文本内容）")
     @GetMapping("/projects/{id}/space/search")
+    @BizApi(summary = "searchSpace", description = "", tags = { "z-task" })
     public Result<Map<String, Object>> searchSpace(
-            @PathVariable Long id,
-            @RequestParam String keyword,
-            @RequestParam(required = false, defaultValue = "20") int limit,
-            @RequestParam(required = false, defaultValue = "") String token,
+            @PathVariable @BizParam(name = "id", type = BizField.FieldType.INTEGER, description = "", position = BizParam.Position.PATH) Long id,
+            @RequestParam @BizParam(name = "keyword", type = BizField.FieldType.STRING, description = "", position = BizParam.Position.QUERY) String keyword,
+            @RequestParam(required = false, defaultValue = "20")
+            @BizParam(name = "limit", type = BizField.FieldType.INTEGER, description = "", position = BizParam.Position.QUERY) int limit,
+            @RequestParam(required = false, defaultValue = "")
+            @BizParam(name = "token", type = BizField.FieldType.STRING, description = "", position = BizParam.Position.QUERY) String token,
             HttpServletRequest request) {
         try {
             String uid = requireUserId(request, token);
@@ -555,3 +614,6 @@ public class TodoController {
         }
     }
 }
+
+
+
