@@ -42,7 +42,7 @@
     "@types/react": "^19.2.0",
     "@types/react-dom": "^19.2.0",
     "@vitejs/plugin-react": "^4.2.1",
-    "@yuku123/z-markdown-component": "file:../../../z-markdown-component",
+    "@yuku123/z-markdown-component": "^0.1.0",
     "antd": "^6.3.3",
     "dayjs": "^1.11.13",
     "highlight.js": "^11.10.0",
