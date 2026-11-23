@@ -18,9 +18,8 @@ export default function ProjectList() {
     const loadProjects = async () => {
         setLoading(true)
         try {
-            const userId = localStorage.getItem('userId') || '1'
-            const res = await getProjectListByUser(userId)
-            setProjects(res.data || [])
+            const projects = await getProjectListByUser()
+            setProjects(projects)
         } catch (e) {
             message.error('加载项目失败')
         } finally {

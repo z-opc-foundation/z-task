@@ -1,11 +1,9 @@
-import {useEffect, useState} from 'react'
-import {Button, message, Select, Space, Tag} from 'antd'
-import {PlusOutlined} from '@ant-design/icons';
+import {useEffect, useRef, useState} from 'react'
+import {Alert, Button, message, Select, Space, Tag} from 'antd'
+import {PlusOutlined} from '@ant-design/icons'
 import {useNavigate} from 'react-router-dom'
 import {ListTable} from '@yuku123/z-frontend-common/ui'
-import {completeTask, getTaskListByList, reopenTask} from '../../services/api'
-
-const {Option} = Select
+import {completeTask, getProjectListByUser, getTaskListByProject, reopenTask} from '../../services/api'
 
 const statusMap = {
     0: {color: 'gold', text: '待办'},
@@ -22,136 +20,121 @@ const priorityMap = {
 
 export default function TaskList() {
     const navigate = useNavigate()
+    const [projects, setProjects] = useState([])
+    const [projectLoading, setProjectLoading] = useState(true)
+    const [projectError, setProjectError] = useState('')
+    const [projectRetry, setProjectRetry] = useState(0)
+    const [selectedProjectId, setSelectedProjectId] = useState()
     const [tasks, setTasks] = useState([])
     const [loading, setLoading] = useState(false)
-    const [selectedListId, setSelectedListId] = useState(null)
+    const [error, setError] = useState('')
+    const [refresh, setRefresh] = useState(0)
+    const [pendingId, setPendingId] = useState(null)
+    const submitting = useRef(false)
 
-    const loadTasks = async (listId) => {
-        if (!listId) return
-        setLoading(true)
+    useEffect(() => {
+        let active = true
+        setProjectLoading(true)
+        setProjectError('')
+        getProjectListByUser().then(data => {
+            if (!active) return
+            setProjects(data)
+            setSelectedProjectId(current => current ?? data[0]?.id)
+        }).catch(error => {
+            if (active) setProjectError(error.message || '加载项目失败')
+        }).finally(() => {
+            if (active) setProjectLoading(false)
+        })
+        return () => { active = false }
+    }, [projectRetry])
+
+    useEffect(() => {
+        let active = true
+        setTasks([])
+        setError('')
+        setLoading(selectedProjectId != null)
+        if (selectedProjectId != null) {
+            getTaskListByProject(selectedProjectId).then(data => {
+                if (active) setTasks(data)
+            }).catch(error => {
+                if (active) setError(error.message || '加载任务失败')
+            }).finally(() => {
+                if (active) setLoading(false)
+            })
+        }
+        return () => { active = false }
+    }, [selectedProjectId, refresh])
+
+    const changeStatus = async (record) => {
+        if (submitting.current) return
+        submitting.current = true
+        setPendingId(record.id)
         try {
-            const res = await getTaskListByList(listId)
-            setTasks(res.data || [])
-        } catch (e) {
-            message.error('加载任务失败')
+            await (record.status === 2 ? reopenTask(record.id) : completeTask(record.id))
+            message.success(record.status === 2 ? '任务已重新打开' : '任务已完成')
+            setRefresh(value => value + 1)
+        } catch (error) {
+            message.error(error.message || '操作失败')
         } finally {
-            setLoading(false)
+            submitting.current = false
+            setPendingId(null)
         }
     }
 
-    useEffect(() => {
-        if (selectedListId) {
-            loadTasks(selectedListId)
-        }
-    }, [selectedListId])
-
     const columns = [
+        {title: 'ID', dataIndex: 'id', key: 'id', width: 80},
+        {title: '任务名称', dataIndex: 'title', key: 'title'},
         {
-            title: 'ID',
-            dataIndex: 'id',
-            key: 'id',
-            width: 80
-        },
-        {
-            title: '任务名称',
-            dataIndex: 'title',
-            key: 'title'
-        },
-        {
-            title: '优先级',
-            dataIndex: 'priority',
-            key: 'priority',
+            title: '优先级', dataIndex: 'priority', key: 'priority',
             render: (priority) => {
                 const info = priorityMap[priority] || {color: 'default', text: String(priority)}
                 return <Tag color={info.color}>{info.text}</Tag>
             }
         },
         {
-            title: '状态',
-            dataIndex: 'status',
-            key: 'status',
+            title: '状态', dataIndex: 'status', key: 'status',
             render: (status) => {
                 const info = statusMap[status] || {color: 'default', text: String(status)}
                 return <Tag color={info.color}>{info.text}</Tag>
             }
         },
+        {title: '截止日期', dataIndex: 'dueDate', key: 'dueDate', render: date => date || '-'},
         {
-            title: '截止日期',
-            dataIndex: 'dueDate',
-            key: 'dueDate',
-            render: (date) => date || '-'
-        },
-        {
-            title: '操作',
-            key: 'action',
+            title: '操作', key: 'action',
             render: (_, record) => (
                 <Space size="middle">
-                    <Button type="link" size="small" onClick={() => navigate(`/z-task/task/edit/${record.id}`)}>
-                        编辑
+                    <Button type="link" size="small" onClick={() => {
+                        const query = new URLSearchParams()
+                        if (record.projectId != null) query.set('projectId', record.projectId)
+                        if (record.listId != null) query.set('listId', record.listId)
+                        navigate(`edit/${record.id}?${query}`)
+                    }}>详情</Button>
+                    <Button type="link" size="small" loading={pendingId === record.id}
+                            disabled={pendingId != null} onClick={() => changeStatus(record)}>
+                        {record.status === 2 ? '重新打开' : '完成'}
                     </Button>
-                    {record.status === 2 ? (
-                        <Button type="link" size="small" onClick={() => handleReopen(record.id)}>重新打开</Button>
-                    ) : (
-                        <Button type="link" size="small" onClick={() => handleComplete(record.id)}>完成</Button>
-                    )}
                 </Space>
             )
         }
     ]
 
-    const handleComplete = async (taskId) => {
-        try {
-            await completeTask(taskId)
-            message.success('任务已完成')
-            loadTasks(selectedListId)
-        } catch (e) {
-            message.error('操作失败')
-        }
-    }
-
-    const handleReopen = async (taskId) => {
-        try {
-            await reopenTask(taskId)
-            message.success('任务已重新打开')
-            loadTasks(selectedListId)
-        } catch (e) {
-            message.error('操作失败')
-        }
-    }
-
     return (
         <div>
-            {/* Card + Table 合成基座 ListTable 一件：分页 / 过滤 / EmptyState 三件套一次到位。
-                原来那个「选择列表」下拉留在卡片上方（它切的是数据源，不是过滤），
-                过滤交给 ListTable 内置的搜索框（原来那个 antd Search 没接 onChange，是死的）。 */}
+            {projectError && <Alert type="error" showIcon title={projectError} style={{marginBottom: 16}}
+                                    action={<Button onClick={() => setProjectRetry(value => value + 1)}>重试</Button>}/>}
             <div style={{marginBottom: 16}}>
-                <Select
-                    placeholder="选择列表"
-                    style={{width: 200}}
-                    onChange={(val) => setSelectedListId(val)}
-                    allowClear
-                >
-                    <Option value={1}>待办</Option>
-                    <Option value={2}>进行中</Option>
-                    <Option value={3}>已完成</Option>
-                </Select>
+                <Select placeholder="选择项目" style={{width: 240}} value={selectedProjectId}
+                        loading={projectLoading} disabled={projectLoading || pendingId != null}
+                        onChange={setSelectedProjectId} allowClear
+                        options={projects.map(project => ({value: project.id, label: project.name}))}/>
             </div>
-
-            <ListTable
-                columns={columns}
-                rows={tasks}
-                rowKey="id"
-                loading={loading}
-                cardTitle="任务管理"
-                cardExtra={
-                    <Button type="primary" icon={<PlusOutlined/>} onClick={() => navigate('/z-task/task/edit/new')}>
-                        新建任务
-                    </Button>
-                }
-                searchKeys="title"
-                searchPlaceholder="搜索任务名称"
-                emptyDescription="该列表下还没有任务"
-            />
+            {error && <Alert type="error" showIcon title={error} style={{marginBottom: 16}}
+                             action={<Button onClick={() => setRefresh(value => value + 1)}>重试</Button>}/>}
+            <ListTable columns={columns} rows={tasks} rowKey="id" loading={loading || projectLoading}
+                       cardTitle="任务管理" cardExtra={
+                <Button type="primary" icon={<PlusOutlined/>} onClick={() => navigate('edit/new')}>新建任务</Button>
+            } searchKeys="title" searchPlaceholder="搜索任务名称"
+                       emptyDescription={selectedProjectId == null ? '请选择项目查看任务' : '该项目下还没有任务'}/>
         </div>
     )
 }

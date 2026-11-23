@@ -1,5 +1,5 @@
 import {useEffect, useState} from 'react'
-import {Card, Col, Row, Statistic} from 'antd'
+import {Alert, Button, Card, Col, Row, Statistic} from 'antd'
 import {CheckCircleOutlined, ClockCircleOutlined, FileTextOutlined} from '@ant-design/icons'
 import {getTaskListByAssignee} from '../services/api'
 
@@ -12,30 +12,44 @@ export default function Dashboard() {
         cancelled: 0
     })
 
+    const [error, setError] = useState('')
+    const [loading, setLoading] = useState(true)
+    const [retry, setRetry] = useState(0)
+
     useEffect(() => {
-        const userId = localStorage.getItem('userId') || '1'
-        getTaskListByAssignee(userId)
-            .then(res => {
-                const tasks = res.data || []
-                setStats({
+        let active = true
+        const load = async () => {
+            setLoading(true)
+            setError('')
+            try {
+                const userId = localStorage.getItem('userId')
+                if (!userId) throw new Error('缺少当前用户信息，请重新登录')
+                const tasks = await getTaskListByAssignee(userId)
+                if (active) setStats({
                     total: tasks.length,
                     todo: tasks.filter(t => t.status === 0).length,
                     doing: tasks.filter(t => t.status === 1).length,
                     done: tasks.filter(t => t.status === 2).length,
                     cancelled: tasks.filter(t => t.status === 3).length
                 })
-            })
-            .catch(() => {
-                // 静默失败，保持 0
-            })
-    }, [])
+            } catch (error) {
+                if (active) setError(error.message || '加载任务统计失败')
+            } finally {
+                if (active) setLoading(false)
+            }
+        }
+        load()
+        return () => { active = false }
+    }, [retry])
 
     return (
         <div>
             <h1 style={{marginBottom: 24}}>仪表盘</h1>
+            {error && <Alert type="error" showIcon title={error} style={{marginBottom: 16}}
+                             action={<Button onClick={() => setRetry(value => value + 1)}>重试</Button>}/>}
             <Row gutter={16}>
                 <Col span={6}>
-                    <Card>
+                    <Card loading={loading}>
                         <Statistic
                             title="总任务数"
                             value={stats.total}
@@ -44,7 +58,7 @@ export default function Dashboard() {
                     </Card>
                 </Col>
                 <Col span={6}>
-                    <Card>
+                    <Card loading={loading}>
                         <Statistic
                             title="待办"
                             value={stats.todo}
@@ -53,7 +67,7 @@ export default function Dashboard() {
                     </Card>
                 </Col>
                 <Col span={6}>
-                    <Card>
+                    <Card loading={loading}>
                         <Statistic
                             title="进行中"
                             value={stats.doing}
@@ -62,7 +76,7 @@ export default function Dashboard() {
                     </Card>
                 </Col>
                 <Col span={6}>
-                    <Card>
+                    <Card loading={loading}>
                         <Statistic
                             title="已完成"
                             value={stats.done}
