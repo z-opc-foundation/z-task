@@ -15,7 +15,7 @@ import {
   MarkdownLiveEditor,
   type LiveEditorMode,
   type MarkdownLiveEditorHandle,
-} from "@yuku123/z-markdown-component";
+} from "@yuku123/z-frontend-markdown";
 import styles from "./index.module.css";
 
 interface TocItem {

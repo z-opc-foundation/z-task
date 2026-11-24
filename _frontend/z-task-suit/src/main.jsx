@@ -17,7 +17,7 @@ import './index.css'
  *   1. markdown 包在前（它含 vditor 的基础样式，TodoTab 的覆盖类要压在它上面）；
  *   2. 待办组件包在后。
  */
-import '@yuku123/z-markdown-component/style.css'
+import '@yuku123/z-frontend-markdown/style.css'
 import '@yuku123/z-task-component/style.css'
 
 // Router 只由 App 提供 —— 这里再包一层 BrowserRouter 会让 App 里的那个变成

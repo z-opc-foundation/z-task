@@ -23,7 +23,7 @@ import {fetchNoteTree} from "../../services/todo-api";
 import {completeTodoItem, createTodoItem, deleteTodoItem, reopenTodoItem, updateTodoItem} from "../../services/todo-api";
 import {isPositiveId, sameId, type Id} from "../../utils/id";
 import { INBOX_PROJECT_ID } from "./index";
-import { MarkdownLiveEditor } from "@yuku123/z-markdown-component";
+import { MarkdownLiveEditor } from "@yuku123/z-frontend-markdown";
 import type { TodoProjectContext } from "./index";
 import { resolveAssignees, resolveStatusLabel, STATUS_LABEL } from "./index";
 import styles from "./index.module.css";

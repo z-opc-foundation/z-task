@@ -19,7 +19,7 @@ export default defineConfig({
          * 原因：字符串数组是**精确匹配**，不是前缀匹配。子路径 import 匹配不到 ⇒
          *   · `highlight.js/lib/core`、`highlight.js/lib/languages/*`
          *   · `@yuku123/z-frontend-common/ui`（子路径入口）
-         *   · `@yuku123/z-markdown-component`
+         *   · `@yuku123/z-frontend-markdown`
          * 这些会被 rollup 当普通依赖**打进本包 dist** ⇒
          *   ① 包体凭空膨胀（highlight.js 一家就 130KB+）；
          *   ② 宿主侧失去「按需语言 / 共享基座单一真源」的分块能力；
@@ -43,7 +43,7 @@ export default defineConfig({
                 id === '@dnd-kit/core' ||
                 id === '@dnd-kit/sortable' ||
                 id === '@dnd-kit/utilities' ||
-                // Markdown 渲染栈（z-markdown-component 的 peer 依赖，宿主提供）
+                // Markdown 渲染栈（z-frontend-markdown 的 peer 依赖，宿主提供）
                 id === 'react-markdown' ||
                 id === 'remark-gfm' ||
                 id === 'rehype-highlight' ||
@@ -53,7 +53,7 @@ export default defineConfig({
                 // vditor（MarkdownLiveEditor）
                 id === 'vditor' ||
                 // @yuku123/* 一律 external：共享基座 / 兄弟组件包只能有一份真源。
-                // 前缀判定覆盖了 z-frontend-common 的三个入口 + z-markdown-component。
+                // 前缀判定覆盖了 z-frontend-common 的三个入口 + z-frontend-markdown。
                 id.startsWith('@yuku123/'),
         },
     },

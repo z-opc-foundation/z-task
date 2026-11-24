@@ -3,7 +3,7 @@
  *
  * ## 为什么要这一步
  *
- * `MarkdownLiveEditor`（`@yuku123/z-markdown-component`）用的是 vditor 的 **IR 模式**，
+ * `MarkdownLiveEditor`（`@yuku123/z-frontend-markdown`）用的是 vditor 的 **IR 模式**，
  * vditor 在运行时会去**同源**拉这些资源：
  * <pre>
  *   /vditor/dist/js/i18n/zh_CN.js       // 中文界面文案（缺了整块 UI 变英文/报 404）

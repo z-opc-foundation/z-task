@@ -243,7 +243,7 @@ z-task 侧新增同名配置项（`z-task.workspace.base-dir`），**生产必�
 |---|---|---|
 | `TodoTab` 及 11 个兄弟组件 | **z-task-component** | 唯一真源，z-team 从 `@yuku123/z-task-component` 引入 |
 | 待办域 API（`todo` / `crossdomain`） | **z-task-component** | `services/todo-api/`，统一出口 `index.js` |
-| Markdown 渲染/编辑 | **z-markdown-component**（新包） | vditor + react-markdown + mermaid，两仓 + 主壳共用 |
+| Markdown 渲染/编辑 | **z-frontend-markdown**（新包） | vditor + react-markdown + mermaid，两仓 + 主壳共用 |
 | `todoLinkUtils`（待办↔笔记关联纯函数） | **z-task-component** | 读的是待办数据结构 ⇒ 跟着待办走；z-team 的 `PersonalNoteTab` 反过来引它 |
 | 宿主编排（打开笔记 / 打开群聊项目 / 派发会话） | **z-team** | 通过 props 回调注入，不写进组件 |
 
