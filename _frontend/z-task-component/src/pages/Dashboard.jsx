@@ -43,17 +43,17 @@ export default function Dashboard() {
     }, [retry])
 
     return (
-        <div>
-            <h1 style={{marginBottom: 24}}>仪表盘</h1>
-            {error && <Alert type="error" showIcon title={error} style={{marginBottom: 16}}
+        <div className="ztask-page-root">
+            <h1 style={{margin: 0}}>仪表盘</h1>
+            {error && <Alert className="ztask-flat-block" type="error" showIcon title={error} style={{marginBottom: -1}}
                              action={<Button onClick={() => setRetry(value => value + 1)}>重试</Button>}/>}
-            <Row gutter={16}>
+            <Row className="ztask-dashboard-stats" gutter={0}>
                 <Col span={6}>
                     <Card loading={loading}>
                         <Statistic
                             title="总任务数"
                             value={stats.total}
-                            prefix={<FileTextOutlined style={{color: '#1890ff'}}/>}
+                            prefix={<FileTextOutlined style={{color: 'var(--zfc-primary)'}}/>}
                         />
                     </Card>
                 </Col>
@@ -71,7 +71,7 @@ export default function Dashboard() {
                         <Statistic
                             title="进行中"
                             value={stats.doing}
-                            prefix={<FileTextOutlined style={{color: '#1890ff'}}/>}
+                            prefix={<FileTextOutlined style={{color: 'var(--zfc-primary)'}}/>}
                         />
                     </Card>
                 </Col>

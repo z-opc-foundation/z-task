@@ -188,7 +188,7 @@ export default function TodoAgentSection({
           </Button>,
         ]}
       >
-        <Typography.Paragraph type="secondary" style={{ fontSize: 12 }}>
+        <Typography.Paragraph type="secondary" style={{ fontSize: 12, marginBottom: 0 }}>
           会话已创建并归组到项目「{kickoff?.projectSpaceTitle}」。把下面这段发给它，就等于把活派清楚了
           —— 里面已经带了项目空间的文件清单和同项目其它待办。
         </Typography.Paragraph>
@@ -196,12 +196,13 @@ export default function TodoAgentSection({
           style={{
             maxHeight: 380,
             overflow: "auto",
-            background: "rgba(0,0,0,0.03)",
+            background: "var(--zfc-surface-2)",
+            border: "1px solid var(--zfc-line)",
             padding: 12,
             borderRadius: 8,
             fontSize: 12,
             whiteSpace: "pre-wrap",
-            margin: 0,
+            margin: "-1px 0 0",
           }}
         >
           {kickoff?.kickoff}

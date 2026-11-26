@@ -18,36 +18,36 @@ export default function HomePage() {
     const cards = menuItems.filter((m) => m.key !== '/z-task/home')
 
     return (
-        <div>
-            <Card style={{ marginBottom: 16, background: 'linear-gradient(135deg, #7c3aed 0%, #6d28d9 100%)', border: 'none' }}>
-                <Space direction="vertical" size={4} style={{ color: '#fff' }}>
-                    <Title level={3} style={{ color: '#fff', margin: 0 }}>
+        <div className="ztask-home-page">
+            <Card className="ztask-flat-block" style={{ marginBottom: -1, background: 'var(--zfc-surface)', border: '1px solid var(--zfc-line)' }}>
+                <Space direction="vertical" size={4} style={{ color: 'var(--zfc-ink)' }}>
+                    <Title level={3} style={{ color: 'var(--zfc-ink)', margin: 0 }}>
                         欢迎{user?.name ? `，${user.name}` : ''}
                     </Title>
-                    <Paragraph style={{ color: 'rgba(255,255,255,0.85)', margin: 0 }}>
+                    <Paragraph style={{ color: 'var(--zfc-ink-2)', margin: 0 }}>
                         z-task 任务管理 管理台
                     </Paragraph>
                     {user?.role && (
-                        <Tag style={{ marginTop: 8, background: 'rgba(255,255,255,0.2)', color: '#fff', border: 'none' }}>{user.role}</Tag>
+                        <Tag style={{ marginTop: 8, background: 'var(--zfc-primary-soft)', color: 'var(--zfc-primary)', border: '1px solid var(--zfc-line)' }}>{user.role}</Tag>
                     )}
                 </Space>
             </Card>
 
-            <Row gutter={[16, 16]}>
+            <Row className="ztask-home-cards" gutter={[0, 0]}>
                 {cards.map((m) => (
                     <Col key={m.key} xs={24} sm={12} md={12} lg={8}>
-                        <Card hoverable onClick={() => navigate(m.key)} style={{ borderTop: '3px solid #7c3aed' }}>
+                        <Card hoverable onClick={() => navigate(m.key)} style={{ borderTop: '3px solid var(--zfc-primary)' }}>
                             <Space align="start" size={12}>
                                 <div style={{
                                     width: 44, height: 44, borderRadius: 8, flexShrink: 0,
-                                    background: 'rgba(124,58,237,0.08)', color: '#7c3aed',
+                                    background: 'var(--zfc-primary-soft)', color: 'var(--zfc-primary)',
                                     display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 20,
                                 }}>
                                     {m.icon}
                                 </div>
                                 <div style={{ minWidth: 0 }}>
-                                    <div style={{ fontSize: 15, fontWeight: 600, color: '#0f172a' }}>{m.label}</div>
-                                    <div style={{ fontSize: 12, color: '#94a3b8', marginTop: 2 }}>{m.desc || m.label}</div>
+                                    <div style={{ fontSize: 15, fontWeight: 600, color: 'var(--zfc-ink)' }}>{m.label}</div>
+                                    <div style={{ fontSize: 12, color: 'var(--zfc-muted-2)', marginTop: 2 }}>{m.desc || m.label}</div>
                                 </div>
                             </Space>
                         </Card>

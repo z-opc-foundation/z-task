@@ -2,8 +2,11 @@ import React from 'react'
 import ReactDOM from 'react-dom/client'
 import {ConfigProvider} from 'antd'
 import zhCN from 'antd/locale/zh_CN'
+import {antdTheme} from '@yuku123/z-frontend-common/ui'
 import App from './App'
 import './index.css'
+import '@yuku123/z-frontend-common/blocks.css'
+import './cognition.css'
 
 /**
  * ⚠ 组件包的 CSS **必须由宿主显式引入**。
@@ -24,7 +27,7 @@ import '@yuku123/z-task-component/style.css'
 // "Router inside Router"，react-router 直接抛错，整页只剩一段红字。
 ReactDOM.createRoot(document.getElementById('root')).render(
     <React.StrictMode>
-        <ConfigProvider locale={zhCN}>
+        <ConfigProvider locale={zhCN} theme={antdTheme}>
             <App/>
         </ConfigProvider>
     </React.StrictMode>,

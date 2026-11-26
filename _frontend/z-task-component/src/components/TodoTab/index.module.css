@@ -1,5 +1,5 @@
 /* 工作待办 Tab：左侧栏 + 主区（快速添加/工具栏/列表）
- * 视觉基线：紧凑直角高密度 —— 圆角 0、12px 字号基准、8px 间距栅格、主色 #4285f4 */
+ * 视觉基线：认知范本紧致高密度 —— token 由 z-frontend-common/blocks.css 提供 */
 
 /* ── 设计令牌（.container 为面板内联区；其余为 portal 渲染的浮层，需各自声明）── */
 .container,
@@ -10,18 +10,18 @@
 .addModalPicker,
 .membersModal,
 .columnModal {
-  --td-primary: #4285f4;
-  --td-primary-hover: #2f6fd0;
-  --td-primary-soft: #eaf2fe;
+  --td-primary: var(--zfc-primary);
+  --td-primary-hover: var(--zfc-primary-strong);
+  --td-primary-soft: var(--zfc-primary-soft);
   /* 文本层级：正文 → 次要正文 → 次要信息 → label/占位 */
-  --td-text: #1f2329;
-  --td-text-2: #4e5969;
-  --td-text-3: #86909c;
-  --td-text-4: #a9aeb8;
-  --td-border: #e5e6eb;
-  --td-border-light: #f0f1f3;
-  --td-bg-soft: #f7f8fa;
-  --td-bg-hover: #f2f3f5;
+  --td-text: var(--zfc-ink);
+  --td-text-2: var(--zfc-ink-2);
+  --td-text-3: var(--zfc-muted);
+  --td-text-4: var(--zfc-muted-2);
+  --td-border: var(--zfc-line);
+  --td-border-light: var(--zfc-line);
+  --td-bg-soft: var(--zfc-surface-2);
+  --td-bg-hover: var(--zfc-surface-2);
   --td-danger: #f53f3f;
   --td-warn: #ff7d00;
 }
@@ -30,8 +30,11 @@
   display: flex;
   height: 100%;
   min-height: 0;
-  background: #fff;
+  margin: 0;
+  padding: 0;
+  background: var(--zfc-bg);
   font-size: 12px;
+  line-height: 1.62;
   color: var(--td-text);
 }
 /* ── 左侧栏 ── */
@@ -121,7 +124,7 @@
   line-height: 16px;
 }
 .sideItemActive .sideItemCount {
-  background: rgba(66, 133, 244, 0.16);
+  background: var(--td-primary-soft);
   color: var(--td-primary);
 }
 .sideGroupLabel {
@@ -263,12 +266,16 @@
 
 .boardWrap {
   display: flex;
-  gap: 8px;
+  gap: 0;
   overflow-x: auto;
   height: 100%;
   min-height: 0;
   align-items: stretch;
   padding: 0 0 4px;
+}
+.boardCol + .boardCol,
+.boardCol + .boardAddColumn {
+  margin-left: -1px;
 }
 .boardCol {
   flex: 0 0 264px;
@@ -324,7 +331,7 @@
 }
 .boardColAdd:hover {
   color: var(--td-primary);
-  background: rgba(66, 133, 244, 0.1);
+  background: var(--td-primary-soft);
 }
 .addRow {
   display: flex;
@@ -353,7 +360,10 @@
   padding: 6px;
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 0;
+}
+.boardColBody > .itemCard + .itemCard {
+  margin-top: -1px;
 }
 .boardColEmpty {
   color: var(--td-text-4);
@@ -454,12 +464,11 @@
   border-radius: 0;
   cursor: pointer;
   overflow: hidden;
-  transition: border-color 0.14s ease, box-shadow 0.14s ease,
-    transform 0.14s ease;
+  transition: border-color 0.14s ease, transform 0.14s ease;
 }
 .itemCard:hover {
   border-color: var(--td-primary);
-  box-shadow: 0 0 0 1px rgba(66, 133, 244, 0.12);
+  box-shadow: none;
 }
 .itemCard:active {
   transform: translateY(1px);
@@ -609,8 +618,8 @@
 }
 .cardChipTag {
   background: var(--td-primary-soft);
-  border-color: #cfe2fd;
-  color: #2f6fd0;
+  border-color: var(--zfc-primary-soft-2);
+  color: var(--td-primary-hover);
 }
 /* 指派人：直角首字方块（最多 3 个）+ 溢出计数 */
 .cardAvatars {
@@ -849,9 +858,9 @@
   border: 1px solid var(--td-border-light);
 }
 .statusProgress {
-  background: #e8f3ff;
-  color: #1677ff;
-  border: 1px solid #bae0ff;
+  background: var(--td-primary-soft);
+  color: var(--td-primary);
+  border: 1px solid var(--zfc-primary-soft-2);
 }
 .statusDone {
   background: #e8f8e8;
@@ -960,7 +969,7 @@
 .detailDrawer :global(.ant-drawer-content),
 .detailDrawer :global(.ant-drawer-content-wrapper) {
   border-radius: 0;
-  box-shadow: -1px 0 0 0 var(--td-border), -8px 0 24px rgba(0, 0, 0, 0.06);
+  box-shadow: var(--zfc-overlay-shadow);
 }
 .detailDrawer :global(.ant-drawer-content) {
   display: flex;
@@ -1436,7 +1445,7 @@
   font-size: 12px;
   border-radius: 0;
   background: var(--td-primary-soft);
-  border-color: #cfe2fd;
+  border-color: var(--zfc-primary-soft-2);
   color: var(--td-primary-hover);
 }
 .detailDrawer :global(.ant-select-multiple .ant-select-selection-item-remove) {
@@ -1482,7 +1491,7 @@
 .detailDrawer :global(.ant-select-focused .ant-select-selector),
 .detailDrawer :global(.ant-picker-focused) {
   border-color: var(--td-primary) !important;
-  box-shadow: 0 0 0 2px rgba(66, 133, 244, 0.1) !important;
+  box-shadow: 0 0 0 2px var(--td-primary-soft) !important;
 }
 /* 占位色统一（含带前缀图标输入框的内层 input） */
 .detailDrawer :global(.ant-select-selection-placeholder),
@@ -1524,7 +1533,8 @@
 }
 /* 抽屉内下拉浮层（Select）直角化 */
 .detailDropdown {
-  border-radius: 0;
+  border-radius: 10px;
+  box-shadow: var(--zfc-overlay-shadow);
   font-size: 12px;
   padding: 2px 0;
 }
@@ -1537,8 +1547,8 @@
   color: var(--td-text-2);
 }
 .detailDropdown :global(.ant-select-item-option-selected) {
-  background: #eaf2fe;
-  color: #4285f4;
+  background: var(--td-primary-soft);
+  color: var(--td-primary);
   font-weight: 500;
 }
 .detailDropdown :global(.ant-select-item-option-active) {
@@ -1906,16 +1916,18 @@
  * Modal 走 portal 渲染，className 落在 .ant-modal 根节点，后代选择器可安全限定 */
 
 .addModal :global(.ant-modal-content),
-.addModal :global(.ant-modal-header),
-.addModal :global(.ant-modal-footer),
-.columnModal :global(.ant-modal-content),
-.columnModal :global(.ant-modal-header),
-.columnModal :global(.ant-modal-footer) {
-  border-radius: 0;
-}
 .columnModal :global(.ant-modal-content) {
   border: 1px solid var(--td-border);
-  box-shadow: 0 4px 16px rgba(31, 35, 41, 0.1);
+  border-radius: 10px;
+  box-shadow: var(--zfc-overlay-shadow);
+}
+.addModal :global(.ant-modal-header),
+.columnModal :global(.ant-modal-header) {
+  border-radius: 10px 10px 0 0;
+}
+.addModal :global(.ant-modal-footer),
+.columnModal :global(.ant-modal-footer) {
+  border-radius: 0 0 10px 10px;
 }
 .columnModal :global(.ant-modal-body) {
   padding: 12px 14px;
@@ -1926,10 +1938,6 @@
 .columnModal :global(.ant-select-selector),
 .columnModal :global(.ant-btn) {
   border-radius: 0 !important;
-}
-.addModal :global(.ant-modal-content) {
-  border: 1px solid var(--td-border);
-  box-shadow: 0 4px 16px rgba(31, 35, 41, 0.1);
 }
 .addModal :global(.ant-modal-header) {
   padding: 9px 14px;
@@ -2033,7 +2041,7 @@
 .addModal :global(.ant-select-focused .ant-select-selector),
 .addModal :global(.ant-picker-focused) {
   border-color: var(--td-primary);
-  box-shadow: 0 0 0 2px rgba(66, 133, 244, 0.1);
+  box-shadow: 0 0 0 2px var(--td-primary-soft);
 }
 .addModal :global(.ant-input::placeholder),
 .addModal :global(.ant-select-selection-placeholder),

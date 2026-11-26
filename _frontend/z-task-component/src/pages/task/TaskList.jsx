@@ -119,18 +119,19 @@ export default function TaskList() {
     ]
 
     return (
-        <div>
-            {projectError && <Alert type="error" showIcon title={projectError} style={{marginBottom: 16}}
+        <div className="ztask-page-root">
+            {projectError && <Alert className="ztask-flat-block" type="error" showIcon title={projectError} style={{marginBottom: -1}}
                                     action={<Button onClick={() => setProjectRetry(value => value + 1)}>重试</Button>}/>}
-            <div style={{marginBottom: 16}}>
+            <div className="ztask-flat-block" style={{marginBottom: -1, padding: 8, border: '1px solid var(--zfc-line)', background: 'var(--zfc-surface)'}}>
                 <Select placeholder="选择项目" style={{width: 240}} value={selectedProjectId}
                         loading={projectLoading} disabled={projectLoading || pendingId != null}
                         onChange={setSelectedProjectId} allowClear
                         options={projects.map(project => ({value: project.id, label: project.name}))}/>
             </div>
-            {error && <Alert type="error" showIcon title={error} style={{marginBottom: 16}}
+            {error && <Alert className="ztask-flat-block" type="error" showIcon title={error} style={{marginBottom: -1}}
                              action={<Button onClick={() => setRefresh(value => value + 1)}>重试</Button>}/>}
             <ListTable columns={columns} rows={tasks} rowKey="id" loading={loading || projectLoading}
+                       cardProps={{className: 'ztask-flat-block'}}
                        cardTitle="任务管理" cardExtra={
                 <Button type="primary" icon={<PlusOutlined/>} onClick={() => navigate('edit/new')}>新建任务</Button>
             } searchKeys="title" searchPlaceholder="搜索任务名称"

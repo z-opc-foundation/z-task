@@ -43,7 +43,7 @@ export default function TodoPage() {
     }, [])
 
     return (
-        <div style={{height: '100%', minHeight: 0, display: 'flex', flexDirection: 'column'}}>
+        <div className="ztask-page-root" style={{height: '100%', minHeight: 0, display: 'flex', flexDirection: 'column'}}>
             <TodoTab
                 onOpenProject={onOpenProject}
                 onOpenNote={onOpenNote}

@@ -1,0 +1,155 @@
+/* z-task 认知范本（lead 008 §26）。
+ * token 真源由 @yuku123/z-frontend-common/blocks.css 提供，这里只做宿主壳与 antd 收口。 */
+html,
+body,
+#root {
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    background: var(--zfc-bg);
+    color: var(--zfc-ink);
+    font-family: 'Inter Variable', 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
+        'Helvetica Neue', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', Arial, sans-serif;
+    font-size: 15px;
+    line-height: 1.62;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+button,
+input,
+textarea,
+select {
+    font-family: inherit;
+}
+
+/* AppLayout 的 main 带行内 padding，使用稳定壳类而不是哈希后的页面类收口。 */
+.zfc-app-shell {
+    margin: 0;
+    padding: 0;
+    border-radius: 0;
+    box-shadow: none;
+    background: var(--zfc-bg);
+}
+
+.zfc-app-header,
+.zfc-app-body {
+    border-radius: 0;
+    box-shadow: none;
+}
+
+.zfc-app-main {
+    min-width: 0;
+    min-height: 0;
+    margin: 0;
+    padding: 0 var(--zfc-page-x) !important;
+    border-radius: 0;
+    box-shadow: none;
+    background: var(--zfc-bg);
+}
+
+/* 页面根节点统一顶部零留白；只挂全局类，不穿透 CSS Module。 */
+.ztask-page-root {
+    margin: 0;
+    padding: 0;
+}
+
+.ztask-flat-block {
+    border-radius: 0 !important;
+    box-shadow: none !important;
+}
+
+/* 面板 8 / 输入 9 / 浮层 10 由 antdTheme 映射；Select 控件与浮层共用圆角 token，
+   因此下拉层在宿主全局 CSS 中单独收口为 10px。AntD CSS-in-JS 会动态注入同优先级规则，
+   输入控件用 important 保证运行时仍是 9px。 */
+.ant-input,
+.ant-input-affix-wrapper,
+.ant-input-number,
+.ant-select-selector,
+.ant-picker {
+    border-radius: 9px !important;
+}
+
+/* 页面、面板、卡片、表格零阴影；hover 也只允许描边/底色反馈。 */
+.ant-card,
+.ant-card-hoverable:hover,
+.ant-table-wrapper,
+.ant-table-container,
+.ant-table,
+.ant-table-content {
+    box-shadow: none !important;
+}
+
+.ant-card,
+.ant-table-wrapper {
+    background: var(--zfc-surface);
+    border-color: var(--zfc-line);
+}
+
+/* 浮层统一 10px 圆角与唯一允许的阴影；侧抽屉保持贴边直角。 */
+.ant-modal-content {
+    border: 1px solid var(--zfc-line);
+    border-radius: 10px;
+    box-shadow: var(--zfc-overlay-shadow) !important;
+}
+
+.ant-modal-header {
+    border-radius: 10px 10px 0 0;
+}
+
+.ant-modal-footer {
+    border-radius: 0 0 10px 10px;
+}
+
+.ant-drawer-content-wrapper,
+.ant-drawer-content {
+    border-radius: 0;
+    box-shadow: var(--zfc-overlay-shadow) !important;
+}
+
+.ant-dropdown-menu,
+.ant-select-dropdown,
+.ant-picker-dropdown,
+.ant-popover-inner,
+.ant-tooltip-inner {
+    border: 1px solid var(--zfc-line);
+    border-radius: 10px;
+    box-shadow: var(--zfc-overlay-shadow) !important;
+}
+
+/* 首页：欢迎块与快捷入口读作一张连续纸。 */
+.ztask-home-page {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+}
+
+.ztask-home-cards {
+    margin: 1px 0 0 1px;
+}
+
+.ztask-home-cards .ant-col {
+    margin-left: -1px;
+}
+
+.ztask-home-cards .ant-card {
+    margin-top: -1px;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+}
+
+/* 仪表盘：统计卡片零间隙，只保留 1px 共边。 */
+.ztask-dashboard-stats {
+    margin: 1px 0 0 1px;
+}
+
+.ztask-dashboard-stats .ant-col {
+    margin-left: -1px;
+}
+
+.ztask-dashboard-stats .ant-card {
+    margin-top: -1px;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+}

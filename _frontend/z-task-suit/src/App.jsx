@@ -52,7 +52,7 @@ function ProtectedShell() {
             appTitle="z-task 任务管理"
             appVersion="0.1.0"
             appUser={user}
-            appIcon={{ icon: <img src="/icon.png" alt="z-task 任务管理" style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: 8 }} />, color: '#16a34a', label: 'z-task 任务管理' }}
+            appIcon={{ icon: <img src="/icon.png" alt="z-task 任务管理" style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: 8 }} />, color: '#0052d9', label: 'z-task 任务管理' }}
         />
     )
 }
