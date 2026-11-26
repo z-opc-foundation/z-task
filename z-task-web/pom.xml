@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xmlns="http://maven.apache.org/POM/4.0.0"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>io.github.yuku123</groupId>
+        <artifactId>z-task</artifactId>
+        <version>1.0.1</version>
+    </parent>
+
+    <artifactId>z-task-web</artifactId>
+
+    <name>z-task :: web</name>
+    <description>任务协作平台 Web 层：Board/Task/Project/Label/SyncUser 的 REST 接口、
+        请求响应 DTO 与 MyBatis 配置；前端 dist 作为 static 资源随本 jar 发布</description>
+
+    <dependencies>
+        <dependency>
+            <groupId>io.github.yuku123</groupId>
+            <artifactId>z-task-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.github.yuku123</groupId>
+            <artifactId>z-boot-datasource-starter</artifactId>
+        </dependency>
+        <!-- 4A 中心鉴权: 仅 SSO 拦截器/JWT (z-ctc-web 的 ctc 主数据栈 z-task 不需要) -->
+        <dependency>
+            <groupId>io.github.yuku123</groupId>
+            <artifactId>z-ctc-sso</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.github.yuku123</groupId>
+            <artifactId>z-util-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.github.yuku123</groupId>
+            <artifactId>z-meta-api</artifactId>
+            <version>${z-meta.version}</version>
+        </dependency>
+    </dependencies>
+</project>

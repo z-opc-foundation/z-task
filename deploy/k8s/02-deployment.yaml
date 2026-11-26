@@ -1,0 +1,138 @@
+# ============================================================
+# z-task —— Deployment（工作负载）
+#
+# 【镜像 tag 为什么这样写】
+#   image: zopc/z-task:20261112-71637e2
+#   —— 裸 tag，**不带 Nexus 仓库前缀**。铁律：本集群 imagePullPolicy=Never，
+#      镜像只存在于两个节点的 containerd，不在任何 registry。k3s 不会去拉，
+#      它按 `image:` 字段的**字面引用**去节点本地 content store 里找。
+#      如果喂进 containerd 的 tag 带前缀（例如 nexus.internal/zopc/z-task:1.0.0-zboot112）
+#      而清单里写的是裸 tag（或反过来），本地查不到 ⇒ Pod 卡 ErrImageNeverPull。
+#      喂镜像的 tag 必须与这里的 `image:` 逐字一致，见 README §2。
+#   imagePullPolicy: Never —— 照抄线上。
+#   ⚠ 2026-10-23（卡 TASK-20261023-008）：原先写的是 `zopc/z-task:local` ——
+#      裸 tag 不可回滚、不可追溯 ⇒ 本轮换成版本化 tag（z-boot-datasource-starter 抬到 1.1.2）。
+#
+# 【探针为什么选 tcpSocket】
+#   本域线上 1 副本在跑，但**HTTP 端点在本域不可用作探针**：
+#     · /actuator/health 经 SSO 闸门 ⇒ 返回 302 / 401（不是 200），
+#       拿它当探针 ⇒ Pod 永远不就绪（探针只认 2xx/3xx）。
+#     · 线上基线里的 readinessProbe 打的是 httpGet /doc.html，
+#       那是 Swagger 文档页，不是健康端点。
+#   ⇒ 保守用 tcpSocket 探 8082：只证明「端口在监听」，不假设应用健康语义。
+#     （需要真正的业务健康判定时，应在应用侧提供一个不经 SSO 闸门的内部端点。）
+#
+# 【secret 从哪来】
+#   ZTASK_DB_HOST / ZTASK_DB_USER / ZTASK_DB_PASSWORD →
+#   secretKeyRef: secret z-task-db / 键 host / user / password。
+#   secret z-task-db 已在集群里（手工灌的），本仓不写它的内容。
+#   重建集群时按 README §3 的命令补灌。
+# ============================================================
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: z-task-admin
+  namespace: z-task
+  labels:
+    app.kubernetes.io/name: z-task-admin
+    app.kubernetes.io/part-of: z-opc-foundation
+spec:
+  replicas: 1
+  # 保留 10 个历史版本 ⇒ `kubectl rollout undo deploy/z-task-admin -n z-task` 可用。
+  revisionHistoryLimit: 10
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: z-task-admin
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: z-task-admin
+    spec:
+      containers:
+        - name: z-task
+          image: zopc/z-task:20261112-71637e2
+          imagePullPolicy: Never
+          ports:
+            - name: http
+              containerPort: 8082
+              protocol: TCP
+          env:
+            # JVM 参数：与线上逐字一致。
+            - name: JAVA_OPTS
+              value: "-Xms256m -Xmx1024m"
+            # ===== 数据源：共享 RDS 的 oc 库（z-opc 系各仓共用同一个库）=====
+            # 地址/账号/口令一律走 secret 引用，仓内不留明文（lead 001 凭证规范）。
+            - name: ZTASK_DB_HOST
+              valueFrom:
+                secretKeyRef:
+                  name: z-task-db
+                  key: host
+            - name: ZTASK_DB_PORT
+              value: "3306"
+            - name: ZTASK_DB_NAME
+              value: oc
+            - name: ZTASK_DB_USER
+              valueFrom:
+                secretKeyRef:
+                  name: z-task-db
+                  key: user
+            - name: ZTASK_DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: z-task-db
+                  key: password
+            # SSO 签名密钥：本仓 pom 把 z-ctc-sso 钉到 1.0.5（卡 TASK-20261022-012，
+            # 那一版去掉了内置 HS256 密钥）⇒ 缺 sso.jwt-secret 时 JwtUtil 直接
+            # fail-closed 拒绝启动（2026-10-23 发版实测：新 Pod 起不来、
+            # 旧 Pod 仍在服务）。值只走 secret 引用，仓里不出现明文。
+            - name: SSO_JWT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: sso-jwt
+                  key: sso-jwt-secret
+            # 工作区根目录：必须与下面 volumeMounts 的 mountPath 逐字一致。
+            # ⚠ 项目空间的读写**只在 z-task 侧**（z-team 已不碰 todo/ 目录），
+            #    ⇒ base-dir 一致性由本仓单侧保证，z-team 无需同步改。
+            - name: ZTASK_WORKSPACE_BASE_DIR
+              value: /data/z_team
+          resources:
+            limits:
+              cpu: "2"
+              memory: 2Gi
+            requests:
+              cpu: 300m
+              memory: 1280Mi
+          # ===== 项目空间文件：必须挂持久卷 =====
+          # 待办的「项目空间」= 服务器上一个文件夹，落在 {base-dir}/todo/{projectId}/。
+          # 不挂卷 ⇒ 文件写在容器可写层 ⇒ Pod 重启 / 迁移 / 滚动更新后**全部消失**，
+          # 而数据库里的待办记录还在 ⇒ 用户看到「事项在、文件没了」。
+          # ⚠ 2026-11-02：此前本 Deployment **一个 volume 都没有**（待办迁入后才暴露的缺口）。
+          # ⚠ base-dir 与 mountPath 必须一致（上面 ZTASK_WORKSPACE_BASE_DIR 已钉死同一路径）。
+          volumeMounts:
+            - name: workspace
+              mountPath: /data/z_team
+          # 探针只探「端口在监听」。
+          # ⚠ 本域 HTTP 端点被 SSO 闸门挡（/actuator/health 返回 302/401），
+          #   不能用作探针；理由见文件头注释。
+          readinessProbe:
+            tcpSocket:
+              port: http
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            failureThreshold: 6
+          livenessProbe:
+            tcpSocket:
+              port: http
+            # 启动比就绪慢：JVM 起 + 连 RDS，放宽到 120s 再开始判活。
+            initialDelaySeconds: 120
+            periodSeconds: 30
+            failureThreshold: 6
+      volumes:
+        - name: workspace
+          hostPath:
+            # ⚠ 铁律：本集群 imagePullPolicy=Never，镜像只存在于节点本地 content store。
+            #   同理，hostPath 只在**节点本地**有效 —— Pod 必须落在挂了这条路径的节点上。
+            #   集群是 k3s 单节点 ⇒ 目前无调度问题；若扩成多节点，须改用 PVC
+            #   （storageClass + ReadWriteMany）而不是 hostPath。
+            path: /data/z_team
+            type: DirectoryOrCreate

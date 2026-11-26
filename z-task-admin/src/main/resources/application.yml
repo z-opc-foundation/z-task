@@ -1,0 +1,124 @@
+# =============================================================================
+# z-task 启动配置 (application.yml)
+# 敏感项一律走环境变量, 仓库内不落真实地址/密钥.
+# 业务方接入时, 复制此文件并改 z.base.db / sso 配置.
+# =============================================================================
+
+server:
+  port: 8082
+  servlet:
+    context-path: /
+
+spring:
+  application:
+    name: z-task
+  profiles:
+    active: dev
+  # SQL 会话工厂由 z-task-web TaskMyBatisConfig 手工装配 (z.base.db.task.*),
+  # spring/druid/mybatis-plus 的自动装配会在其注册前抢跑, 一律排除
+  autoconfigure:
+    exclude:
+      - org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration
+      - org.springframework.boot.autoconfigure.jdbc.DataSourceTransactionManagerAutoConfiguration
+      # ⚠ Druid 有两个包名，按**依赖的 starter 版本线**选：
+      #   SB2 (druid-spring-boot-starter)      → com.alibaba.druid.spring.boot.autoconfigure.DruidDataSourceAutoConfigure
+      #   SB3 (druid-spring-boot-3-starter)    → com.alibaba.druid.spring.boot3.autoconfigure.DruidDataSourceAutoConfigure
+      # 本项目在 SB3 线上（jar 内是 druid-spring-boot-3-starter-1.2.23）。
+      # 历史上这里只写了 SB2 的那个包名 ⇒ **排除静默失效**，Druid 仍然接管数据源，
+      # 于是本地启动报「Failed to determine suitable jdbc url」（它去找 spring.datasource.url，
+      # 而本项目的数据源走 z.base.db.task.*，根本没这项）。
+      # 两个包名都列上：切换 starter 版本线时不用再回来改这一行。
+      - com.alibaba.druid.spring.boot.autoconfigure.DruidDataSourceAutoConfigure
+      - com.alibaba.druid.spring.boot3.autoconfigure.DruidDataSourceAutoConfigure
+      - com.baomidou.mybatisplus.autoconfigure.MybatisPlusAutoConfiguration
+  jackson:
+    date-format: yyyy-MM-dd HH:mm:ss
+    time-zone: Asia/Shanghai
+  servlet:
+    multipart:
+      max-file-size: 50MB
+      max-request-size: 100MB
+
+# ------------------------------------------------------------
+# 数据源: z-boot-datasource-starter ModuleDataSourceTemplate
+# 模块键 z.base.db.task.* 缺省时逐项回退 z.base.db.default.*
+# (SQL 会话工厂由 z-task-web TaskMyBatisConfig 手工装配,
+#  不走 spring.datasource / mybatis-plus.* 自动配置)
+# ------------------------------------------------------------
+z:
+  # z-ext 预置埋点自登记控制台（运行期可被控制台切换扩展点实现）
+  ext:
+    console:
+      enabled: true
+      url: ${ZEXT_CONSOLE_URL:http://192.168.31.136:8888}
+  base:
+    db:
+      task:
+        host: ${ZTASK_DB_HOST:127.0.0.1}
+        port: ${ZTASK_DB_PORT:3306}
+        database: ${ZTASK_DB_NAME:z_task}
+        username: ${ZTASK_DB_USER:root}
+        password: ${ZTASK_DB_PASSWORD:}
+
+# ------------------------------------------------------------
+# 工作区根目录: 待办的「项目空间」落在 {base-dir}/todo/{projectId}/
+# ⚠ 与 z-team 的 z-team.workspace.base-dir 必须是**同一物理目录**:
+#    目录名由 projectId 确定性推导, 两侧一致 ⇒ 存量空间文件零迁移;
+#    分叉 ⇒ 变成两份互不相干的目录, 一边写一边读不到。
+# ⚠ 生产(k8s)通过 ZTASK_WORKSPACE_BASE_DIR 指向挂载点 /data/z_team;
+#    本地默认 ${user.home}/z_team, 与 z-team 本地默认值逐字相同。
+# ------------------------------------------------------------
+z-task:
+  workspace:
+    base-dir: ${ZTASK_WORKSPACE_BASE_DIR:${user.home}/z_team}
+    env: ${ZTASK_WORKSPACE_ENV:prod}
+  # ----------------------------------------------------------
+  # 用户同步端点的专用 service token (机对机, /api/sync-user/**).
+  # ⚠ 未配置 / 为空 ⇒ SyncUserTokenInterceptor 对该组端点一律 401 (fail-closed),
+  #    端点绝不静默放行。真实值只走环境变量 ZTASK_SYNC_USER_TOKEN, 不落仓库。
+  # ----------------------------------------------------------
+  sync-user:
+    token: ${ZTASK_SYNC_USER_TOKEN:}
+
+# ------------------------------------------------------------
+# 4A 中心 SSO (z-ctc-sso): 用户态 JWT 鉴权
+# /api/sync-user/** 是机对机端点、没有用户 SSO cookie: Controller 标 @NoLogin 让用户 SSO
+# 闸门放行, 由 SyncUserTokenInterceptor 用专用 service token 独立把关
+# (环境变量 ZTASK_SYNC_USER_TOKEN, 请求头 X-ZTask-Sync-Token); 未配置 token 一律 401
+# (fail-closed)。详见 README「用户同步鉴权」。
+# ------------------------------------------------------------
+sso:
+  enabled: true
+  token-cookie-name: zifang_token
+  # SSO 排除路径 (不需要用户 SSO 鉴权)
+  exclude-paths:
+    - /login
+    - /api/auth/login
+    - /api/auth/register
+    - /doc.html
+    - /v3/api-docs/**
+    - /v2/api-docs/**
+    - /swagger-resources/**
+    - /swagger-ui/**
+    - /swagger-ui.html
+    - /webjars/**
+    - /favicon.ico
+    - /error
+  # SSO 拦截路径 (默认 /**, 即全部)
+  intercept-paths:
+    - /**
+  login-url: /login
+
+# Knife4j (z-boot-web-starter 自带 knife4j-openapi3)
+knife4j:
+  enable: true
+  setting:
+    language: zh_cn
+
+# Logging (log4j2, z-boot-web-starter 默认)
+logging:
+  level:
+    com.zifang.z.task: info
+    com.zifang.ctc.audit: info
+  pattern:
+    console: '%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{50} - %msg%n'

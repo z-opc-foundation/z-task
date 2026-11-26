@@ -1,0 +1,42 @@
+{
+  "name": "@yuku123/z-task-suit",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "description": "z-task 独立运行壳（lead 005 §9.1 suit：AppLayout + 鉴权 + manifest 路由）。不发布 npm",
+  "scripts": {
+    "dev": "vite",
+    "build:component": "cd ../z-task-component && npm install --silent && npm run build",
+    "build": "npm run build:component && node scripts/sync-vditor-assets.mjs && vite build",
+    "sync:vditor": "node scripts/sync-vditor-assets.mjs",
+    "predev": "node scripts/sync-vditor-assets.mjs"
+  },
+  "dependencies": {
+    "@ant-design/icons": "^6.1.0",
+    "@ant-design/pro-components": "^3.1.12-0",
+    "@yuku123/z-frontend-common": "^1.6.0",
+    "@yuku123/z-frontend-markdown": "^0.1.0",
+    "@yuku123/z-task-component": "file:../z-task-component",
+    "antd": "^6.3.3",
+    "axios": "^1.16.1",
+    "highlight.js": "^11.10.0",
+    "react": "^19.2.0",
+    "react-dom": "^19.2.0",
+    "react-markdown": "^9.1.0",
+    "react-router-dom": "^7.13.1",
+    "rehype-highlight": "^7.0.2",
+    "remark-gfm": "^4.0.1",
+    "unified": "^11.0.5",
+    "vditor": "^3.9.7"
+  },
+  "devDependencies": {
+    "@types/react": "^19.2.0",
+    "@types/react-dom": "^19.2.0",
+    "@vitejs/plugin-react": "^4.2.1",
+    "vite": "^6.4.5"
+  },
+  "overrides": {
+    "follow-redirects": "^1.16.2",
+    "source-map-js": "^1.2.2"
+  }
+}

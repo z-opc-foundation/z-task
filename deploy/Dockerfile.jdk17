@@ -1,0 +1,7 @@
+# z-task-admin jdk17 基座镜像（jar 已是 class 61，旧 zopc/z-task:local 基底 jdk8 跑不了）
+# 构建口径同 z-lc deploy/Dockerfile.jdk17
+FROM eclipse-temurin:17-jre-jammy
+ENV LANG=C.UTF-8 LC_ALL=C.UTF-8
+COPY z-task-admin/target/z-task-admin-*.jar /app/app.jar
+EXPOSE 8082
+ENTRYPOINT ["sh", "-c", "exec java $JAVA_OPTS -jar /app/app.jar"]
