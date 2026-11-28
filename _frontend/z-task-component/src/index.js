@@ -10,6 +10,8 @@ export {default as ProjectList} from './components/ProjectList'
 export {default as TaskList} from './components/TaskList'
 export {default as TaskDashboard} from './components/TaskDashboard'
 export {default as TaskApp} from './components/TaskApp'
+// 工作空间事项页（2026-11-28 CEO「项目任务」口径：空间之下有一大堆事项）
+export {default as SpaceItems} from './components/SpaceItems'
 
 // 待办（todo）—— 2026-11-02 从 z-team 迁入
 // 单一真源：z-team 改为从这里引入（`@yuku123/z-task-component`），

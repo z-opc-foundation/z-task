@@ -9,10 +9,12 @@ import {taskApi} from '../api'
  *   - open: boolean           是否打开
  *   - task: object | null     任务对象 (null = 新建)
  *   - projects: array         项目列表
+ *   - defaultProjectId: number | string | null  新建时的默认所属项目（2026-11-28
+ *     工作空间事项页用：在空间里建事项默认落在本空间，用户仍可改选）
  *   - onClose: () => void     关闭回调
  *   - onSaved: () => void     保存成功回调
  */
-export default function TaskEditModal({open, task, projects, onClose, onSaved}) {
+export default function TaskEditModal({open, task, projects, defaultProjectId, onClose, onSaved}) {
     const [form] = Form.useForm()
     const isEdit = !!task?.id
 
@@ -29,8 +31,10 @@ export default function TaskEditModal({open, task, projects, onClose, onSaved}) 
             })
         } else if (open) {
             form.resetFields()
+            // 新建：默认锁定传入的空间（有值才写，避免清掉 initialValue）
+            if (defaultProjectId != null) form.setFieldsValue({projectId: defaultProjectId})
         }
-    }, [open, task, form])
+    }, [open, task, form, defaultProjectId])
 
     const handleOk = async () => {
         try {

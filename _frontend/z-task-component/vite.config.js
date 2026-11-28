@@ -11,7 +11,7 @@ export default defineConfig({
         dedupe: ['react', 'react-dom', 'react-router-dom', 'antd', '@ant-design/icons', 'axios', 'dayjs'],
     },
     build: {
-        lib: {entry: {index: path.resolve(__dirname, 'src/index.js'), pages: path.resolve(__dirname, 'src/pages.js')}, formats: ['es']},
+        lib: {entry: {index: path.resolve(__dirname, 'src/index.js'), pages: path.resolve(__dirname, 'src/pages.js'), menu: path.resolve(__dirname, 'src/menu.js')}, formats: ['es']},
         outDir: 'dist', emptyOutDir: false,
         /**
          * rollup 的 external 改为**函数式**判定（2026-11-02 待办搬迁时改造）。
